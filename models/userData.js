@@ -7,14 +7,15 @@ const validations = require("../utility/validations");
 //@ role - Admin Creates organisations
 
 var userDataSchema = new Schema({
-organisation: {
+orgCode: {
     type: String,
-    default:"Admin",
     trim: true,
     minlength: 2,
     maxlength: 50,
   },
-    role:{
+  user:[
+      {
+   role:{
         type: String,
         required: true
     },
@@ -25,6 +26,9 @@ organisation: {
         min: 6000000000,
         max: 9999999999
     }
+      }
+  ]
+ 
 });
 
 

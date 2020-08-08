@@ -47,6 +47,23 @@ var adminSchema = new Schema({
     }
 });
 
+adminSchema.pre('save', function (next) { //can be said as a model method applicable on single document
+    const admin = this;
+    if (!admin.isModified('password')) {
+        return next();
+    } else {
+        bcrypt.genSalt(10, function (err, salt) {
+            if (err) return next(err);
+            else {
+                bcrypt.hash(admin.password, salt, (err, hash) => {
+                    if (err) return next(err);
+                    admin.password = hash;
+                    next();
+                });
+            }
+        });
+    }
+});
 
 
 var admin = mongoose.model("admin", adminSchema);
