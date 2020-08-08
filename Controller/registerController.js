@@ -86,19 +86,3 @@ exports.csvParser = async (url) => {
         });
     }))
 };
-
-exports.addClass = async (req, res) => {
-        var arr = JSON.parse(req.students);
-        console.log(arr);
-        
-        Student.insertMany(students).then((result) => {
-            if (result.length > 0) {
-                res.sendStatus(200)
-            } else {
-                res.sendStatus(304)
-            }
-        }).catch((err) => {
-            console.log(err)
-            res.sendStatus(500)
-        })
-};

@@ -140,7 +140,7 @@ var orgSchema = new Schema({
       },
       teachingClasses:[
           {
-             teacherClass:{
+             teacherClass:{ 
                 type: String,
              },
              teacherSection:{
