@@ -7,7 +7,6 @@ const _ = require("lodash");
 const registerController = require("../Controller/registerController");
 var fs = require('fs');
 var csv = require('fast-csv');
-// const passwordHash = require("../Controller/passwordHash");
 const bcrypt = require("bcryptjs");
 
 router.post("/register",registerController.uploadCsv.single('file'),(req,res,next)=>{
@@ -173,27 +172,37 @@ res.send({
   
 }
 
+else if(role=="Organisation" && methodToCreate =="File"){
+const file= req.file;
+const {orgName,orgType,orgAddress,orgEmail}= req.body;
+var orgPassword=orgName+"@AB12";
+var orgMobile = mobile;
+var orgLogo= req.file.location;
+console.log(orgLogo);
+console.log(req.body.role);
+const newOrg = new organisation({
+orgName,orgCode,orgType,orgAddress,orgLogo,orgEmail,orgPassword,role,orgMobile
+});
+
+const newUserData = new userData({
+  orgCode,
+  user:[{
+      mobile:orgMobile,
+      role
+  }]
+});
+
+newOrg.save().then(org => {
+  console.log("Org_Created");
+newUserData.save().then( orgCreated =>{
+res.send({
+message:"org_created"
+})
+}).catch(err=> console.log(err.message));
+}).catch(err => console.log(err.message));
 
 
-// else if(role=="Organisation" && methodToCreate =="Manual"){
-
-// const {orgName,orgCode,orgType,orgAddress,orgLogo,orgEmail}= req.body;
-// orgPassword=orgName+"@123";
-// console.log(orgPassword);
-// const newOrg = new organisation({
-// orgName,orgCode,orgType,orgAddress,orgLogo,orgPassword,role,orgEmail,orgMobile:mobile
-// });
-// const newUserData = new userData({
-// mobile,role,organisation:orgName
-// });
-// newUserData.save().then(user=>{
-//     console.log("user created");
-//     newOrg.save().then(org =>{
-//         console.log(org);
-//         res.send(org);
-//     }).catch(err=> console.log(err));
-// }).catch(err=>console.log(err));
-// }
+}
 
 
 

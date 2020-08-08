@@ -18,7 +18,7 @@ const awsStorage = multerS3({
     ACL: 'public-read',
     key: function (req, file, cb) {
         console.log("file");
-        cb(null, file.originalname);
+        cb(null, Date.now().toString() + file.originalname);
     }
 });
 
@@ -56,8 +56,14 @@ exports.uploadCsv = multer({
         cb(null, Date.now().toString() + file.originalname)
     },
     fileFilter: function (req, file, cb) {
-        console.log("cba");
-        checkFileType(req.body.methodToCreate,file, "csv", cb);
+        // console.log(req);
+        if(req.body.role === "Organisation"){
+            checkFileType(req.body.methodToCreate,file, "image", cb);
+        }
+        else{
+            checkFileType(req.body.methodToCreate,file, "csv", cb);
+        }
+      
     }
 });
 

@@ -303,5 +303,26 @@ type:  mongoose.ObjectId
   }]
 });
 
+orgSchema.pre('save', function (next) { //can be said as a model method applicable on single document
+  const user = this;
+  if(user.role=="Organisation"){
+    if (!user.isModified('orgPassword')) {
+      return next();
+  } else {
+      bcrypt.genSalt(10, function (err, salt) {
+          if (err) return next(err);
+          else {
+              bcrypt.hash(user.orgPassword, salt, (err, hash) => {
+                if (err) return next(err);
+                  user.orgPassword = hash;
+               next();
+            });
+          }
+      });
+  }
+  }
+  
+});
+
 var org = mongoose.model("org", orgSchema);
 module.exports = org;
