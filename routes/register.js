@@ -181,6 +181,8 @@ var orgMobile = mobile;
 var orgLogo= req.file.location;
 console.log(orgLogo);
 console.log(req.body.role);
+
+
 const newOrg = new organisation({
 orgName,orgCode,orgType,orgAddress,orgLogo,orgEmail,orgPassword,role,orgMobile
 });

@@ -11,7 +11,7 @@ var forms = multer();
 
 const register = require("./routes/register");
 const login = require("./routes/login");
-
+const showList = require("./routes/showList");
 
 const app = express();
 
@@ -44,6 +44,7 @@ app.use(cors());
 
 app.use("/api/app", register);
 app.use("/api/app", login);
+app.use("/api/app", showList);
 
 //3.error handling middle ware
 app.use((err, req, res, next) => {
