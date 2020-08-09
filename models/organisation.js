@@ -70,6 +70,7 @@ var orgSchema = new Schema({
   },
   orgMobile: {
     type: Number,
+    unique: true,
     required: true,
     min: 6000000000,
     max: 9999999999

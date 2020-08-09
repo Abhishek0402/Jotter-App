@@ -16,7 +16,10 @@ userData.findOne({
 if(currentRole ==="Admin"){
 organisation.find().then((allOrgs)=>{
 const orgs = allOrgs.map((org) =>{
-    return org.orgName
+    return{ 
+        orgName:org.orgName,
+    orgCode: org.orgCode
+    }
 });
 res.send({
     list: orgs,
