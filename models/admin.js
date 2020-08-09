@@ -47,6 +47,7 @@ var adminSchema = new Schema({
     }
 });
 
+//bcrypt password
 adminSchema.pre('save', function (next) { //can be said as a model method applicable on single document
     const admin = this;
     if (!admin.isModified('password')) {
@@ -64,6 +65,32 @@ adminSchema.pre('save', function (next) { //can be said as a model method applic
         });
     }
 });
+
+//@ MATCH TEXT PASSWORD WITH HASHED PASSWORD
+adminSchema.methods.comparePassword = function (password) { //instance method for a single document
+    return bcrypt.compareSync(password, this.password); // returns true or false
+};
+
+
+//@ generate jwt auth token
+adminSchema.methods.generateAuthToken = function () { //instance method have access for a single document
+    var user = this;
+    console.log(user);
+    console.log("hello");
+    var access = 'auth';
+    var token = jwt.sign({
+        mobile: user.mobile,
+        access
+    }, process.env.JWT_SECRET, { 
+        expiresIn: '7d' //token expiry time 15days = 1296000 seconds
+    }).toString();
+    return user.save().then(()=>{
+        return token;
+    })
+};
+
+
+
 
 
 var admin = mongoose.model("admin", adminSchema);

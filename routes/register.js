@@ -8,8 +8,9 @@ const registerController = require("../Controller/registerController");
 var fs = require('fs');
 var csv = require('fast-csv');
 const bcrypt = require("bcryptjs");
+const authController = require("../Controller/authController");
 
-router.post("/register",registerController.uploadCsv.single('file'),(req,res,next)=>{
+router.post("/register",authController.authenticate,registerController.uploadCsv.single('file'),(req,res,next)=>{
 const {role,mobile,orgCode,methodToCreate} = req.body;
 console.log("registration api");
 userData.findOne({

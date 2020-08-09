@@ -10,6 +10,8 @@ var forms = multer();
 //@ public login- signup
 
 const register = require("./routes/register");
+const login = require("./routes/login");
+
 
 const app = express();
 
@@ -41,7 +43,7 @@ app.use(cors());
 //express app routes
 
 app.use("/api/app", register);
-
+app.use("/api/app", login);
 
 //3.error handling middle ware
 app.use((err, req, res, next) => {
