@@ -47,7 +47,7 @@ var orgSchema = new Schema({
   orgPassword: {
     type: String,
     minlength: 8,
-    maxlength: 50,
+    maxlength: 5000,
     trim: true,
     required: "password is required",
     validate: [validations.validatePassword, "Please fill a valid password"],
@@ -108,7 +108,8 @@ var orgSchema = new Schema({
           type: String
       },
       teacherCode:{
-          type: String
+          type: String,
+          unique:true,
       },
       teacherGender:{
           type: String
@@ -122,6 +123,7 @@ var orgSchema = new Schema({
       },
       teacherEmail:{
         type: String,
+        unique:true,
         minlength: 5,
         maxlength: 50,
         validate: [validations.validateEmail, "Please fill a valid email address"],
@@ -129,13 +131,14 @@ var orgSchema = new Schema({
       teacherPassword:{
  type: String,
     minlength: 8,
-    maxlength: 50,
+    maxlength: 5000,
     trim: true,
     required: "password is required",
     validate: [validations.validatePassword, "Please fill a valid password"],
       },
       teacherMobile:{
         type: Number,
+        unique:true,
         min: 6000000000,
         max: 9999999999
       },
@@ -242,7 +245,7 @@ role:{
       studentPassword:{
         type: String,
     minlength: 8,
-    maxlength: 50,
+    maxlength: 5000,
     trim: true,
     required: "password is required",
     validate: [validations.validatePassword, "Please fill a valid password"],
@@ -324,6 +327,45 @@ orgSchema.pre('save', function (next) { //can be said as a model method applicab
   }
   
 });
+
+
+//@ MATCH TEXT PASSWORD WITH HASHED PASSWORD
+orgSchema.methods.comparePassword = function (password,role) { //instance method for a single document
+  console.log(role);
+ if(role=="Organisation"){
+  return bcrypt.compareSync(password, this.orgPassword); // returns true or false
+ }
+ 
+  
+};
+
+//@ generate jwt auth token
+orgSchema.methods.generateAuthToken = function (role) { //instance method have access for a single document
+  var user = this;
+  console.log(role);
+  console.log(user);
+  console.log("hello");
+  var access = 'auth';
+  if(role=="Organisation"){
+    var token = jwt.sign({
+      mobile: user.Orgmobile,
+      access
+  }, process.env.JWT_SECRET, { 
+      expiresIn: '7d' //token expiry time 15days = 1296000 seconds
+  }).toString();
+  }
+  else if(role=="Teacher"){
+
+  }
+  else if(role == "Student"){
+
+
+  }
+
+  return user.save().then(()=>{
+      return token;
+  });
+};
 
 var org = mongoose.model("org", orgSchema);
 module.exports = org;

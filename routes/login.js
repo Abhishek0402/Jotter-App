@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router(); //routing
 const admin = require("../models/admin");
-// const organisation = require("../models/organisation");
+const organisation = require("../models/organisation");
 const userData = require("../models/userData");
 const _ = require("lodash");
 
@@ -59,8 +59,61 @@ else{
 }
 
 else{
-console.log("org or org teacher or org student");
  
+  
+console.log("org or org teacher or org student");
+ organisation.findOne({
+   orgCode
+ }).then(orgExists=>{
+if(orgExists){
+  if(role=="Organisation"){
+    if (orgExists.comparePassword(password,role)) {
+      console.log("correct password");
+          orgExists.generateAuthToken(role).then((token) => {
+            console.log("token "+ token);
+        res.header('x-auth', token).send({
+          user: {
+           orgName:orgExists.orgName,
+           orgCode:orgExists.orgCode,
+           orgType:orgExists.orgType,
+           orgAddress: orgExists.orgAddress,
+           orgLogo:orgExists.orgLogo,
+           orgEmail:orgExists.orgEmail,
+           role:orgExists.role,
+           orgMobile:orgExists.orgMobile
+          },
+          message: "loggedIn"
+        });
+      }).catch(err => console.log(err));
+    
+    } else {
+      console.log("Invalid password");
+      res.send({
+        message: "Invalid_Password"
+      });
+    }
+  }
+  else if(role=="Teacher"){
+
+  }
+  else if(role=="Student"){
+
+  }
+  else{
+    console.log("Invalid role");
+    res.send({
+message:"Invalid_role"
+    });
+  }
+
+}
+  else{
+    console.log("Invalid_PhoneNo");
+    res.send({
+      message:"Invalid_PhoneNo"
+    })
+  }
+ }).catch(err=>console.log(err.message));
 
 
 
