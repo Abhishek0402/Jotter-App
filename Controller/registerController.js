@@ -58,7 +58,7 @@ exports.uploadCsv = multer({
     fileFilter: function (req, file, cb) {
         console.log("body test");
         console.log(req.body);
-        if(req.body.role === '"Organisation"'){
+        if(req.body.role === "Organisation"){
             checkFileType(req.body.methodToCreate,file, "image", cb);
         }
         else{
