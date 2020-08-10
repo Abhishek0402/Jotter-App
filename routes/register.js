@@ -149,7 +149,7 @@ res.send({
 
 userData.findOne({user:{$elemMatch:{mobile:mobile}}}).then(mobilePresent=>{
 if(mobilePresent){
- console.log("Admin mobile exists");
+ console.log("mobile exists");
      res.send({
       message:"invalid_entry"
      });
