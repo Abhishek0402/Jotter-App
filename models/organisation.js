@@ -62,6 +62,7 @@ var orgSchema = new Schema({
   },
   orgEmail: {
     type: String,
+    unique:true,
     trim: true,
     minlength: 5,
     maxlength: 50,
@@ -110,6 +111,7 @@ var orgSchema = new Schema({
       teacherCode:{
           type: String,
           unique:true,
+          required:true
       },
       teacherGender:{
           type: String
@@ -139,6 +141,7 @@ var orgSchema = new Schema({
       teacherMobile:{
         type: Number,
         unique:true,
+        required:true,
         min: 6000000000,
         max: 9999999999
       },
@@ -207,7 +210,9 @@ default:1 //1 - all, 0 - selected
         maxlength: 50,
           },
 studentRollNo:{
-    type:String
+    type:String,
+    unique:true,
+    required:true
 },
 studentClass:{
     type: String
@@ -227,12 +232,16 @@ role:{
       },
       studentEmail:{
         type: String,
+        required:true,
+        unique:true,
         minlength: 5,
         maxlength: 50,
         validate: [validations.validateEmail, "Please fill a valid email address"],
       },
      studentMobile:{
         type: Number,
+        unique:true,
+        required:true,
         min: 6000000000,
         max: 9999999999
       },

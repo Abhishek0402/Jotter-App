@@ -30,7 +30,7 @@ router.post(
           });
 
           if (userPresent >= 0) {
-            console.log("Already existing");
+            console.log("mobile Already existing");
             res.send({
               message: "invalid_entry",
             });
@@ -45,7 +45,7 @@ router.post(
                 teacherEmail,
                 class_section_subject,
               } = req.body;
-              teacherPassword = teacherName + "@123";
+              teacherPassword = teacherName + "@AB12";
 
               var classes = new Array();
               var classSeperator = _.split(class_section_subject, ",");
@@ -129,11 +129,21 @@ router.post(
                                   message: "teacher_created",
                                 });
                               })
-                              .catch((err) => console.log(err.message));
+                              .catch((err) =>{console.log(err.message)
+                              res.send({
+                                message:"invalid_entry"
+                              });
+                              });
                           })
-                          .catch((err) => console.log(err));
+                          .catch((err) =>{
+                            console.log(err.message);
+                            res.send({
+                              message
+                            })
+                          });
                       }
                     }
+                    
                   } else {
                     console.log("org not found");
                     res.send({
@@ -143,10 +153,105 @@ router.post(
                 })
                 .catch((err) => console.log(err.message));
             }
+
+            else if(role=="Student" && methodToCreate=="Manual"){
+              const {studentName,studentRollNo,studentClass,studentSection,
+                studentFatherName,studentEmail,studentDOB,studentGender} = req.body;
+             studentPassword = studentName+"@AB12";
+
+             organisation
+             .findOne({
+               orgCode
+             })
+             .then((orgFoundForStudent) => {
+               if (orgFoundForStudent) {
+                 var studentRollNoExists = _.findIndex(
+                   orgFoundForStudent.orgStudent,
+                   {
+                     studentRollNo:studentRollNo
+                   }
+                 );
+                 if (studentRollNoExists >= 0) {
+                   console.log("student roll no. exists");
+                   res.send({
+                     message: "invalid_entry",
+                   });
+                 } else {
+                   var studentEmailPresent = _.findIndex(
+                    orgFoundForStudent.orgStudent,
+                     {
+                       studentEmail:studentEmail
+                     }
+                   );
+
+                   if (studentEmailPresent >= 0) {
+                     console.log("student email exists");
+                     res.send({
+                       message: "invalid_entry",
+                     });
+                   } else {
+                     //push new user to userDate schema
+                     orgExists.user.push({
+                       role,
+                       mobile,
+                     });
+
+                     orgFoundForStudent.orgStudent.push({
+                      studentName,
+                      studentRollNo,
+                      studentClass,
+                      studentSection,
+                      studentFatherName,
+                      role,
+                      studentEmail,
+                      studentMobile: mobile,
+                      studentDOB,
+                      studentGender,
+                      studentPassword
+                     });
+
+                     orgExists
+                       .save()
+                       .then((user) => {
+                         console.log("student created");
+                         orgFoundForStudent
+                           .save()
+                           .then((student) => {
+                             res.send({
+                               message: "student_created",
+                             });
+                           })
+                           .catch((err) => {
+                             console.log(err.message)
+                             res.send({
+                               message:"invalid_entry"
+                             })});
+                       })
+                       .catch((err) =>{ console.log(err)
+                        res.send({
+                          message:"invalid_entry"
+                        })
+                      });
+                      
+                   }
+                 }
+               }
+                else {
+                 console.log("org not found");
+                 res.send({
+                   message: "invalid_entry",
+                 });
+               }
+             })
+             .catch((err) => console.log(err.message));
+            }
+
+
+
+            
           }
         }
-        
-        
+
         else {
           userData
             .findOne({ user: { $elemMatch: { mobile: mobile } } })
@@ -205,9 +310,19 @@ router.post(
                                   message: "admin_created",
                                 });
                               })
-                              .catch((err) => console.log(err.message));
+                              .catch((err) => {
+                                console.log(err.message);
+                                res.send({
+                                  message:"invalid_entry"
+                                });
+                              });
                           })
-                          .catch((err) => console.log(err.message));
+                          .catch((err) => {
+                            console.log(err.message);
+                            res.send({
+                              message:"invalid_entry"
+                            });
+                          });
                       }
                     })
                     .catch((err) => console.log(err.message));
