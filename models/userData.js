@@ -36,7 +36,7 @@ orgCode: {
 //@ match jwt
 userDataSchema.statics.findByToken = function (token) { //model method for the whole schema/table
   var User = this;
-  console.log(User);
+  console.log("user is "+ User);
   var decoder; //User is the whole schema/table 
   //user is the individual document
   try {

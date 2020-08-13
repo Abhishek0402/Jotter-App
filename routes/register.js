@@ -28,7 +28,7 @@ router.post(
           var userPresent = _.findIndex(orgExists.user, {
             mobile: mobile,
           });
-
+          console.log(`user mobile present at ${userPresent}`);
           if (userPresent >= 0) {
             console.log("mobile Already existing");
             res.send({
@@ -129,21 +129,21 @@ router.post(
                                   message: "teacher_created",
                                 });
                               })
-                              .catch((err) =>{console.log(err.message)
-                              res.send({
-                                message:"invalid_entry"
-                              });
+                              .catch((err) => {
+                                console.log(err.message);
+                                res.send({
+                                  message: "invalid_entry",
+                                });
                               });
                           })
-                          .catch((err) =>{
+                          .catch((err) => {
                             console.log(err.message);
                             res.send({
-                              message
-                            })
+                              message,
+                            });
                           });
                       }
                     }
-                    
                   } else {
                     console.log("org not found");
                     res.send({
@@ -152,107 +152,292 @@ router.post(
                   }
                 })
                 .catch((err) => console.log(err.message));
-            }
+            } else if (role == "Student" && methodToCreate == "Manual") {
+              const {
+                studentName,
+                studentRollNo,
+                studentClass,
+                studentSection,
+                studentFatherName,
+                studentEmail,
+                studentDOB,
+                studentGender,
+              } = req.body;
+              studentPassword = studentName + "@AB12";
 
-            else if(role=="Student" && methodToCreate=="Manual"){
-              const {studentName,studentRollNo,studentClass,studentSection,
-                studentFatherName,studentEmail,studentDOB,studentGender} = req.body;
-             studentPassword = studentName+"@AB12";
-
-             organisation
-             .findOne({
-               orgCode
-             })
-             .then((orgFoundForStudent) => {
-               if (orgFoundForStudent) {
-                 var studentRollNoExists = _.findIndex(
-                   orgFoundForStudent.orgStudent,
-                   {
-                     studentRollNo:studentRollNo
-                   }
-                 );
-                 if (studentRollNoExists >= 0) {
-                   console.log("student roll no. exists");
-                   res.send({
-                     message: "invalid_entry",
-                   });
-                 } else {
-                   var studentEmailPresent = _.findIndex(
-                    orgFoundForStudent.orgStudent,
-                     {
-                       studentEmail:studentEmail
-                     }
-                   );
-
-                   if (studentEmailPresent >= 0) {
-                     console.log("student email exists");
-                     res.send({
-                       message: "invalid_entry",
-                     });
-                   } else {
-                     //push new user to userDate schema
-                     orgExists.user.push({
-                       role,
-                       mobile,
-                     });
-
-                     orgFoundForStudent.orgStudent.push({
-                      studentName,
-                      studentRollNo,
-                      studentClass,
-                      studentSection,
-                      studentFatherName,
-                      role,
-                      studentEmail,
-                      studentMobile: mobile,
-                      studentDOB,
-                      studentGender,
-                      studentPassword
-                     });
-
-                     orgExists
-                       .save()
-                       .then((user) => {
-                         console.log("student created");
-                         orgFoundForStudent
-                           .save()
-                           .then((student) => {
-                             res.send({
-                               message: "student_created",
-                             });
-                           })
-                           .catch((err) => {
-                             console.log(err.message)
-                             res.send({
-                               message:"invalid_entry"
-                             })});
-                       })
-                       .catch((err) =>{ console.log(err)
-                        res.send({
-                          message:"invalid_entry"
-                        })
+              organisation
+                .findOne({
+                  orgCode,
+                })
+                .then((orgFoundForStudent) => {
+                  if (orgFoundForStudent) {
+                    var studentRollNoExists = _.findIndex(
+                      orgFoundForStudent.orgStudent,
+                      {
+                        studentRollNo: studentRollNo,
+                      }
+                    );
+                    if (studentRollNoExists >= 0) {
+                      console.log("student roll no. exists");
+                      res.send({
+                        message: "invalid_entry",
                       });
-                      
-                   }
-                 }
-               }
-                else {
-                 console.log("org not found");
-                 res.send({
-                   message: "invalid_entry",
-                 });
-               }
-             })
-             .catch((err) => console.log(err.message));
-            }
+                    } else {
+                      var studentEmailPresent = _.findIndex(
+                        orgFoundForStudent.orgStudent,
+                        {
+                          studentEmail: studentEmail,
+                        }
+                      );
 
+                      if (studentEmailPresent >= 0) {
+                        console.log("student email exists");
+                        res.send({
+                          message: "invalid_entry",
+                        });
+                      } else {
+                        //push new user to userDate schema
+                        orgExists.user.push({
+                          role,
+                          mobile,
+                        });
 
+                        orgFoundForStudent.orgStudent.push({
+                          studentName,
+                          studentRollNo,
+                          studentClass,
+                          studentSection,
+                          studentFatherName,
+                          role,
+                          studentEmail,
+                          studentMobile: mobile,
+                          studentDOB,
+                          studentGender,
+                          studentPassword,
+                        });
 
+                        orgExists
+                          .save()
+                          .then((user) => {
+                            console.log("student created");
+                            orgFoundForStudent
+                              .save()
+                              .then((student) => {
+                                res.send({
+                                  message: "student_created",
+                                });
+                              })
+                              .catch((err) => {
+                                console.log(err.message);
+                                res.send({
+                                  message: "invalid_entry",
+                                });
+                              });
+                          })
+                          .catch((err) => {
+                            console.log(err);
+                            res.send({
+                              message: "invalid_entry",
+                            });
+                          });
+                      }
+                    }
+                  } else {
+                    console.log("org not found");
+                    res.send({
+                      message: "invalid_entry",
+                    });
+                  }
+                })
+                .catch((err) => console.log(err.message));
+            } 
             
-          }
-        }
+            else if (role == "Teacher" && methodToCreate == "File") {
+              const file = req.file;
+console.log(file.originalname);
+file.originalname= Date.now().toString() +"_" + req.body.orgCode+"_"+req.body.role+"_"+file.originalname;
+console.log(`new file name ${file.originalname}`);
 
-        else {
+              organisation
+                .findOne({ orgCode })
+                .then(async (orgExistsForCsvTeacher) => {
+                  if (orgExistsForCsvTeacher) {
+                    await registerController
+                      .read(file.originalname)
+                      .then(async (data) => {
+                        await registerController
+                          .csvParser(data.Body.toString())
+                          .then(async (data) => {
+                            req.addClass = await JSON.stringify(data, null, 2);
+                            var arr = JSON.parse(req.addClass);
+                            var codeArray = new Array();
+                            var mobileArray = new Array();
+                            var emailArray = new Array();
+
+                            const orgTeachers = await arr.map((item) => {
+                            
+                              //class section subject seperator
+                              var classes = new Array();
+                              var classSeperator = _.split(
+                                item.class_section_subjects,
+                                ","
+                              );
+                              var classLength = classSeperator.length;
+                              for (var classFinder in classSeperator) {
+                                var classNewFind = _.split(
+                                  classSeperator[classFinder],
+                                  "_"
+                                );
+                                var classNewFindLength = classNewFind.length;
+                                var teacherClass = classNewFind[0];
+                                var teacherSection = classNewFind[1];
+                                var subjects = new Array();
+                                for (var i = 2; i < classNewFindLength; i++) {
+                                  subjects.push({ subject: classNewFind[i] });
+                                }
+                                classes.push({
+                                  teacherClass: teacherClass,
+                                  teacherSection: teacherSection,
+                                  teachingSubjects: subjects,
+                                });
+                              }
+console.log("item mobile"+item.mobile);
+                              userData
+                                .findOne({
+                                  user: { $elemMatch: { mobile: item.mobile } },
+                                })
+                                .then((userMobileExists) => {
+                                  if (userMobileExists) {
+                                    console.log(
+                                      "mobile Already existing in user table"
+                                    );
+                                    res.send({
+                                      error: `${item.mobile} mobile no. already exists in user table`,
+                                      message: "invalid_entry",
+                                    });
+                                  } else {
+                                    var emailExists = _.findIndex(
+                                      orgExistsForCsvTeacher.orgTeachers,
+                                      {
+                                        teacherEmail: item.email,
+                                      }
+                                    );
+                                    console.log(emailExists);
+                                    var mobileExists = _.findIndex(
+                                      orgExistsForCsvTeacher.orgTeachers,
+                                      {
+                                        teacherMobile: item.mobile,
+                                      }
+                                    );
+                                    console.log(mobileExists);
+                                    var teacherCodeExists = _.findIndex(
+                                      orgExistsForCsvTeacher.orgTeachers,
+                                      {
+                                        teacherCode: item.code,
+                                      }
+                                    );
+                                    console.log(teacherCodeExists);
+                                    if (emailExists >= 0) {
+                                      console.log("email exists");
+                                      res.send({
+                                        error: `${item.email} email already exists`,
+                                        message: "invalid_entry",
+                                      });
+                                    } else if (mobileExists >= 0) {
+                                      console.log("mobile exists");
+                                      res.send({
+                                        error: `${item.mobile} mobile no. already exists`,
+                                        message: "invalid_entry",
+                                      });
+                                    } else if (teacherCodeExists >= 0) {
+                                      console.log("teacher code exists");
+                                      res.send({
+                                        error: `${item.code} teacher code already exists`,
+                                        message: "invalid_entry",
+                                      });
+                                    } else if (
+                                      codeArray.includes(item.code) ||
+                                      mobileArray.includes(item.mobile) ||
+                                      emailArray.includes(item.email)
+                                    ) {
+                                      console.log("redundant data");
+                                      console.log(`${item.code}  ${item.email} ${item.mobile}`);
+                                      res.send({
+                                        error: `redundant entry at line ${item.sno}`,
+                                        message: "invalid_entry",
+                                      });
+                                    } else {
+                                      orgExistsForCsvTeacher.orgTeachers.push({
+                                        teacherName: item.name,
+                                        teacherAge: item.age,
+                                        teacherDesignation: item.designation,
+                                        teacherCode: item.code,
+                                        teacherGender: item.gender,
+                                        role: item.role,
+                                        teacherEmail: item.email,
+                                        teacherPassword: item.name + "@AB12",
+                                        teacherMobile: item.mobile,
+                                        teachingClasses: classes,
+                                      });
+                                      orgExists.user.push({
+                                        role: item.role,
+                                        mobile: item.mobile,
+                                      });
+                                    }
+                                  }
+                                })
+                                .catch((err) => console.log(err.message));
+
+                              codeArray.push(item.code);
+                              mobileArray.push(item.mobile);
+                              emailArray.push(item.email);
+                            });
+console.log(codeArray);
+console.log(emailArray);
+console.log(mobileArray);
+                            // console.log(orgExists);
+                            // console.log(orgExistsForCsvTeacher);
+                          })
+                          .catch((err) => console.log(err.message));
+                      })
+                      .catch((err) => console.log(err.message));
+
+                    orgExistsForCsvTeacher
+                      .save()
+                      .then((teachersAdded) => {
+                        // console.log("teacher list added");
+                        orgExists
+                          .save()
+                          .then((teacherCreated) => {
+                            res.send({
+                              message: "teachers_added",
+                            });
+                          })
+                          .catch((err) => {
+                            console.log(err.message);
+                            res.send({
+                              message: "invalid_entry",
+                            });
+                          });
+                      })
+                      .catch((err) => {
+                        console.log(err.message);
+                        res.send({
+                          message: "invalid_entry",
+                        });
+                      });
+
+                  } else {
+                    console.log("org code not found in org list");
+                    res.send({
+                      message: "invalid_orgCode",
+                    });
+                  }
+                })
+                .catch((err) => console.log(err.message));
+            }
+          }
+        } else {
           userData
             .findOne({ user: { $elemMatch: { mobile: mobile } } })
             .then((mobilePresent) => {
@@ -313,21 +498,20 @@ router.post(
                               .catch((err) => {
                                 console.log(err.message);
                                 res.send({
-                                  message:"invalid_entry"
+                                  message: "invalid_entry",
                                 });
                               });
                           })
                           .catch((err) => {
                             console.log(err.message);
                             res.send({
-                              message:"invalid_entry"
+                              message: "invalid_entry",
                             });
                           });
                       }
                     })
                     .catch((err) => console.log(err.message));
-                } 
-                else if (role == "Organisation" && methodToCreate == "File") {
+                } else if (role == "Organisation" && methodToCreate == "File") {
                   const file = req.file;
                   const { orgName, orgType, orgAddress, orgEmail } = req.body;
                   var orgPassword = orgName + "@AB12";

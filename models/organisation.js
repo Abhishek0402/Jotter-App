@@ -357,7 +357,7 @@ orgSchema.methods.generateAuthToken = function (role) { //instance method have a
   var access = 'auth';
   if(role=="Organisation"){
     var token = jwt.sign({
-      mobile: user.Orgmobile,
+      mobile: user.orgMobile,
       access
   }, process.env.JWT_SECRET, { 
       expiresIn: '7d' //token expiry time 15days = 1296000 seconds

@@ -6,7 +6,7 @@ const authenticate = (req,res,next) => {
     var token = req.header('x-auth');
     console.log(token);
   userData.findByToken(token).then((userExists) => {
-     if(!userExists){
+     if(!userExists){ 
      console.log('user not exists');
      return Promise.reject();
    } 

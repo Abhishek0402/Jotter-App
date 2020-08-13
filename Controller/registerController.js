@@ -18,7 +18,14 @@ const awsStorage = multerS3({
     ACL: 'public-read',
     key: function (req, file, cb) {
         console.log("file");
-        cb(null, Date.now().toString() + file.originalname);
+
+        if((req.body.role=="Teacher" && req.body.methodToCreate =="File") || (req.body.role=="Student" && req.body.methodToCreate =="File")){
+            cb(null, Date.now().toString() +"_" + req.body.orgCode + "_" + req.body.role + "_"+ file.originalname);
+        }
+        else{
+            cb(null, Date.now().toString() + file.originalname);
+        }
+        
     }
 });
 
@@ -53,7 +60,12 @@ exports.uploadCsv = multer({
     limits: { fileSize: 5000000 },
     key: function (req, file, cb) {
         console.log("abc");
-        cb(null, Date.now().toString() + file.originalname)
+       if((req.body.role=="Teacher" && req.body.methodToCreate =="File") || (req.body.role=="Student" && req.body.methodToCreate =="File")){
+            cb(null,  Date.now().toString() +"_" + req.body.orgCode + "_" + req.body.role + "_"+ file.originalname);
+        }
+        else{
+            cb(null, Date.now().toString() + file.originalname);
+        }
     },
     fileFilter: function (req, file, cb) {
         console.log("body test");
@@ -74,6 +86,7 @@ exports.read = async (url) => {
         Bucket: awsConfig.bucket,
         Key: url
     };
+    console.log(params.Key);
     return new Promise((resolve, reject) => {
         s3.getObject(params, (err, data) => {
             if (err) reject(err);
