@@ -47,7 +47,8 @@ router.post(
               } = req.body;
               teacherPassword = teacherName + "@AB12";
 
-// teacherPassword = passwordHash.passwordHash(teacherPassword);
+              var teacherPassword= bcrypt.hashSync(teacherPassword, 10);
+         
 console.log(teacherPassword);
               var classes = new Array();
               var classSeperator = _.split(class_section_subject, ",");
@@ -167,6 +168,8 @@ console.log(teacherPassword);
                 studentGender,
               } = req.body;
               studentPassword = studentName + "@AB12";
+
+              var studentPassword= bcrypt.hashSync(studentPassword, 10);
 
               organisation
                 .findOne({
@@ -379,6 +382,9 @@ res.send({
                                   });
                                 }
                                 teacherPassword = item.name+ "@AB12";
+
+              var teacherPassword= bcrypt.hashSync(teacherPassword, 10);
+
 
                                 orgFoundForTeacher.orgTeachers.push({
                 
