@@ -19,12 +19,8 @@ const awsStorage = multerS3({
     key: function (req, file, cb) {
         console.log("file");
 
-        if((req.body.role=="Teacher" && req.body.methodToCreate =="File") || (req.body.role=="Student" && req.body.methodToCreate =="File")){
-            cb(null, Date.now().toString() +"_" + req.body.orgCode + "_" + req.body.role + "_"+ file.originalname);
-        }
-        else{
-            cb(null, Date.now().toString() + file.originalname);
-        }
+            cb(null, file.originalname);
+        
         
     }
 });
@@ -60,12 +56,9 @@ exports.uploadCsv = multer({
     limits: { fileSize: 5000000 },
     key: function (req, file, cb) {
         console.log("abc");
-       if((req.body.role=="Teacher" && req.body.methodToCreate =="File") || (req.body.role=="Student" && req.body.methodToCreate =="File")){
-            cb(null,  Date.now().toString() +"_" + req.body.orgCode + "_" + req.body.role + "_"+ file.originalname);
-        }
-        else{
+     
             cb(null, Date.now().toString() + file.originalname);
-        }
+    
     },
     fileFilter: function (req, file, cb) {
         console.log("body test");

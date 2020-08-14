@@ -9,12 +9,12 @@ var fs = require("fs");
 var csv = require("fast-csv");
 const bcrypt = require("bcryptjs");
 const authController = require("../Controller/authController");
-
+const passwordHash = require("../Controller/passwordHashing");
 router.post(
   "/register",
   authController.authenticate,
   registerController.uploadCsv.single("file"),
-  (req, res, next) => {
+  async (req, res, next) => {
     const { role, mobile, orgCode, methodToCreate } = req.body;
     console.log("registration api");
     userData
@@ -47,6 +47,8 @@ router.post(
               } = req.body;
               teacherPassword = teacherName + "@AB12";
 
+// teacherPassword = passwordHash.passwordHash(teacherPassword);
+console.log(teacherPassword);
               var classes = new Array();
               var classSeperator = _.split(class_section_subject, ",");
               for (var classFinder in classSeperator) {
@@ -113,28 +115,21 @@ router.post(
                           teacherGender,
                           role,
                           teacherEmail,
-                          teacherPassword,
+                          teacherPassword:teacherPassword,
                           teacherMobile: mobile,
                           teachingClasses: classes,
                         });
 
-                        orgExists
+                        orgFoundForTeacher
+                        .save()
+                        .then((teacher) => {
+                          orgExists
                           .save()
                           .then((user) => {
                             console.log("teacher created");
-                            orgFoundForTeacher
-                              .save()
-                              .then((teacher) => {
-                                res.send({
-                                  message: "teacher_created",
-                                });
-                              })
-                              .catch((err) => {
-                                console.log(err.message);
-                                res.send({
-                                  message: "invalid_entry",
-                                });
-                              });
+                            res.send({
+                              message: "teacher_created",
+                            });
                           })
                           .catch((err) => {
                             console.log(err.message);
@@ -142,6 +137,14 @@ router.post(
                               message,
                             });
                           });
+                        })
+                        .catch((err) => {
+                          console.log(err.message);
+                          res.send({
+                            message: "invalid_entry",
+                          });
+                        });
+                       
                       }
                     }
                   } else {
@@ -250,191 +253,199 @@ router.post(
                   }
                 })
                 .catch((err) => console.log(err.message));
-            } 
-            
-            else if (role == "Teacher" && methodToCreate == "File") {
+            } else if (role == "Teacher" && methodToCreate == "File") {
               const file = req.file;
-console.log(file.originalname);
-file.originalname= Date.now().toString() +"_" + req.body.orgCode+"_"+req.body.role+"_"+file.originalname;
-console.log(`new file name ${file.originalname}`);
 
-              organisation
-                .findOne({ orgCode })
-                .then(async (orgExistsForCsvTeacher) => {
-                  if (orgExistsForCsvTeacher) {
-                    await registerController
-                      .read(file.originalname)
-                      .then(async (data) => {
-                        await registerController
-                          .csvParser(data.Body.toString())
-                          .then(async (data) => {
-                            req.addClass = await JSON.stringify(data, null, 2);
-                            var arr = JSON.parse(req.addClass);
-                            var codeArray = new Array();
-                            var mobileArray = new Array();
-                            var emailArray = new Array();
+              organisation.findOne({
+                orgCode
+              }).then(async orgFoundForTeacher=>{
+                if(orgFoundForTeacher){
+                console.log("start processing csv file");
+ 
+              await registerController
+              .read(file.originalname)
+              .then(async (data) => {
+                await registerController
+                  .csvParser(data.Body.toString())
+                  .then(async (data) => {
+                    req.addClass = await JSON.stringify(
+                      data,
+                      null,
+                      2
+                    );
+                    var arr = JSON.parse(req.addClass);
+              
+                    var dataLength=arr.length;
+                  var c=0;
+                  var codeArray = new Array();
+                  var mobileArray = new Array();
+                  var emailArray = new Array();
 
-                            const orgTeachers = await arr.map((item) => {
-                            
-                              //class section subject seperator
-                              var classes = new Array();
-                              var classSeperator = _.split(
-                                item.class_section_subjects,
-                                ","
-                              );
-                              var classLength = classSeperator.length;
-                              for (var classFinder in classSeperator) {
-                                var classNewFind = _.split(
-                                  classSeperator[classFinder],
-                                  "_"
+                    const orgTeachersMap = await arr.map(
+                      (item) => {
+                     
+var mobilePresent=_.findIndex(orgFoundForTeacher.orgTeachers,{
+  teacherMobile:item.mobile
+});
+var emailPresent = _.findIndex(orgFoundForTeacher.orgTeachers,{
+  teacherEmail:item.email
+});
+var codePresent = _.findIndex(orgFoundForTeacher.orgTeachers,{
+  teacherCode:item.code
+});       
+
+if(
+  codeArray.includes(item.code) ||
+  mobileArray.includes(item.mobile) ||
+  emailArray.includes(item.email)
+) {
+  console.log("redundant data");
+  console.log(`${item.code}  ${item.email} ${item.mobile}`);
+  res.send({
+    error: `redundant entry at line ${item.sno}`,
+    message: "invalid_entry",
+  });
+} 
+else{
+         if(mobilePresent>=0){
+console.log("mobile present");
+res.send({
+  mistake:`${item.mobile} already exists`,
+  message:"invalid_entry"
+});
+       } 
+           else{
+            if(emailPresent>=0){
+              console.log("email present");
+              res.send({
+                mistake:`${item.email} already exists`,
+                message:"invalid_entry"
+              });
+            }
+            else{
+            if(codePresent>=0){
+              console.log("teacher code present");
+            res.send({
+              mistake:`${item.code} already exists`,
+              message:"invalid_entry"
+            });
+            }
+            else{
+             c++;
+            }
+            }
+           }
+          }
+          codeArray.push(item.code);
+          mobileArray.push(item.mobile);
+          emailArray.push(item.email);
+
+                          });//map ends
+
+                          //new map
+                          if(c==dataLength){
+                            const orgTeachersMap = await arr.map(
+                              (item) => {
+                                //class section subject seperator
+                                var classes = new Array();
+                                var classSeperator = _.split(
+                                  item.class_section_subjects,
+                                  ","
                                 );
-                                var classNewFindLength = classNewFind.length;
-                                var teacherClass = classNewFind[0];
-                                var teacherSection = classNewFind[1];
-                                var subjects = new Array();
-                                for (var i = 2; i < classNewFindLength; i++) {
-                                  subjects.push({ subject: classNewFind[i] });
-                                }
-                                classes.push({
-                                  teacherClass: teacherClass,
-                                  teacherSection: teacherSection,
-                                  teachingSubjects: subjects,
-                                });
-                              }
-console.log("item mobile"+item.mobile);
-                              userData
-                                .findOne({
-                                  user: { $elemMatch: { mobile: item.mobile } },
-                                })
-                                .then((userMobileExists) => {
-                                  if (userMobileExists) {
-                                    console.log(
-                                      "mobile Already existing in user table"
-                                    );
-                                    res.send({
-                                      error: `${item.mobile} mobile no. already exists in user table`,
-                                      message: "invalid_entry",
+                                var classLength = classSeperator.length;
+                                for (var classFinder in classSeperator) {
+                                  var classNewFind = _.split(
+                                    classSeperator[classFinder],
+                                    "_"
+                                  );
+                                  var classNewFindLength =
+                                    classNewFind.length;
+                                  var teacherClass = classNewFind[0];
+                                  var teacherSection = classNewFind[1];
+                                  var subjects = new Array();
+                                  for (
+                                    var i = 2;
+                                    i < classNewFindLength;
+                                    i++
+                                  ) {
+                                    subjects.push({
+                                      subject: classNewFind[i],
                                     });
-                                  } else {
-                                    var emailExists = _.findIndex(
-                                      orgExistsForCsvTeacher.orgTeachers,
-                                      {
-                                        teacherEmail: item.email,
-                                      }
-                                    );
-                                    console.log(emailExists);
-                                    var mobileExists = _.findIndex(
-                                      orgExistsForCsvTeacher.orgTeachers,
-                                      {
-                                        teacherMobile: item.mobile,
-                                      }
-                                    );
-                                    console.log(mobileExists);
-                                    var teacherCodeExists = _.findIndex(
-                                      orgExistsForCsvTeacher.orgTeachers,
-                                      {
-                                        teacherCode: item.code,
-                                      }
-                                    );
-                                    console.log(teacherCodeExists);
-                                    if (emailExists >= 0) {
-                                      console.log("email exists");
-                                      res.send({
-                                        error: `${item.email} email already exists`,
-                                        message: "invalid_entry",
-                                      });
-                                    } else if (mobileExists >= 0) {
-                                      console.log("mobile exists");
-                                      res.send({
-                                        error: `${item.mobile} mobile no. already exists`,
-                                        message: "invalid_entry",
-                                      });
-                                    } else if (teacherCodeExists >= 0) {
-                                      console.log("teacher code exists");
-                                      res.send({
-                                        error: `${item.code} teacher code already exists`,
-                                        message: "invalid_entry",
-                                      });
-                                    } else if (
-                                      codeArray.includes(item.code) ||
-                                      mobileArray.includes(item.mobile) ||
-                                      emailArray.includes(item.email)
-                                    ) {
-                                      console.log("redundant data");
-                                      console.log(`${item.code}  ${item.email} ${item.mobile}`);
-                                      res.send({
-                                        error: `redundant entry at line ${item.sno}`,
-                                        message: "invalid_entry",
-                                      });
-                                    } else {
-                                      orgExistsForCsvTeacher.orgTeachers.push({
-                                        teacherName: item.name,
-                                        teacherAge: item.age,
-                                        teacherDesignation: item.designation,
-                                        teacherCode: item.code,
-                                        teacherGender: item.gender,
-                                        role: item.role,
-                                        teacherEmail: item.email,
-                                        teacherPassword: item.name + "@AB12",
-                                        teacherMobile: item.mobile,
-                                        teachingClasses: classes,
-                                      });
-                                      orgExists.user.push({
-                                        role: item.role,
-                                        mobile: item.mobile,
-                                      });
-                                    }
                                   }
-                                })
-                                .catch((err) => console.log(err.message));
+                                  classes.push({
+                                    teacherClass: teacherClass,
+                                    teacherSection: teacherSection,
+                                    teachingSubjects: subjects,
+                                  });
+                                }
+                                teacherPassword = item.name+ "@AB12";
 
-                              codeArray.push(item.code);
-                              mobileArray.push(item.mobile);
-                              emailArray.push(item.email);
-                            });
-console.log(codeArray);
-console.log(emailArray);
-console.log(mobileArray);
-                            // console.log(orgExists);
-                            // console.log(orgExistsForCsvTeacher);
-                          })
-                          .catch((err) => console.log(err.message));
-                      })
-                      .catch((err) => console.log(err.message));
+                                orgFoundForTeacher.orgTeachers.push({
+                
+                                  teacherName: item.name,
+                                  teacherAge: item.age,
+                                  teacherDesignation: item.designation,
+                                  teacherCode: item.code,
+                                  teacherGender: item.gender,
+                                  role: item.role,
+                                  teacherEmail: item.email,
+                            teacherPassword:teacherPassword,
+                            teacherMobile:item.mobile,
+                            teachingClasses: classes
+                                
+                              });
+                              orgExists.user.push({
+                            role:item.role,
+                            mobile:item.mobile
+                              });   
 
-                    orgExistsForCsvTeacher
-                      .save()
-                      .then((teachersAdded) => {
-                        // console.log("teacher list added");
-                        orgExists
-                          .save()
-                          .then((teacherCreated) => {
-                            res.send({
-                              message: "teachers_added",
-                            });
-                          })
-                          .catch((err) => {
-                            console.log(err.message);
-                            res.send({
-                              message: "invalid_entry",
-                            });
-                          });
-                      })
-                      .catch((err) => {
-                        console.log(err.message);
-                        res.send({
-                          message: "invalid_entry",
-                        });
-                      });
 
-                  } else {
-                    console.log("org code not found in org list");
-                    res.send({
-                      message: "invalid_orgCode",
-                    });
-                  }
-                })
-                .catch((err) => console.log(err.message));
+                              });         
+                          }
+                      }
+                    );
+                  })
+                  .catch((err) => console.log(err.message))
+              .catch((err) => console.log(err.message));
+
+              orgFoundForTeacher.save()
+                         .then((teachersAdded) => {
+                           console.log("teacher list added");
+                           orgExists
+                             .save()
+                             .then((teacherCreated) => {
+                               console.log("user added");
+                               res.send({
+                                 message: "teachers_added",
+                               });
+                             })
+                             .catch((err) => {
+                               console.log(err.message);
+                               res.send({
+                                 message: "invalid_entry",
+                               });
+                             });
+                         })
+                         .catch((err) => {
+                           console.log(err.message);
+                           res.send({
+                             message: "invalid_entry",
+                           });
+                         });
+
+
+                }
+                else{
+console.log("orgCode not found");
+res.send({
+  message:"invalid_orgCode"
+});
+                }
+                }).catch(err=>{
+                  console.log(err.message);
+                });
+
+              
             }
           }
         } else {

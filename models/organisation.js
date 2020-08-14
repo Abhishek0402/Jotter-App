@@ -192,7 +192,9 @@ default:1 //1 - all, 0 - selected
                          type: String
                      },
                      studentRollNO:{
-                         type:String
+                         type:String,
+                         unique:true,
+                         required:true
                      }
                  }
              ],
@@ -317,7 +319,7 @@ type:  mongoose.ObjectId
 });
 
 orgSchema.pre('save', function (next) { //can be said as a model method applicable on single document
-  const user = this;
+ var user=this;
   if(user.role=="Organisation"){
     if (!user.isModified('orgPassword')) {
       return next();
@@ -334,7 +336,6 @@ orgSchema.pre('save', function (next) { //can be said as a model method applicab
       });
   }
   }
-  
 });
 
 
