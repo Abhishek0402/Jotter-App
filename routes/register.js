@@ -571,8 +571,6 @@ router.post(
                       .catch((err) => console.log(err.message))
                       .catch((err) => console.log(err.message));
 
-
-
                       orgFoundForStudent
                       .save()
                       .then((studentAdded) => {
@@ -613,13 +611,57 @@ router.post(
                 .catch((err) => {
                   console.log(err.message);
                 });
-
-
-
-
             }
+else if(role=="Class" && methodToCreate=="Manual"){
+  console.log("class creation");
+  const {class_section_subject}= req.body;
+          
+  organisation.findOne({orgCode}).then(orgFoundForClass =>{
+  if(orgFoundForClass){
+  var classes = new Array();
+
+  var classSeperator= _.split(class_section_subject,',');
+  for(var classFinder in classSeperator){
+  var classNewFind = _.split(classSeperator[classFinder],'_');
+  var classNewFindLength = classNewFind.length;
+  var orgClass = classNewFind[0];
+  var orgSection = classNewFind[1];
+  var Subject = new Array();
+
+  for(var i=2;i<classNewFindLength;i++){
+      Subject.push({subjects: classNewFind[i]});
+  }
+  orgFoundForClass.orgClasses.push({
+      orgClass: orgClass,
+      orgSection: orgSection,
+      orgSubjects: Subject
+  });
+
+  }
+         orgFoundForClass.save().then(ClassCreated =>{
+             console.log(ClassCreated);
+             res.send({
+               message: "class_created"
+             });
+         }).catch(err=> console.log(err.message));
+
+  }
+  else{
+      console.log("Invalid orgCode");
+      res.send({
+          message: "Invalid_orgCode"
+      });
+  }
+  }).catch(err=>console.log(err));
 
 
+
+
+}
+else if(role=="Class" && methodToCreate=="File"){
+
+
+}
 
           }
         } else {
