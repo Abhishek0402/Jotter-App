@@ -11,20 +11,20 @@
                 //                 var arr = JSON.parse(req.addClass);
 
                 //                 const orgClasses = await arr.map((item) => {
-                //     orgExists.orgStudent.push({
-                //     studentName:item.name,
-                //     studentRollNo: item.rollNo,
-                //     studentClass:item.studentClass,
-                //     studentSection:item.section,
-                //     studentFatherName: item.fatherName,
-                // role: item.role,
-                // studentEmail:item.email,
-                // studentMobile:item.mobile,
-                // studentDOB: item.dob,
-                // studentGender:item.gender,
-                // studentPassword: item.name+"@AB12",
+                    orgExists.orgStudent.push({
+                    studentName:item.name,
+                    studentRollNo: item.rollNo,
+                    studentClass:item.studentClass,
+                    studentSection:item.section,
+                    studentFatherName: item.fatherName,
+                role: item.role,
+                studentEmail:item.email,
+                studentMobile:item.mobile,
+                studentDOB: item.dob,
+                studentGender:item.gender,
+                studentPassword: item.name+"@AB12",
 
-                //     });
+                    });
                 //         });
                 //     // console.log(orgClasses);
                 //              }).catch(err => console.log(err));
