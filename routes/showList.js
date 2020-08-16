@@ -27,8 +27,29 @@ res.send({
 });
 console.log(orgs);
 }).catch(err=>console.log(err));
-}
-else if(currentRole === "Organisation"){
+} else if(currentRole === "Organisation"){
+
+organisation.findOne({orgCode}).then(orgFound=>{
+    if(orgFound){
+        const teacherList = orgFound.orgTeachers.map((teachers) =>{
+            return{ 
+                teacherName:teachers.teacherName,
+                teacherCode: teachers.teacherCode,
+                active:teachers.active
+            }
+        });
+        res.send({
+            list: teacherList,
+            message:"list_found"
+        });
+    }
+    else{
+console.log("Invalid_orgCode");
+res.send({
+    message:"Invalid_orgCode"
+});
+    }
+}).catch(err=>console.log(err.message));
 
 }
 else if(currentRole==="Teacher"){
