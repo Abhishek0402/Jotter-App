@@ -649,18 +649,51 @@ else if(role=="Class" && methodToCreate=="Manual"){
   else{
       console.log("Invalid orgCode");
       res.send({
-          message: "Invalid_orgCode"
+          message: "invalid_entry"
       });
   }
   }).catch(err=>console.log(err));
 
-
-
-
 }
 else if(role=="Class" && methodToCreate=="File"){
+  const file = req.file;
+  organisation.findOne({orgCode}).then(async orgFoundForClass =>{
+    if(orgFoundForClass){
+      
+      await registerController.read(file.originalname).then(async data => {
+        await registerController.csvParser(data.Body.toString()).then(async data => {
+            req.addClass = await JSON.stringify(data, null, 2);
+            var arr = JSON.parse(req.addClass);
+            const orgClasses = await arr.map((item) => {
+                var teachSubject = _.split(item.subjects,",");
+                var orgSubjects = new Array();
+                for(var i in teachSubject){
+orgSubjects.push({
+    subjects: teachSubject[i]
+});
+                }
+orgFoundForClass.orgClasses.push({
+orgClass:item.orgClass,
+orgSection:item.orgSection,
+orgSubjects: orgSubjects
 
+})
+    });
+         }).catch(err => console.log(err));
+    }).catch(err => console.log(err));
 
+      orgFoundForClass.save().then(classCreated => {
+          console.log("classCreated");
+          res.send(classCreated);
+      }).catch(err=>console.log(err));
+    }
+    else{
+      console.log("invalid org Code");
+      res.send({
+          "message":"invalid_orgcode"
+      });
+    }
+  }).catch(err=> console.log(err.message));
 }
 
           }
