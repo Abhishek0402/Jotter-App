@@ -356,9 +356,9 @@ else if(role=="Teacher" || role=="teacher"){
  }
 else if(role=="Student"){
   const StudentIndex = _.findIndex(this.orgStudent,{
-    teacherMobile:mobile
+   studentMobile:mobile
   });
-  hashPassword = (this.orgTeachers[teacherIndex]).teacherPassword;
+  hashPassword = (this.orgStudent[StudentIndex]).studentPassword;
   return bcrypt.compareSync(password, hashPassword); // returns true or false
 }
  
@@ -392,6 +392,13 @@ process.env.JWT_SECRET,{
 
   else if(role == "Student"){
 
+var token = jwt.sign({
+  mobile,
+  access
+},
+process.env.JWT_SECRET,{
+  expiresIn:'7d'
+}).toString();
 
   }
 

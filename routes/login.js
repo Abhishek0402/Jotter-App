@@ -154,10 +154,20 @@ else{
       if(orgExists.orgStudent[studentDataIndex].active){
         orgExists.generateAuthToken(role,mobile).then((token) => {
           console.log("token "+ token);
-          var student = orgExists.orgStudent[StudentDataIndex];
+          var student = orgExists.orgStudent[studentDataIndex];
       res.header('x-auth', token).send({
         user:{
-      
+      studentName: student.studentName,
+      studentRollNo:student.studentRollNo,
+      studentClass:student.studentClass,
+      studentSection:student.studentSection,
+      studentFatherName:student.studentFatherName,
+      role:student.role,
+      studentEmail: student.studentEmail,
+      studentMobile:student.studentMobile,
+      studentDOB:student.studentDOB,
+      studentGender: student.studentGender,
+
         },
         message: "loggedIn"
       });
