@@ -347,14 +347,20 @@ orgSchema.methods.comparePassword = function (password,role,mobile) { //instance
  if(role=="Organisation"){
   return bcrypt.compareSync(password, this.orgPassword); // returns true or false
  }
- if(role=="Teacher" || role=="teacher"){
+else if(role=="Teacher" || role=="teacher"){
   const teacherIndex = _.findIndex(this.orgTeachers,{
     teacherMobile:mobile
   });
   hashPassword = (this.orgTeachers[teacherIndex]).teacherPassword;
   return bcrypt.compareSync(password, hashPassword); // returns true or false
-  
  }
+else if(role=="Student"){
+  const StudentIndex = _.findIndex(this.orgStudent,{
+    teacherMobile:mobile
+  });
+  hashPassword = (this.orgTeachers[teacherIndex]).teacherPassword;
+  return bcrypt.compareSync(password, hashPassword); // returns true or false
+}
  
 };
 

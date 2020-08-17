@@ -5,7 +5,7 @@ const organisation = require("../models/organisation");
 const userData = require("../models/userData");
 const _ = require("lodash");
 
-router.post("/login",(req,res,next)=>{
+router.post("/login",(req,res,next) => {
 const {mobile,password}= req.body;
 
 userData.findOne({
@@ -18,9 +18,15 @@ console.log("user_Exsits");
   var roleIndex = _.findIndex(userExists.user,{
     mobile:mobile
   });
+  console.log(roleIndex);
+  if(roleIndex>=0){
 var role = (userExists.user[roleIndex]).role;
-// console.log(userExists);
+  }
+  else{
+    role="";
+  }
   console.log(`${orgCode} + ${role} + ${mobile}`);
+
 
 if(orgCode ==="Admin"){
 admin.findOne({
@@ -137,8 +143,31 @@ else{
     }
   }
   
-  else if(role=="Student"){
-    if (orgExists.comparePassword(password,role)) {
+  else if(role=="Student") {
+    if (orgExists.comparePassword(password,role,mobile)) {
+      console.log("yes student");
+      var studentDataIndex= _.findIndex(orgExists.orgStudent,{
+        studentMobile:mobile
+      });
+      if(orgExists.orgStudent[studentDataIndex].active){
+        orgExists.generateAuthToken(role,mobile).then((token) => {
+          console.log("token "+ token);
+          var student = orgExists.orgStudent[StudentDataIndex];
+      res.header('x-auth', token).send({
+        user:{
+      
+        },
+        message: "loggedIn"
+      });
+      }).catch(err => console.log(err));
+      }
+      else{
+        console.log("active user");
+            res.send({
+              message: "inactive_user"
+            });
+      }
+
 
     }
     else{
