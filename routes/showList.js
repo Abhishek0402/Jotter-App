@@ -7,7 +7,7 @@ const _ = require("lodash");
 const authController = require("../Controller/authController");
 
 router.post("/showList",authController.authenticate,(req,res,next)=>{
-const {currentRole,orgCode} = req.body;
+var {currentRole,orgCode} = req.body;
 
 userData.findOne({
     orgCode
@@ -73,4 +73,37 @@ res.send({
 
 });
 
+
+router.post("/changeState",authController.authenticate,(req,res,next)=>{
+   var {orgCode,teacherCode} = req.body;
+organisation.findOne({orgCode}).then(orgFound=>{
+    if(orgFound){
+var teacherDetails = _.findIndex(orgFound.orgTeachers,{
+    teacherCode:teacherCode
+});
+
+if(teacherDetails>=0){
+    orgFound.orgTeachers[teacherDetails].active= !orgFound.orgTeachers[teacherDetails].active;
+
+    orgFound.save().then(statechanged=>{
+    res.send({
+        message: "state_changed"
+    });
+    }).catch(err=>console.log(err.message));
+}
+else{
+    console.log("Invalid_teacherCode");
+    res.send({
+        message:"invalid_teacherCode"
+    });
+}
+    }
+    else{
+        console.log("Invalid_orgCode");
+        res.send({
+            message:"invalid_orgCode"
+        });
+    }
+}).catch(err=>console.log(err.message));
+});
 module.exports = router;

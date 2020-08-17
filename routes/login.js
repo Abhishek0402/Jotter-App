@@ -15,8 +15,11 @@ userData.findOne({
 console.log("user_Exsits");
 
   var orgCode = userExists.orgCode;
-  var role = userExists.user[0].role;
-
+  var roleIndex = _.findIndex(userExists.user,{
+    mobile:mobile
+  });
+var role = (userExists.user[roleIndex]).role;
+// console.log(userExists);
   console.log(`${orgCode} + ${role} + ${mobile}`);
 
 if(orgCode ==="Admin"){
@@ -60,16 +63,15 @@ else{
 
 else{
  
-  
 console.log("org or org teacher or org student");
  organisation.findOne({
    orgCode
  }).then(orgExists=>{
 if(orgExists){
   if(role=="Organisation"){
-    if (orgExists.comparePassword(password,role)) {
+    if (orgExists.comparePassword(password,role,mobile)) {
       console.log("correct password");
-          orgExists.generateAuthToken(role).then((token) => {
+          orgExists.generateAuthToken(role,mobile).then((token) => {
             console.log("token "+ token);
         res.header('x-auth', token).send({
           user: {
@@ -93,11 +95,58 @@ if(orgExists){
       });
     }
   }
-  else if(role=="Teacher"){
 
+  else if(role=="Teacher" || role=="teacher"){
+    if (orgExists.comparePassword(password,role,mobile)) {
+      console.log("yes teacher");
+var teacherDataIndex= _.findIndex(orgExists.orgTeachers,{
+  teacherMobile:mobile
+});
+if(orgExists.orgTeachers[teacherDataIndex].active){
+  orgExists.generateAuthToken(role,mobile).then((token) => {
+    console.log("token "+ token);
+    var teacher = orgExists.orgTeachers[teacherDataIndex];
+res.header('x-auth', token).send({
+  user:{
+  teacherName: teacher.teacherName,
+  teacherAge: teacher.teacherAge,
+  teacherDesignation: teacher.teacherDesignation,
+  teacherCode: teacher.teacherCode,
+  teacherGender: teacher.teacherGender,
+  role: teacher.role,
+  teacherEmail:teacher.teacherEmail,
+  teacherMobile:teacher.teacherMobile,
+  teacherClasses: teacher.teachingClasses
+  },
+  message: "loggedIn"
+});
+}).catch(err => console.log(err));
+}
+else{
+  console.log("active user");
+      res.send({
+        message: "inactive_user"
+      });
+}
+    }
+    else{
+      console.log("Invalid password");
+      res.send({
+        message: "Invalid_Password"
+      });
+    }
   }
+  
   else if(role=="Student"){
+    if (orgExists.comparePassword(password,role)) {
 
+    }
+    else{
+      console.log("Invalid password");
+      res.send({
+        message: "Invalid_Password"
+      });
+    }
   }
   else{
     console.log("Invalid role");

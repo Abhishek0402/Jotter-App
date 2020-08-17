@@ -684,14 +684,16 @@ orgSubjects: orgSubjects
 
       orgFoundForClass.save().then(classCreated => {
           console.log("classCreated");
-          res.send(classCreated);
+          res.send({
+            message: "class_created"
+          });
       }).catch(err=>console.log(err));
     }
     else{
       console.log("invalid org Code");
       res.send({
-          "message":"invalid_orgcode"
-      });
+        message: "invalid_entry"
+    });
     }
   }).catch(err=> console.log(err.message));
 }

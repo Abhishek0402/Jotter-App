@@ -3,6 +3,8 @@ var Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const _ = require("lodash");
+
 dotenv.config();
 //@ validation module
 const validations = require("../utility/validations");
@@ -105,7 +107,7 @@ var orgSchema = new Schema({
           min: 18,
           max: 100
       },
-      teacherDesgination:{
+      teacherDesignation:{
           type: String
       },
       teacherCode:{
@@ -340,17 +342,24 @@ orgSchema.pre('save', function (next) { //can be said as a model method applicab
 
 
 //@ MATCH TEXT PASSWORD WITH HASHED PASSWORD
-orgSchema.methods.comparePassword = function (password,role) { //instance method for a single document
+orgSchema.methods.comparePassword = function (password,role,mobile) { //instance method for a single document
   console.log(role);
  if(role=="Organisation"){
   return bcrypt.compareSync(password, this.orgPassword); // returns true or false
  }
- 
+ if(role=="Teacher" || role=="teacher"){
+  const teacherIndex = _.findIndex(this.orgTeachers,{
+    teacherMobile:mobile
+  });
+  hashPassword = (this.orgTeachers[teacherIndex]).teacherPassword;
+  return bcrypt.compareSync(password, hashPassword); // returns true or false
   
+ }
+ 
 };
 
 //@ generate jwt auth token
-orgSchema.methods.generateAuthToken = function (role) { //instance method have access for a single document
+orgSchema.methods.generateAuthToken = function (role,mobile) { //instance method have access for a single document
   var user = this;
   console.log(role);
   console.log(user);
@@ -364,9 +373,17 @@ orgSchema.methods.generateAuthToken = function (role) { //instance method have a
       expiresIn: '7d' //token expiry time 15days = 1296000 seconds
   }).toString();
   }
-  else if(role=="Teacher"){
+  else if(role=="Teacher" || role=="teacher"){
+var token = jwt.sign({
+  mobile,
+  access
+},
+process.env.JWT_SECRET,{
+  expiresIn:'7d'
+}).toString();
 
   }
+
   else if(role == "Student"){
 
 
