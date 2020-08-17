@@ -19,7 +19,8 @@ console.log("user_Exsits");
     mobile:mobile
   });
   console.log(roleIndex);
-  if(roleIndex>=0){
+  console.log(userExists.user[roleIndex]);
+    if(roleIndex>=0){
 var role = (userExists.user[roleIndex]).role;
   }
   else{
