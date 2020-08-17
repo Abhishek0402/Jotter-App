@@ -7,7 +7,7 @@ const _ = require("lodash");
 
 router.post("/login",(req,res,next) => {
 const {password}= req.body;
-var mobile = (req.body.mobile).toString();
+var mobile = parseFloat(req.body.mobile);
 console.log(req.body);
 userData.findOne({
   user:{$elemMatch:{mobile:mobile}}
