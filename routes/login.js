@@ -6,7 +6,8 @@ const userData = require("../models/userData");
 const _ = require("lodash");
 
 router.post("/login",(req,res,next) => {
-const {mobile,password}= req.body;
+const {password}= req.body;
+var mobile = (req.body.mobile).toString();
 console.log(req.body);
 userData.findOne({
   user:{$elemMatch:{mobile:mobile}}
