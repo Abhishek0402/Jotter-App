@@ -112,7 +112,7 @@ var orgSchema = new Schema({
       },
       teacherCode:{
           type: String,
-          unique:true,
+          // unique:true,
           // required:true
       },
       teacherGender:{
@@ -127,7 +127,7 @@ var orgSchema = new Schema({
       },
       teacherEmail:{
         type: String,
-        unique:true,
+        // unique:true,
         minlength: 5,
         maxlength: 50,
         validate: [validations.validateEmail, "Please fill a valid email address"],
@@ -138,11 +138,11 @@ var orgSchema = new Schema({
     maxlength: 5000,
     trim: true,
     // required: "password is required",
-    // validate: [validations.validatePassword, "Please fill a valid password"],
+    validate: [validations.validatePassword, "Please fill a valid password"],
       },
       teacherMobile:{
         type: Number,
-        unique:true,
+        // unique:true,
         // required:true,
         min: 6000000000,
         max: 9999999999
@@ -193,9 +193,9 @@ default:1 //1 - all, 0 - selected
                      studentsName:{
                          type: String
                      },
-                     studentRollNO:{
+                     studentRollNo:{
                          type:String,
-                         unique:true
+                        //  unique:true
                         //  required:true
                      }
                  }
@@ -215,7 +215,7 @@ default:1 //1 - all, 0 - selected
           },
 studentRollNo:{
     type:String,
-    unique:true,
+    // unique:true,
     // required:true
 },
 studentClass:{
@@ -237,14 +237,14 @@ role:{
       studentEmail:{
         type: String,
         // required:true,
-        unique:true,
+        // unique:true,
         minlength: 5,
         maxlength: 50,
         validate: [validations.validateEmail, "Please fill a valid email address"],
       },
      studentMobile:{
         type: Number,
-        unique:true,
+        // unique:true,
         // required:true,
         min: 6000000000,
         max: 9999999999
