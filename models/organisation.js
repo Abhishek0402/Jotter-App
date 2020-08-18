@@ -113,7 +113,7 @@ var orgSchema = new Schema({
       teacherCode:{
           type: String,
           unique:true,
-          required:true
+          // required:true
       },
       teacherGender:{
           type: String
@@ -137,13 +137,13 @@ var orgSchema = new Schema({
     minlength: 8,
     maxlength: 5000,
     trim: true,
-    required: "password is required",
-    validate: [validations.validatePassword, "Please fill a valid password"],
+    // required: "password is required",
+    // validate: [validations.validatePassword, "Please fill a valid password"],
       },
       teacherMobile:{
         type: Number,
         unique:true,
-        required:true,
+        // required:true,
         min: 6000000000,
         max: 9999999999
       },
@@ -195,8 +195,8 @@ default:1 //1 - all, 0 - selected
                      },
                      studentRollNO:{
                          type:String,
-                         unique:true,
-                         required:true
+                         unique:true
+                        //  required:true
                      }
                  }
              ],
@@ -216,7 +216,7 @@ default:1 //1 - all, 0 - selected
 studentRollNo:{
     type:String,
     unique:true,
-    required:true
+    // required:true
 },
 studentClass:{
     type: String
@@ -236,7 +236,7 @@ role:{
       },
       studentEmail:{
         type: String,
-        required:true,
+        // required:true,
         unique:true,
         minlength: 5,
         maxlength: 50,
@@ -245,7 +245,7 @@ role:{
      studentMobile:{
         type: Number,
         unique:true,
-        required:true,
+        // required:true,
         min: 6000000000,
         max: 9999999999
       },
@@ -260,7 +260,7 @@ role:{
     minlength: 8,
     maxlength: 5000,
     trim: true,
-    required: "password is required",
+    // required: "password is required",
     validate: [validations.validatePassword, "Please fill a valid password"],
       }
       }
