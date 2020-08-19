@@ -26,15 +26,16 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-exports.mail = (user, subject,purpose) => {
+exports.mail = (mailList) => {
   var replacements = {
-    purpose: purpose,
-    otp: user.otp
+    purpose: "hii",
+    otp: "class"
 };
+console.log("mailer running");
   transporter.sendMail({
       from: emailConfig.email,
-      to: user.email,
-      subject,
+      to: mailList,
+      subject:"add",
       html: template(replacements)
     },
     (error, info) => {

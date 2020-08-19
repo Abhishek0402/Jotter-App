@@ -64,7 +64,7 @@ var orgSchema = new Schema({
   },
   orgEmail: {
     type: String,
-    unique:true,
+    unique: true,
     trim: true,
     minlength: 5,
     maxlength: 50,
@@ -76,7 +76,7 @@ var orgSchema = new Schema({
     unique: true,
     required: true,
     min: 6000000000,
-    max: 9999999999
+    max: 9999999999,
   },
   orgClasses: [
     {
@@ -88,9 +88,9 @@ var orgSchema = new Schema({
       },
       orgSubjects: [
         {
-          subjects:{
-            type:String
-          }
+          subjects: {
+            type: String,
+          },
         },
       ],
     },
@@ -102,308 +102,344 @@ var orgSchema = new Schema({
         minlength: 2,
         maxlength: 50,
       },
-      teacherAge:{
-          type: Number,
-          min: 18,
-          max: 100
+      teacherAge: {
+        type: Number,
+        min: 18,
+        max: 100,
       },
-      teacherDesignation:{
-          type: String
+      teacherDesignation: {
+        type: String,
       },
-      teacherCode:{
-          type: String,
-          // unique:true,
-          // required:true
+      teacherCode: {
+        type: String,
+        // unique:true,
+        // required:true
       },
-      teacherGender:{
-          type: String
+      teacherGender: {
+        type: String,
       },
-      role:{
-          type: String
+      role: {
+        type: String,
       },
       active: {
         type: Boolean,
         default: 1, // 1 - active, 0 - not active
       },
-      teacherEmail:{
+      teacherEmail: {
         type: String,
         // unique:true,
         minlength: 5,
         maxlength: 50,
-        validate: [validations.validateEmail, "Please fill a valid email address"],
+        validate: [
+          validations.validateEmail,
+          "Please fill a valid email address",
+        ],
       },
-      teacherPassword:{
- type: String,
-    minlength: 8,
-    maxlength: 5000,
-    trim: true,
-    // required: "password is required",
-    validate: [validations.validatePassword, "Please fill a valid password"],
+      teacherPassword: {
+        type: String,
+        minlength: 8,
+        maxlength: 5000,
+        trim: true,
+        // required: "password is required",
+        validate: [
+          validations.validatePassword,
+          "Please fill a valid password",
+        ],
       },
-      teacherMobile:{
+      teacherMobile: {
         type: Number,
         // unique:true,
         // required:true,
         min: 6000000000,
-        max: 9999999999
+        max: 9999999999,
       },
-      teachingClasses:[
-          {
-             teacherClass:{ 
+      teachingClasses: [
+        {
+          teacherClass: {
+            type: String,
+          },
+          teacherSection: {
+            type: String,
+          },
+          teachingSubjects: [
+            {
+              subject: {
                 type: String,
-             },
-             teacherSection:{
-                type: String,
-             },
-             teachingSubjects :[
-                 {
-                   subject:{
-                       type:String
-                   } 
-                 }
-             ]
-          }
+              },
+            },
+          ],
+        },
       ],
-      schedules:[
-          {
-              topicScheduled:{
-                  type:String
-              },
-              subjectScheduled:{
-                  type:String
-              },
-              classScheduled:{
-                  type:String
-              },
-              sectionSchedules:{
-                  type:String
-              },
-             date:{
-                 type: String
-             },
-             time:{
-                 type:String
-             },
-             selectedStudents:[
-                 {
-                     AllOrSomeSelected:{
-type:Boolean,
-default:1 //1 - all, 0 - selected
-                     },
-                     studentsName:{
-                         type: String
-                     },
-                     studentRollNo:{
-                         type:String,
-                        //  unique:true
-                        //  required:true
-                     }
-                 }
-             ],
-          }
-      ],
-
-    }
+    },
   ],
-  orgStudent:[
-      {
-          studentName:{
-                type: String,
+  orgStudent: [
+    {
+      studentName: {
+        type: String,
         trim: true,
         minlength: 2,
         maxlength: 50,
-          },
-studentRollNo:{
-    type:String,
-    // unique:true,
-    // required:true
-},
-studentClass:{
-    type: String
-},
-studentSection:{
-    type:String
-},
-studentFatherName:{
-    type:String
-},
-role:{
-    type:String
-},
- active: {
+      },
+      studentRollNo: {
+        type: String,
+        // unique:true,
+        // required:true
+      },
+      studentClass: {
+        type: String,
+      },
+      studentSection: {
+        type: String,
+      },
+      studentFatherName: {
+        type: String,
+      },
+      role: {
+        type: String,
+      },
+      active: {
         type: Boolean,
         default: 1, // 1 - active, 0 - not active
       },
-      studentEmail:{
+      studentEmail: {
         type: String,
         // required:true,
         // unique:true,
         minlength: 5,
         maxlength: 50,
-        validate: [validations.validateEmail, "Please fill a valid email address"],
+        validate: [
+          validations.validateEmail,
+          "Please fill a valid email address",
+        ],
       },
-     studentMobile:{
+      studentMobile: {
         type: Number,
         // unique:true,
         // required:true,
         min: 6000000000,
-        max: 9999999999
+        max: 9999999999,
       },
-      studentDOB:{
-          type:String
-      },
-      studentGender:{
-          type:String
-      },
-      studentPassword:{
+      studentDOB: {
         type: String,
-    minlength: 8,
-    maxlength: 5000,
-    trim: true,
-    // required: "password is required",
-    validate: [validations.validatePassword, "Please fill a valid password"],
-      }
-      }
+      },
+      studentGender: {
+        type: String,
+      },
+      studentPassword: {
+        type: String,
+        minlength: 8,
+        maxlength: 5000,
+        trim: true,
+        // required: "password is required",
+        validate: [
+          validations.validatePassword,
+          "Please fill a valid password",
+        ],
+      },
+    },
   ],
-  questionaire:[{
-      purposeOfQuestion:{  //subject or other
-          type:String
+  questionaire: [
+    {
+      purposeOfQuestion: {
+        //subject or other
+        type: String,
       },
-      subject:{ //subject in which question is asked
-          type:String
+      subject: {
+        //subject in which question is asked
+        type: String,
       },
-      questionId:{
-type:  mongoose.ObjectId
+      questionId: {
+        type: mongoose.ObjectId,
       },
-       question:{
-                  type:String,
-                  minlength: 2,
-                  maxlength:500
-              },
-              date:{
-                  type:String
-              },
-              time:{
-                  type:String
-              },
-              questionAskedBy:{ //teacher or student
-                  type:String
-              },
-              askingPersonCode:{   // Teacher Code or roll no.
-                  type:String
-              },
-              QuestionShowToClass:{
-                  type:String
-              },
-              questionShowToSection:{
-                  type:String
-              },
-              replies:[{
-                  answer:{
-                      type:String,
-                      minlength:2,
-                      maxlength:5000
-                  },
-                  replyDate:{
-                      type:String
-                  },
-                  replyTime:{
-                      type:String
-                  },
-                  replier:{
-                    type:String
-                  },
-                  replierCode:{
-                      type:String
-                  }
-              }]
-  }]
-});
-
-orgSchema.pre('save', function (next) { //can be said as a model method applicable on single document
- var user=this;
-  if(user.role=="Organisation"){
-    if (!user.isModified('orgPassword')) {
-      return next();
-  } else {
-      bcrypt.genSalt(10, function (err, salt) {
-          if (err) return next(err);
-          else {
-              bcrypt.hash(user.orgPassword, salt, (err, hash) => {
-                if (err) return next(err);
-                  user.orgPassword = hash;
-               next();
-            });
+      question: {
+        type: String,
+        minlength: 2,
+        maxlength: 500,
+      },
+      date: {
+        type: String,
+      },
+      time: {
+        type: String,
+      },
+      questionAskedBy: {
+        //teacher or student
+        type: String,
+      },
+      askingPersonCode: {
+        // Teacher Code or roll no.
+        type: String,
+      },
+      QuestionShowToClass: {
+        type: String,
+      },
+      questionShowToSection: {
+        type: String,
+      },
+      replies: [
+        {
+          answer: {
+            type: String,
+            minlength: 2,
+            maxlength: 5000,
+          },
+          replyDate: {
+            type: String,
+          },
+          replyTime: {
+            type: String,
+          },
+          replier: {
+            type: String,
+          },
+          replierCode: {
+            type: String,
+          },
+        },
+      ],
+    },
+  ],
+  schedules: [
+    {
+      teacherCode: {
+        type: String,
+      },
+      classScheduled: {
+        type: String,
+      },
+      sectionScheduled: {
+        type: String,
+      },
+      topicScheduled: {
+        type: String,
+      },
+      subjectScheduled: {
+        type: String,
+      },
+      active:{
+        type:Boolean,
+        default: 1
+      },
+      createdAt:{
+type: String
+      },
+      updatedAt:{
+type:String
+      },
+      scheduleDate:{
+        type:String
+      },
+      scheduleTime:{
+        type:String
+      },
+      selectedStudents: [
+        {
+          studentRollNo: {
+            type: String,
+          },
+          studentEmail:{
+            type:String
           }
-      });
-  }
-  }
+        },
+      ],
+    }
+  ],
+  
 });
 
+orgSchema.pre("save", function (next) {
+  //can be said as a model method applicable on single document
+  var user = this;
+  if (user.role == "Organisation") {
+    if (!user.isModified("orgPassword")) {
+      return next();
+    } else {
+      bcrypt.genSalt(10, function (err, salt) {
+        if (err) return next(err);
+        else {
+          bcrypt.hash(user.orgPassword, salt, (err, hash) => {
+            if (err) return next(err);
+            user.orgPassword = hash;
+            next();
+          });
+        }
+      });
+    }
+  }
+});
 
 //@ MATCH TEXT PASSWORD WITH HASHED PASSWORD
-orgSchema.methods.comparePassword = function (password,role,mobile) { //instance method for a single document
+orgSchema.methods.comparePassword = function (password, role, mobile) {
+  //instance method for a single document
   console.log(role);
- if(role=="Organisation"){
-  return bcrypt.compareSync(password, this.orgPassword); // returns true or false
- }
-else if(role=="Teacher" || role=="teacher"){
-  const teacherIndex = _.findIndex(this.orgTeachers,{
-    teacherMobile:mobile
-  });
-  hashPassword = (this.orgTeachers[teacherIndex]).teacherPassword;
-  return bcrypt.compareSync(password, hashPassword); // returns true or false
- }
-else if(role=="Student"){
-  const StudentIndex = _.findIndex(this.orgStudent,{
-   studentMobile:mobile
-  });
-  hashPassword = (this.orgStudent[StudentIndex]).studentPassword;
-  return bcrypt.compareSync(password, hashPassword); // returns true or false
-}
- 
+  if (role == "Organisation") {
+    return bcrypt.compareSync(password, this.orgPassword); // returns true or false
+  } else if (role == "Teacher" || role == "teacher") {
+    const teacherIndex = _.findIndex(this.orgTeachers, {
+      teacherMobile: mobile,
+    });
+    hashPassword = this.orgTeachers[teacherIndex].teacherPassword;
+    return bcrypt.compareSync(password, hashPassword); // returns true or false
+  } else if (role == "Student") {
+    const StudentIndex = _.findIndex(this.orgStudent, {
+      studentMobile: mobile,
+    });
+    hashPassword = this.orgStudent[StudentIndex].studentPassword;
+    return bcrypt.compareSync(password, hashPassword); // returns true or false
+  }
 };
 
 //@ generate jwt auth token
-orgSchema.methods.generateAuthToken = function (role,mobile) { //instance method have access for a single document
+orgSchema.methods.generateAuthToken = function (role, mobile) {
+  //instance method have access for a single document
   var user = this;
   console.log(role);
   console.log(user);
   console.log("hello");
-  var access = 'auth';
-  if(role=="Organisation"){
-    var token = jwt.sign({
-      mobile: user.orgMobile,
-      access
-  }, process.env.JWT_SECRET, { 
-      expiresIn: '7d' //token expiry time 15days = 1296000 seconds
-  }).toString();
+  var access = "auth";
+  if (role == "Organisation") {
+    var token = jwt
+      .sign(
+        {
+          mobile: user.orgMobile,
+          access,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "7d", //token expiry time 15days = 1296000 seconds
+        }
+      )
+      .toString();
+  } else if (role == "Teacher" || role == "teacher") {
+    var token = jwt
+      .sign(
+        {
+          mobile,
+          access,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "7d",
+        }
+      )
+      .toString();
+  } else if (role == "Student") {
+    var token = jwt
+      .sign(
+        {
+          mobile,
+          access,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "7d",
+        }
+      )
+      .toString();
   }
-  else if(role=="Teacher" || role=="teacher"){
-var token = jwt.sign({
-  mobile,
-  access
-},
-process.env.JWT_SECRET,{
-  expiresIn:'7d'
-}).toString();
 
-  }
-
-  else if(role == "Student"){
-
-var token = jwt.sign({
-  mobile,
-  access
-},
-process.env.JWT_SECRET,{
-  expiresIn:'7d'
-}).toString();
-
-  }
-
-  return user.save().then(()=>{
-      return token;
+  return user.save().then(() => {
+    return token;
   });
 };
 

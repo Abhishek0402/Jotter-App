@@ -53,6 +53,35 @@ res.send({
 
 }
 else if(currentRole==="Teacher"){
+const {studentClass,studentSection}= req.body;
+organisation.findOne({orgCode}).then(orgFound =>{
+    if(orgFound){
+console.log(orgFound.orgStudent);
+var studentListDisplay = new Array();
+
+const studentList = orgFound.orgStudent.map((student) =>{
+    if(student.studentClass == studentClass && student.studentSection == studentSection){
+       studentListDisplay.push({
+        studentName:student.studentName,
+        studentRollNo: student.studentRollNo,
+        studentEmail:student.studentEmail
+       });          
+    }
+});
+
+res.send({
+    list: studentListDisplay,
+    message:"list_found"
+});
+
+    }
+    else{
+        console.log("Invalid_orgCode");
+        res.send({
+            message:"Invalid_orgCode"
+        });
+    }
+}).catch(err=>console.log(err.message));
 
 }
 else{
