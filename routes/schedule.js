@@ -26,9 +26,9 @@ orgFound.schedules.push({
 var mailList = new Array();
 var studentEmailList = selectedStudents.map((studentEmail)=>{
     mailList.push(studentEmail.studentEmail);
-// return {
-//     email: studentEmail.studentEmail
-// }
+return {
+    email: studentEmail.studentEmail
+};
 });
 mailer.mail(mailList);
 console.log(mailList);

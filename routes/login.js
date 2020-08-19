@@ -114,7 +114,9 @@ if(orgExists.orgTeachers[teacherDataIndex].active){
   orgExists.generateAuthToken(role,mobile).then((token) => {
     console.log("token "+ token);
     var teacher = orgExists.orgTeachers[teacherDataIndex];
+  
 res.header('x-auth', token).send({
+  user:{
   teacherName: teacher.teacherName,
   teacherAge: teacher.teacherAge,
   teacherDesignation: teacher.teacherDesignation,
@@ -124,7 +126,8 @@ res.header('x-auth', token).send({
   teacherEmail:teacher.teacherEmail,
   teacherMobile:teacher.teacherMobile,
   teacherClasses: teacher.teachingClasses,
-  orgCode: orgCode,
+  orgCode: orgCode
+  },
   message: "loggedIn"
 });
 }).catch(err => console.log(err));
