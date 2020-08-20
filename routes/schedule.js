@@ -10,26 +10,44 @@ const mailer = require("../utility/mailer");
 
 router.post("/schedule/create",authController.authenticate,(req,res,next)=>{
 var {orgCode,teacherCode,classScheduled,sectionScheduled,topicScheduled,subjectScheduled,scheduleDate,scheduleTime,selectedStudents}=req.body;
-console.log(req.body);
+var studentSplitter = _.split(selectedStudents,",");
+
+var studentsList = new Array();
+var mailList = new Array();
+
+for (var selectedStudentDetails in studentSplitter) {
+                var studentNewData = _.split(studentSplitter[studentSplitter], "_");
+                var studentName = studentNewData[0];
+                var studentRollNo = studentNewData[1];
+var studentEmail= studentNewData[2];
+
+                mailList.push(studentEmail);
+
+                studentsList.push({
+                studentRollNo: studentRollNo,
+          studentEmail: studentEmail,
+           studentName:studentName
+                });
+              }
+
+
 var createdAt= moment().format();
 var updatedAt= moment().format();
-console.log(`${createdAt} and ${updatedAt}`);
 organisation.findOne({
     orgCode
 }).then(orgFound =>{
     console.log("orgFound");
     if(orgFound){
 orgFound.schedules.push({
-    teacherCode,classScheduled,sectionScheduled,topicScheduled,subjectScheduled,createdAt,updatedAt,scheduleDate,scheduleTime,selectedStudents
+    teacherCode,classScheduled,sectionScheduled,topicScheduled,subjectScheduled,createdAt,updatedAt,scheduleDate,scheduleTime,selectedStudents: studentsList
 });
 
-var mailList = new Array();
-var studentEmailList = selectedStudents.map((studentEmail)=>{
-    mailList.push(studentEmail.studentEmail);
-return {
-    email: studentEmail.studentEmail
-};
-});
+// var studentEmailList = selectedStudents.map((studentEmail)=>{
+//     mailList.push(studentEmail.studentEmail);
+// return {
+//     email: studentEmail.studentEmail
+// };
+// });
 
 // mailer.mail(mailList);
 
@@ -151,6 +169,18 @@ orgFound.schedules[scheduleIndex].scheduleTime = newScheduleTime;
 orgFound.schedules[scheduleIndex].updatedAt = updatedAt;
 
 console.log(orgFound.schedules[scheduleIndex]);
+
+
+//mailer
+// var mailList = new Array();
+// var studentEmailList = selectedStudents.map((studentEmail)=>{
+//     mailList.push(studentEmail.studentEmail);
+// return {
+//     email: studentEmail.studentEmail
+// };
+// });
+
+
 orgFound.save().then(data=>{
     console.log("updated");
 res.send({
@@ -199,6 +229,16 @@ if(orgFound.schedules[scheduleIndex].active && orgFound.schedules[scheduleIndex]
 orgFound.schedules[scheduleIndex].updatedAt = updatedAt;
 
 console.log(orgFound.schedules[scheduleIndex]);
+
+//mailer
+// var mailList = new Array();
+// var studentEmailList = selectedStudents.map((studentEmail)=>{
+//     mailList.push(studentEmail.studentEmail);
+// return {
+//     email: studentEmail.studentEmail
+// };
+// });
+
 orgFound.save().then(data=>{
     console.log("deleted");
 res.send({
