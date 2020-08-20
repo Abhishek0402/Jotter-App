@@ -276,16 +276,16 @@ var orgSchema = new Schema({
    questionAskerSection:{
      type:String
    },
-
-      //pending
-      // QuestionShowToClass: {
-      //   type: String,
-      // },
-      // questionShowToSection: {
-      //   type: String,
-      // },
-
-
+  QuestionClass: {
+        type: String,
+      },
+      questionSection: {
+        type: String,
+      },
+      active:{
+        type:Boolean,
+        default:1
+      },
       replies: [
         {
           reply: {
@@ -313,7 +313,11 @@ type:String
           },
           replierSection:{//only when student
             type:String
-          }
+          },
+          active:{
+        type:Boolean,
+        default:1
+      }
         }
       ],
     },
@@ -357,6 +361,9 @@ type:String
             type: String,
           },
           studentEmail:{
+            type:String
+          },
+           studentName:{
             type:String
           }
         },

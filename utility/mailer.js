@@ -26,7 +26,33 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+//for subject
 exports.mail = (mailList) => {
+  var replacements = {
+    purpose: "hii",
+    otp: "class"
+};
+console.log("mailer running");
+  transporter.sendMail({
+      from: emailConfig.email,
+      to: mailList,
+      subject:"add",
+      html: template(replacements)
+    },
+    (error, info) => {
+      //(to,subject,text,html,callback)
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent success.");
+      }
+    }
+  );
+};
+
+
+// otp mail
+exports.otpMail = () => {
   var replacements = {
     purpose: "hii",
     otp: "class"
