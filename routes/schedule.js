@@ -57,7 +57,7 @@ res.send({
 });
 
 
-router.post("/schedule/read",(req,res,next)=>{
+router.post("/schedule/read",authController.authenticate,(req,res,next)=>{
 
 const {role,orgCode}= req.body;
 
@@ -73,7 +73,7 @@ var scList = new Array();
 var teacherScheduleList = orgFound.schedules.map((scheduleList)=>{
   if(scheduleList.teacherCode==teacherCode && scheduleList.active){
 scList.push({
-// scheduleId: scheduleList._id,
+scheduleId: scheduleList._id,
 scheduledClass: scheduleList.classScheduled,
 scheduledSection:scheduleList.sectionScheduled,
 topicScheduled:scheduleList.topicScheduled,
@@ -133,8 +133,52 @@ res.send({
 
 
 router.post("/schedule/update",(req,res,next)=>{
+ var {orgCode,scheduleId,newScheduleDate,newScheduleTime,teacherCode} = req.body;
+ var updatedAt = moment().format();
+console.log(scheduleId);
+ organisation.findOne({
+     orgCode
+ }).then(orgFound=>{
+     if(orgFound){
+var scheduleIndex = _.findIndex(orgFound.schedules,{
+    id:scheduleId
+});
+console.log(scheduleIndex);
+// console.log(typeOf(scheduleIndex));
+if(orgFound.schedules[scheduleIndex].active && orgFound.schedules[scheduleIndex].teacherCode == teacherCode){
+    orgFound.schedules[scheduleIndex].scheduleDate = newScheduleDate;
+orgFound.schedules[scheduleIndex].scheduleTime = newScheduleTime;
+orgFound.schedules[scheduleIndex].updatedAt = updatedAt;
+
+console.log(orgFound.schedules[scheduleIndex]);
+orgFound.save().then(data=>{
+    console.log("updated");
+res.send({
+    message:"schedule_updated"
+});
+    
+}).catch(err=>console.log(err.message));
+}
+else {
+    console.log("inactive_schedule or wrong_teacherCode");
+    res.send({
+        message:"update_not_allowed"
+    });
+}
+     }
+     else{
+   console.log("org not found");
+ res.send({
+        message:"update_not_allowed"
+    });
+     }
+ }).catch(err=>console.log(err.message));
 
 });
+
+
+
+
 
 router.post("/schedule/delete",(req,res,next)=>{
 
