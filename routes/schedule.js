@@ -132,7 +132,7 @@ res.send({
 
 
 
-router.post("/schedule/update",(req,res,next)=>{
+router.post("/schedule/update",authController.authenticate,(req,res,next)=>{
  var {orgCode,scheduleId,newScheduleDate,newScheduleTime,teacherCode} = req.body;
  var updatedAt = moment().format();
 console.log(scheduleId);
@@ -180,7 +180,47 @@ else {
 
 
 
-router.post("/schedule/delete",(req,res,next)=>{
+router.post("/schedule/delete",authController.authenticate,(req,res,next)=>{
+
+ var {orgCode,scheduleId,teacherCode} = req.body;
+ var updatedAt = moment().format();
+console.log(scheduleId);
+ organisation.findOne({
+     orgCode
+ }).then(orgFound=>{
+     if(orgFound){
+var scheduleIndex = _.findIndex(orgFound.schedules,{
+    id:scheduleId
+});
+console.log(scheduleIndex);
+// console.log(typeOf(scheduleIndex));
+if(orgFound.schedules[scheduleIndex].active && orgFound.schedules[scheduleIndex].teacherCode == teacherCode){
+ orgFound.schedules[scheduleIndex].active= !orgFound.schedules[scheduleIndex].active;
+orgFound.schedules[scheduleIndex].updatedAt = updatedAt;
+
+console.log(orgFound.schedules[scheduleIndex]);
+orgFound.save().then(data=>{
+    console.log("deleted");
+res.send({
+    message:"schedule_deleted"
+});
+    
+}).catch(err=>console.log(err.message));
+}
+else {
+    console.log("inactive_schedule or wrong_teacherCode");
+    res.send({
+        message:"delete_not_allowed"
+    });
+}
+     }
+     else{
+   console.log("org not found");
+ res.send({
+        message:"delete_not_allowed"
+    });
+     }
+ }).catch(err=>console.log(err.message));
 
 });
 module.exports = router;
