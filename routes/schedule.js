@@ -11,18 +11,19 @@ const mailer = require("../utility/mailer");
 router.post("/schedule/create",authController.authenticate,(req,res,next)=>{
 var {orgCode,teacherCode,classScheduled,sectionScheduled,topicScheduled,subjectScheduled,scheduleDate,scheduleTime,selectedStudents}=req.body;
 var studentSplitter = _.split(selectedStudents,",");
-
+console.log(req.body);
 var studentsList = new Array();
 var mailList = new Array();
-
+console.log(studentSplitter);
 for (var selectedStudentDetails in studentSplitter) {
-                var studentNewData = _.split(studentSplitter[studentSplitter], "_");
+                var studentNewData = _.split(studentSplitter[selectedStudentDetails], "_");
+                console.log(studentNewData);
                 var studentName = studentNewData[0];
                 var studentRollNo = studentNewData[1];
-var studentEmail= studentNewData[2];
+var studentEmail = studentNewData[2];
 
                 mailList.push(studentEmail);
-
+// console.log(studentName);
                 studentsList.push({
                 studentRollNo: studentRollNo,
           studentEmail: studentEmail,
@@ -30,7 +31,7 @@ var studentEmail= studentNewData[2];
                 });
               }
 
-
+console.log(studentsList);
 var createdAt= moment().format();
 var updatedAt= moment().format();
 organisation.findOne({
@@ -41,13 +42,6 @@ organisation.findOne({
 orgFound.schedules.push({
     teacherCode,classScheduled,sectionScheduled,topicScheduled,subjectScheduled,createdAt,updatedAt,scheduleDate,scheduleTime,selectedStudents: studentsList
 });
-
-// var studentEmailList = selectedStudents.map((studentEmail)=>{
-//     mailList.push(studentEmail.studentEmail);
-// return {
-//     email: studentEmail.studentEmail
-// };
-// });
 
 // mailer.mail(mailList);
 
