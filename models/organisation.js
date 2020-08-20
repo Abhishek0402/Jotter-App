@@ -248,37 +248,47 @@ var orgSchema = new Schema({
         //subject in which question is asked
         type: String,
       },
-      questionId: {
-        type: mongoose.ObjectId,
-      },
       question: {
         type: String,
         minlength: 2,
-        maxlength: 500,
+        maxlength: 5000,
       },
-      date: {
+      questionDate: {
         type: String,
       },
-      time: {
+      questionTime: {
         type: String,
       },
-      questionAskedBy: {
+      questionAskerName: {
         //teacher or student
         type: String,
       },
-      askingPersonCode: {
+      questionAskerRole:{
+        type:String
+      },
+      questionAskerCode: {
         // Teacher Code or roll no.
         type: String,
       },
-      QuestionShowToClass: {
-        type: String,
-      },
-      questionShowToSection: {
-        type: String,
-      },
+   questionAskerClass:{
+     type:String
+   },
+   questionAskerSection:{
+     type:String
+   },
+
+      //pending
+      // QuestionShowToClass: {
+      //   type: String,
+      // },
+      // questionShowToSection: {
+      //   type: String,
+      // },
+
+
       replies: [
         {
-          answer: {
+          reply: {
             type: String,
             minlength: 2,
             maxlength: 5000,
@@ -289,13 +299,22 @@ var orgSchema = new Schema({
           replyTime: {
             type: String,
           },
-          replier: {
+          replierName: {
             type: String,
+          },
+          replierRole:{
+type:String
           },
           replierCode: {
             type: String,
           },
-        },
+          replierClass:{ //only when student
+            type:String
+          },
+          replierSection:{//only when student
+            type:String
+          }
+        }
       ],
     },
   ],

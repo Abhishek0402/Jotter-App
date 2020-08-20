@@ -44,7 +44,7 @@ router.post(
                 teacherEmail,
                 class_section_subject,
               } = req.body;
-              teacherPassword = teacherName + "@AB12";
+              teacherPassword = "Smart@123";
 
               var teacherPassword = bcrypt.hashSync(teacherPassword, 10);
 
@@ -165,7 +165,7 @@ router.post(
                 studentDOB,
                 studentGender,
               } = req.body;
-              studentPassword = studentName + "@AB12";
+              studentPassword = "Smart@123";
 
               var studentPassword = bcrypt.hashSync(studentPassword, 10);
 
@@ -376,7 +376,7 @@ router.post(
                                     teachingSubjects: subjects,
                                   });
                                 }
-                                teacherPassword = item.name + "@AB12";
+                                teacherPassword = "Smart@123";
 
                                 var teacherPassword = bcrypt.hashSync(
                                   teacherPassword,
@@ -540,7 +540,7 @@ router.post(
                             if (c == dataLength) {
                               const orgStudentEntryMap = await arr.map((item) => {
                                
-                               var studentPassword = item.name + "@AB12";
+                               var studentPassword = "Smart@123";
 
                                 studentPassword = bcrypt.hashSync(
                                   studentPassword,
@@ -711,7 +711,7 @@ orgSubjects: orgSubjects
               } else {
                 if (role == "Admin" && methodToCreate == "Manual") {
                   const { name, email } = req.body;
-                  var password = name + "@AB12";
+                  var password = "SmartApp@123";
                   const newAdmin = new admin({
                     name,
                     email,
@@ -776,7 +776,7 @@ orgSubjects: orgSubjects
                 } else if (role == "Organisation" && methodToCreate == "File") {
                   const file = req.file;
                   const { orgName, orgType, orgAddress, orgEmail } = req.body;
-                  var orgPassword = orgName + "@AB12";
+                  var orgPassword = "Smart@123";
                   var orgMobile = mobile;
                   var orgLogo = req.file.location;
                   console.log(orgLogo);

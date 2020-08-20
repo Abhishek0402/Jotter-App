@@ -102,6 +102,36 @@ res.send({
 
 });
 
+router.post("/teacher/details",authController.authenticate,(req,res,next)=>{
+var {orgCode,teacherCode}= req.body;
+organisation.findOne({orgCode}).then(orgFound=>{
+if(orgFound){
+var teacherDetails=_.findIndex(orgFound.orgTeachers,{
+    teacherCode:teacherCode
+});
+if(teacherDetails>=0){
+console.log(orgFound.orgTeachers[teacherDetails].teachingClasses);
+res.send({
+    class: orgFound.orgTeachers[teacherDetails].teachingClasses,
+    message:"teacher_detail_found"
+});
+}
+else{
+    console.log("Invalid_teacherCode");
+res.send({
+    message:"Invalid_teacherCode"
+});
+}
+}
+else{
+   console.log("Invalid_orgCode");
+res.send({
+    message:"Invalid_orgCode"
+});
+}
+}).catch(err=>console.log(err.message));
+});
+
 
 router.post("/changeState",authController.authenticate,(req,res,next)=>{
    var {orgCode,teacherCode} = req.body;

@@ -11,11 +11,7 @@ const authenticate = (req,res,next) => {
      return Promise.reject();
    } 
    console.log("hello");
-   console.log(userExists);
-  console.log("bye");
-  //  req.user = user;
-  //  req.token = token;
-  //  console.log("email is "+ req.admin.email);
+   
    console.log("token matched");
    next();                //TO CALL THE NEXT MIDDLEWARE
   }).catch((e) => {
