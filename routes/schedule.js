@@ -95,7 +95,11 @@ else if(role=="Student"|| role=="student"){
 const {studentClass,studentSection,studentRollNo} = req.body;
 var scList = new Array();
 var studentScheduleList = orgFound.schedules.map((scheduleList)=>{
-  if(scheduleList.classScheduled==studentClass && scheduleList.sectionScheduled == studentSection && scheduleList.active){
+  if(scheduleList.classScheduled==studentClass && scheduleList.sectionScheduled == studentSection &&scheduleList.active){
+      var roleCheck = _.findIndex(scheduleList.selectedStudents,{
+          studentRollNo:studentRollNo
+      });
+      if(roleCheck>=0){
 scList.push({
 topicScheduled:scheduleList.topicScheduled,
 subjectScheduled:scheduleList.subjectScheduled,
@@ -103,9 +107,16 @@ subjectScheduled:scheduleList.subjectScheduled,
     scheduleTime: scheduleList.scheduleTime,
     studentCount: scheduleList.selectedStudents.length
 });
+      }
+
   }
 });
 
+console.log(scList);
+res.send({
+    list: scList,
+    message:"list_found"
+});
 }
 }
 else{
@@ -117,6 +128,9 @@ res.send({
 }).catch(err=>console.log(err.message));
 
 });
+
+
+
 
 router.post("/schedule/update",(req,res,next)=>{
 

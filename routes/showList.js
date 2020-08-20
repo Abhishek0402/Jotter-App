@@ -112,7 +112,7 @@ var teacherDetails=_.findIndex(orgFound.orgTeachers,{
 if(teacherDetails>=0){
 console.log(orgFound.orgTeachers[teacherDetails].teachingClasses);
 res.send({
-    class: orgFound.orgTeachers[teacherDetails].teachingClasses,
+    teacherClass: orgFound.orgTeachers[teacherDetails].teachingClasses,
     message:"teacher_detail_found"
 });
 }
