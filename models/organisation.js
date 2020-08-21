@@ -253,17 +253,14 @@ var orgSchema = new Schema({
         minlength: 2,
         maxlength: 5000,
       },
-      questionDate: {
-        type: String,
-      },
-      questionTime: {
+      questionDateTime: {
         type: String,
       },
       questionAskerName: {
-        //teacher or student
         type: String,
       },
       questionAskerRole:{
+           //teacher or student
         type:String
       },
       questionAskerCode: {
@@ -276,10 +273,10 @@ var orgSchema = new Schema({
    questionAskerSection:{
      type:String
    },
-  QuestionClass: {
+  QuestionForClass: {
         type: String,
       },
-      questionSection: {
+      questionForSection: {
         type: String,
       },
       active:{
@@ -293,10 +290,7 @@ var orgSchema = new Schema({
             minlength: 2,
             maxlength: 5000,
           },
-          replyDate: {
-            type: String,
-          },
-          replyTime: {
+          replyDateTime: {
             type: String,
           },
           replierName: {

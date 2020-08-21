@@ -169,6 +169,7 @@ else{
       studentMobile:student.studentMobile,
       studentDOB:student.studentDOB,
       studentGender: student.studentGender,
+      orgCode: orgCode
 
         },
         message: "loggedIn"
