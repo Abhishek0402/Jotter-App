@@ -27,6 +27,9 @@ orgCode: {
         unique: true,
         min: 6000000000,
         max: 9999999999
+    },
+    email:{
+      type:String
     }
       }
   ]

@@ -43,7 +43,7 @@ orgFound.schedules.push({
     teacherCode,classScheduled,sectionScheduled,topicScheduled,subjectScheduled,createdAt,updatedAt,scheduleDate,scheduleTime,selectedStudents: studentsList
 });
 
-// mailer.mail(mailList);
+// mailer.scheduleMail(mailList);
 
 console.log(mailList);
 orgFound.save().then(scheduleCreate=>{

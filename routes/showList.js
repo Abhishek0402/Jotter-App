@@ -165,4 +165,76 @@ else{
     }
 }).catch(err=>console.log(err.message));
 });
+
+
+//edit teachers details
+router.post("/teacher/edit",(req,res,next)=>{
+var {orgCode,teacherCode} = req.body;
+organisation.findOne({
+orgCode
+}).then(orgFound=>{
+    if(orgFound){
+var teacherIndex= _.findIndex(orgFound.orgTeachers,{
+    teacherCode:teacherCode
+});
+if(teacherIndex>=0){
+console.log(orgFound.orgTeachers[teacherIndex]);
+}
+else{
+    console.log("Invalid_teacherCode");
+        res.send({
+            message:"invalid_teacherCode"
+        });
+}
+    }
+    else{
+        console.log("Invalid_orgCode");
+        res.send({
+            message:"invalid_orgCode"
+        });
+    }
+}).catch(err=>console.log(err.message));
+});
+
+router.post("/student/subject",authController.authenticate,(req,res,next)=>{
+var {orgCode,studentClass,studentSection} = req.body;
+organisation.findOne({
+    orgClasses:{$elemMatch:{orgClass:studentClass}},
+    orgClasses:{$elemMatch:{orgSection:studentSection}},
+
+}).then(orgFound=>{
+ if(orgFound){
+  var classIndex = _.findIndex(orgFound.orgClasses,
+{
+ orgClass:studentClass,orgSection:studentSection
+}); 
+ 
+  console.log(classIndex);
+  if(classIndex>=0){
+    console.log(orgFound.orgClasses[classIndex].orgSubjects);
+    var subjects= orgFound.orgClasses[classIndex].orgSubjects.map(subject =>{
+return {
+    subject:subject.subjects
+};
+    });
+    res.send({
+        list: subjects,
+        message:"subject_found"
+    });
+  }
+  else{
+        console.log("Invalid_class");
+        res.send({
+            message:"class_not_in_list"
+        });
+  }
+ }
+ else{
+       console.log("Invalid_orgCode");
+        res.send({
+            message:"no_data"
+        });
+ }
+}).catch(err=>console.log(err.message));
+});
 module.exports = router;

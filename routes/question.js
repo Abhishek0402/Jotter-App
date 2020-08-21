@@ -238,8 +238,6 @@ if(orgFound){
       message:"invalid_question_id"
     });
   }
-
-
 }
 else{
   console.log("invalid_OrgCode");
@@ -269,7 +267,7 @@ res.send({
   }).catch(err=>{
     console.log(err.message);
     res.send({
-      message:"delete_error"
+      message:"delete_not_allowed"
     });
   })
  }
@@ -313,7 +311,7 @@ if(orgFound){
       }).catch(err=>{
         console.log(err.message);
         res.send({
-          message:"delete_error"
+          message:"delete_not_allowed"
         });
       })
     }

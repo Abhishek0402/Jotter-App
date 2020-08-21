@@ -105,6 +105,7 @@ router.post(
                         orgExists.user.push({
                           role,
                           mobile,
+                          email:teacherEmail
                         });
 
                         orgFoundForTeacher.orgTeachers.push({
@@ -204,6 +205,7 @@ router.post(
                         orgExists.user.push({
                           role,
                           mobile,
+                          email:studentEmail
                         });
 
                         orgFoundForStudent.orgStudent.push({
@@ -398,6 +400,7 @@ router.post(
                                 orgExists.user.push({
                                   role: item.role,
                                   mobile: item.mobile,
+                                  email:item.email
                                 });
                               });
                             }
@@ -563,6 +566,7 @@ router.post(
                                 orgExists.user.push({
                                   role: item.role,
                                   mobile: item.mobile,
+                                  email:item.email
                                 });
                               });
                             }
@@ -726,6 +730,7 @@ orgSubjects: orgSubjects
                       {
                         mobile,
                         role,
+                        email
                       },
                     ],
                   });
@@ -817,6 +822,7 @@ orgSubjects: orgSubjects
                             {
                               mobile: orgMobile,
                               role,
+                              email:orgEmail
                             },
                           ],
                         });

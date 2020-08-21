@@ -27,7 +27,7 @@ const transporter = nodemailer.createTransport({
 });
 
 //for subject
-exports.mail = (mailList) => {
+exports.scheduleMail = (mailList) => {
   var replacements = {
     purpose: "hii",
     otp: "class"
@@ -52,16 +52,15 @@ console.log("mailer running");
 
 
 // otp mail
-exports.otpMail = () => {
+exports.otpMail = (user, subject,purpose) => {
   var replacements = {
-    purpose: "hii",
-    otp: "class"
+    purpose: purpose,
+    otp: user.otp
 };
-console.log("mailer running");
   transporter.sendMail({
       from: emailConfig.email,
-      to: mailList,
-      subject:"add",
+      to: user.email,
+      subject,
       html: template(replacements)
     },
     (error, info) => {
