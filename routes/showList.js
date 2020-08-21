@@ -211,14 +211,13 @@ organisation.findOne({
  
   console.log(classIndex);
   if(classIndex>=0){
+      var subjectArray = new Array();
     console.log(orgFound.orgClasses[classIndex].orgSubjects);
     var subjects= orgFound.orgClasses[classIndex].orgSubjects.map(subject =>{
-return {
-    subject:subject.subjects
-};
+        subjectArray.push(subject.subjects);
     });
     res.send({
-        list: subjects,
+        list: subjectArray,
         message:"subject_found"
     });
   }
@@ -237,4 +236,5 @@ return {
  }
 }).catch(err=>console.log(err.message));
 });
+
 module.exports = router;

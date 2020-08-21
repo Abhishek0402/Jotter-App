@@ -11,7 +11,7 @@ router.post("/user/sendOtp",(req,res,next)=>{
 var {mobile,email} = req.body;
 
 userData.findOne({
-    user:{$elemMatch:{mobile:mobile}}
+    user:{$elemMatch:{email:email}}
 }).then(userExists=>{
 if(userExists){
     console.log("user_Exsits");
@@ -25,7 +25,7 @@ if(userExists){
   organisation.findOne({orgCode}).then(orgExists=>{
 if(orgExists){
   if(role=="Admin"){
-      
+
   }
 }
 else{
