@@ -267,13 +267,7 @@ var orgSchema = new Schema({
         // Teacher Code or roll no.
         type: String,
       },
-   questionAskerClass:{
-     type:String
-   },
-   questionAskerSection:{
-     type:String
-   },
-  QuestionForClass: {
+  questionForClass: {
         type: String,
       },
       questionForSection: {

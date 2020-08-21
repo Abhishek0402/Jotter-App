@@ -13,6 +13,7 @@ const register = require("./routes/register");
 const login = require("./routes/login");
 const showList = require("./routes/showList");
 const schedule = require("./routes/schedule");
+const question = require("./routes/question");
 
 const app = express();
 
@@ -47,7 +48,7 @@ app.use("/api/app", register);
 app.use("/api/app", login);
 app.use("/api/app", showList);
 app.use("/api/app", schedule);
-
+app.use("/api/app", question);
 //3.error handling middle ware
 app.use((err, req, res, next) => {
   res.status(422).send({

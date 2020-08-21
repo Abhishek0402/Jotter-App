@@ -8,7 +8,7 @@ var moment = require("moment");
 const authController = require("../Controller/authController");
 const mailer = require("../utility/mailer");
 
-router.post("/question/ask",(req,res,next)=>{
+router.post("/question/ask",authController.authenticate,(req,res,next)=>{
 
     var {orgCode} = req.body;
   organisation.findOne({
@@ -17,8 +17,7 @@ router.post("/question/ask",(req,res,next)=>{
 if(orgFound){
 var {purposeOfQuestion,question,
   questionAskerName,questionAskerCode,
-  questionAskerRole,
-  questionForClass,questionForSection}= req.body;
+  questionAskerRole,questionForClass,questionForSection}= req.body;
 
 questionDateTime = moment().format();
 
@@ -26,49 +25,70 @@ if(questionAskerRole=="Teacher"){
  if(purposeOfQuestion=="Subject"){
  var {subject} = req.body;
  orgFound.questionaire.push({
-   subject: subject
+   purposeOfQuestion:purposeOfQuestion,
+   subject: subject,
+   question: question,
+   questionDateTime,
+   questionAskerName,
+   questionAskerRole,
+   questionAskerCode,
+   questionForClass,
+   questionForSection
  });
  }
- orgFound.questionaire.push({
-  purposeOfQuestion:purposeOfQuestion,
-  question: question,
-  questionDateTime,
-  questionAskerName,
-  questionAskerRole,
-  questionAskerCode,
-  QuestionForClass,
-  questionForSection
-});
+ else if(purposeOfQuestion=="Other"){
+  orgFound.questionaire.push({
+    purposeOfQuestion:purposeOfQuestion,
+    question: question,
+    questionDateTime,
+    questionAskerName,
+    questionAskerRole,
+    questionAskerCode,
+    questionForClass,
+    questionForSection
+  });
+ }
+ 
 }
 else if(questionAskerRole=="Student"){
-  var {questionAskerClass,questionAskerSection} = req.body;
   if(purposeOfQuestion=="Subject"){
     var {subject} = req.body;
     orgFound.questionaire.push({
-      subject: subject
+      purposeOfQuestion:purposeOfQuestion,
+      subject: subject,
+      question: question,
+      questionDateTime,
+      questionAskerName,
+      questionAskerRole,
+      questionAskerCode,
+      questionForClass,
+      questionForSection
     });
     }
-    orgFound.questionaire.push({
-     purposeOfQuestion:purposeOfQuestion,
-     question: question,
-     questionDateTime,
-     questionAskerName,
-     questionAskerRole,
-     questionAskerCode,
-     questionAskerClass,
-     questionAskerSection,
-     QuestionForClass,
-     questionForSection
-   });
-  
-}
+    else if(purposeOfQuestion=="Other"){
+      orgFound.questionaire.push({
+        purposeOfQuestion:purposeOfQuestion,
+        question: question,
+        questionDateTime,
+        questionAskerName,
+        questionAskerRole,
+        questionAskerCode,
+        questionForClass,
+        questionForSection
+      });
+    }  
+  }
 
 orgFound.save().then(questionSaved=>{
 console.log("question asked");
 res.send({
   message:"question_asked"
 });
-}).catch(err=>console.log(err.message));
+}).catch(err=>{console.log(err.message);
+  res.send({
+    message:"saving_error"
+  })
+});
 
 }
 else{
@@ -80,3 +100,5 @@ else{
   }).catch(err=>console.log(err.message));
 
 });
+
+module.exports = router;
