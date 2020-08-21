@@ -112,12 +112,17 @@ var studentScheduleList = orgFound.schedules.map((scheduleList)=>{
           studentRollNo:studentRollNo
       });
       if(roleCheck>=0){
+          var teacherIndex = _.findIndex(orgFound.orgTeachers,{
+            teacherCode:scheduleList.teacherCode 
+          });
+          var teacherName = orgFound.orgTeachers[teacherIndex].teacherName;
 scList.push({
 topicScheduled:scheduleList.topicScheduled,
 subjectScheduled:scheduleList.subjectScheduled,
     scheduleDate:scheduleList.scheduleDate,
     scheduleTime: scheduleList.scheduleTime,
-    studentCount: scheduleList.selectedStudents.length
+    studentCount: scheduleList.selectedStudents.length,
+    teacherName:teacherName
 });
       }
 
