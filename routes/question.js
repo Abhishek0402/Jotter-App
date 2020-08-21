@@ -19,7 +19,7 @@ var {purposeOfQuestion,question,
   questionAskerName,questionAskerCode,
   questionAskerRole,questionForClass,questionForSection}= req.body;
 
-questionDateTime = moment().format();
+questionDateTime = moment().format("L");
 
 if(questionAskerRole=="Teacher"){
  if(purposeOfQuestion=="Subject"){
@@ -107,7 +107,7 @@ organisation.findOne({orgCode}).then(orgFound=>{
 if(orgFound){
   var {questionId,reply,replierName,replierRole,
     replierCode} = req.body;
-  var replyDateTime = moment().format();
+  var replyDateTime =  moment().format("L");
   var questionIndex= _.findIndex(orgFound.questionaire,{
     id:questionId
   });
@@ -162,5 +162,185 @@ else{
 });
 
 
+router.post("/question/read",authController.authenticate,(req,res,next) =>{
+const {orgCode} = req.body;
+organisation.findOne({
+  orgCode
+}).then(orgFound=>{
+if(orgFound){
+var questionActiveList = new Array();
+  const questionList = orgFound.questionaire.map(questionSingle=>{
+ if(questionSingle.active){
+questionActiveList.push({
+  questionId:questionSingle.id,
+purposeOfQuestion:questionSingle.purposeOfQuestion,
+subject:questionSingle.subject,
+question:questionSingle.question,
+questionAskerName:questionSingle.questionAskerName,
+questionAskerRole:questionSingle.questionAskerRole,
+questionAskerCode:questionSingle.questionAskerCode,
+questionForClass:questionSingle.questionForClass,
+questionForSection:questionSingle.questionForSection,
+   questionDateTime:questionSingle.questionDateTime
+});
+ }
+  });
+    console.log(questionActiveList);
+    res.send({
+      list: questionActiveList,
+      message:"list_found"
+    });
+}
+else{
+  console.log("invalid_OrgCode");
+  res.send({
+      message:"invalid_orgCode"
+  });
+}
+}).catch(err=>console.log(err.message));
+});
+
+router.post("/question/reply/read",authController.authenticate,(req,res,next)=>{
+const {orgCode,questionId}= req.body;
+
+organisation.findOne({
+  orgCode
+}).then(orgFound=>{
+if(orgFound){
+  var questionIndex = _.findIndex(orgFound.questionaire,{
+    id:questionId
+  });
+
+  if(questionIndex>=0 && orgFound.questionaire[questionIndex].active){
+    var replyActiveList = new Array();
+    const questionList = orgFound.questionaire[questionIndex].replies.map(questionReplySingle=>{
+  if(questionReplySingle.active){
+    replyActiveList.push({
+      replyId:questionReplySingle.id,
+      replyDateTime:questionReplySingle.replyDateTime,
+      replierName:questionReplySingle.replierName,
+      replierRole: questionReplySingle.replierRole,
+      replierCode:questionReplySingle.replierCode,
+      replierClass:questionReplySingle.replierClass,
+      replierSection:questionReplySingle.replierSection,
+    });
+  }  
+    });
+      console.log(replyActiveList);
+      res.send({
+        list: replyActiveList,
+        message:"list_found"
+      });
+  }
+  else{
+    console.log("invalid question id");
+    res.send({
+      message:"invalid_question_id"
+    });
+  }
+
+
+}
+else{
+  console.log("invalid_OrgCode");
+  res.send({
+      message:"invalid_orgCode"
+  });
+}
+}).catch(err=>console.log(err.message));
+});
+
+
+router.post("/question/delete",authController.authenticate,(req,res,next)=>{
+var {orgCode,questionId} = req.body;
+organisation.findOne({orgCode}).then(orgFound=>{
+if(orgFound){
+ var questionIndex = _.findIndex(orgFound.questionaire,{
+   id:questionId
+ });
+ 
+ if(questionIndex>=0 && orgFound.questionaire[questionIndex].active){
+  orgFound.questionaire[questionIndex].active = !orgFound.questionaire[questionIndex].active;
+  orgFound.save().then(questionDeleted=>{
+console.log("deleted");
+res.send({
+  message:"question_deleted"
+});
+  }).catch(err=>{
+    console.log(err.message);
+    res.send({
+      message:"delete_error"
+    });
+  })
+ }
+ else{
+   console.log("inactive question");
+   res.send({
+     message:"delete_not_allowed"
+   });
+ }
+
+}
+else{
+  console.log("org not found");
+  res.send({
+    message:"invalid_orgCode"
+  });
+}
+}).catch(err=>console.log(err.message));
+});
+
+
+router.post("/question/reply/delete",authController.authenticate,(req,res,next)=>{
+ var {orgCode,questionId,replyId} = req.body;
+ organisation.findOne({orgCode}).then(orgFound=>{
+if(orgFound){
+  var questionIndex = _.findIndex(orgFound.questionaire,{
+    id:questionId
+  });
+  
+  if(questionIndex>=0 && orgFound.questionaire[questionIndex].active){
+    var replyIndex = _.findIndex(orgFound.questionaire[questionIndex].replies,{
+      id:replyId
+    });
+    if(replyIndex>=0 && orgFound.questionaire[questionIndex].replies[replyIndex].active){
+      orgFound.questionaire[questionIndex].replies[replyIndex].active = !orgFound.questionaire[questionIndex].replies[replyIndex].active;
+      orgFound.save().then(replyDeleted=>{
+    console.log("deleted");
+    res.send({
+      message:"reply_deleted"
+    });
+      }).catch(err=>{
+        console.log(err.message);
+        res.send({
+          message:"delete_error"
+        });
+      })
+    }
+    else{
+      console.log("inactive question");
+    res.send({
+      message:"delete_not_allowed"
+    });
+    }
+ 
+  }
+  else{
+    console.log("inactive question");
+    res.send({
+      message:"delete_not_allowed"
+    });
+  }
+}
+else{
+  console.log("org not found");
+  res.send({
+    message:"invalid_orgCode"
+  });
+}
+ }).catch(err=>{
+   console.log(err.message)
+})
+});
 
 module.exports = router;
