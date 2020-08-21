@@ -225,7 +225,7 @@ return {
   else{
         console.log("Invalid_class");
         res.send({
-            message:"class_not_in_list"
+            message:"no_data"
         });
   }
  }
