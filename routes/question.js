@@ -101,4 +101,66 @@ else{
 
 });
 
+router.post("/question/reply/create",authController.authenticate,(req,res,next)=>{
+  var {orgCode} = req.body;
+organisation.findOne({orgCode}).then(orgFound=>{
+if(orgFound){
+  var {questionId,reply,replierName,replierRole,
+    replierCode} = req.body;
+  var replyDateTime = moment().format();
+  var questionIndex= _.findIndex(orgFound.questionaire,{
+    id:questionId
+  });
+  if(questionIndex>=0){
+    if(replierRole=="Teacher"){
+     orgFound.questionaire[questionIndex].replies.push({
+reply,
+replyDateTime,
+replierName,
+replierRole,
+replierCode
+     });
+    }
+    else if(replierRole=="Student"){
+      var {replierClass,replierSection} = req.body;
+      orgFound.questionaire[questionIndex].replies.push({
+        reply,
+        replyDateTime,
+        replierName,
+        replierRole,
+        replierCode,
+        replierClass,
+        replierSection
+             });
+    }
+   orgFound.save().then(replySaved=>{
+     console.log("reply saved");
+     res.send({
+       message:"replied"
+     });
+   }).catch(err=>{ console.log(err.message);
+  res.send({
+    message:"reply_not_allowed"
+  });
+  });
+    
+  }
+  else{
+    console.log("question not found");
+    res.send({
+      message:"reply_not_allowed"
+    });
+  }
+}
+else{
+  console.log("invalid_OrgCode");
+  res.send({
+      message:"invalid_orgCode"
+  });
+}
+}).catch(err=>console.log(err.message));
+});
+
+
+
 module.exports = router;
