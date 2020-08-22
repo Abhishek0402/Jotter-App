@@ -7,6 +7,7 @@ const otp = require("../models/otp");
 const random = require("../utility/random");
 const _ = require("lodash");
 const mailer = require("../utility/mailer");
+const bcrypt = require("bcryptjs");
 
 router.post("/user/sendOtp",(req,res,next)=>{
 var {email} = req.body;
@@ -116,7 +117,7 @@ if(orgCode ==="Admin"){
   adminExists.password = newPassword;
 
   console.log(adminExists);
-  adminExists.save(passwordChanged=>{
+  adminExists.save().then(passwordChanged=>{
 console.log("password changed");
 res.send({
   message:"password_changed"
@@ -148,12 +149,41 @@ if(orgFound){
     orgFound.orgPassword = newPassword;  
     
   }
- else if(role=="Teacher"){
+ else if(role=="Teacher"|| role=="teachers"){
+  newPassword = bcrypt.hashSync(
+    newPassword,
+    10
+  );
   var teacherIndex = _.findIndex(orgFound.orgTeachers,{
-    
-  })
+    teacherEmail:email
+  });
+orgFound.orgTeachers[teacherIndex].teacherPassword = newPassword;
+ }
+ else if(role=="Student"){
+
+  newPassword = bcrypt.hashSync(
+    newPassword,
+    10
+  );
+
+
+   var studentIndex= _.findIndex(orgFound.orgStudent,{
+    studentEmail: email
+   });
+   orgFound.orgStudent[studentIndex].studentPassword = newPassword;
  }
 
+ orgFound.save().then(passwordChanged=>{
+console.log("password_changed");
+res.send({
+  message:"password_changed"
+});
+ }).catch(err=>{
+   console.log(err.message);
+   res.send({
+     message: "invalid_password"
+   });
+ })
 }
 else{
   console.log("Invalid_email");

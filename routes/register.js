@@ -33,7 +33,9 @@ router.post(
             res.send({
               message: "invalid_entry",
             });
-          } else {
+
+          } 
+          else if(role=="Teaccher" || role=="Student" || role=="Class") {
             if (role == "Teacher" && methodToCreate == "Manual") {
               const {
                 teacherName,
@@ -702,6 +704,12 @@ orgSubjects: orgSubjects
   }).catch(err=> console.log(err.message));
 }
 
+          }
+          else{
+            console.log("org Code exists");
+            res.send({
+              message:"invalid_entry"
+            });
           }
         } else {
           userData
