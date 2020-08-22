@@ -85,13 +85,100 @@ var {
       console.log(err);
 
     });
-
-
-
 });
 
 router.post("/user/changePassword",(req,res,next)=>{
+    var {email,newPassword} = req.body;
+
+    userData.findOne({
+    user:{$elemMatch:{email:email}}
+    }).then(userFound=>{
+if(userFound){
+  console.log("user_Exsits");
+
+  var orgCode = userFound.orgCode;
+  var roleIndex = _.findIndex(userFound.user,{
+    email:email
+  });
+  console.log(roleIndex);
+  console.log(userFound.user[roleIndex]);
+    if(roleIndex>=0){
+var role = (userFound.user[roleIndex]).role;
+
+
+if(orgCode ==="Admin"){
+  admin.findOne({
+  email
+  }).then((adminExists) =>{
+  if(adminExists){
+  console.log("correct email");
+  
+  adminExists.password = newPassword;
+
+  console.log(adminExists);
+  adminExists.save(passwordChanged=>{
+console.log("password changed");
+res.send({
+  message:"password_changed"
+});
+  }).catch(err=>{
+    console.log(err.message);
+    res.send({
+      message:"enter_valid_password"
+    });
+  });
+  }
+  else{
+    console.log("Invalid_email");
+    res.send({
+      message:"invalid_data"
+    });
+  }
+  }).catch(err=>console.log(err));
+  }
+  else{
+    console.log("for org teacher student");
+organisation.findOne({
+  orgCode
+}).then(orgFound=>{
+if(orgFound){
+
+  if(role=="Organisation" && orgFound.orgEmail == email){
+
+    orgFound.orgPassword = newPassword;  
     
+  }
+ else if(role=="Teacher"){
+  var teacherIndex = _.findIndex(orgFound.orgTeachers,{
+    
+  })
+ }
+
+}
+else{
+  console.log("Invalid_email");
+  res.send({
+    message:"invalid_data"
+  });
+}
+}).catch(err=>console.log(err.message));
+
+  }
+  }
+  else{
+    console.log("user email not exists");
+    res.send({
+      message:"invalid_data"
+    });
+  }
+}
+else{
+  console.log("user email not exists");
+  res.send({
+    message:"invalid_data"
+  });
+}
+    }).catch(err=>console.log(err.message));
 });
 
 

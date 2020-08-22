@@ -17,9 +17,9 @@ router.post("/question/ask",authController.authenticate,(req,res,next)=>{
 if(orgFound){
 var {purposeOfQuestion,question,
   questionAskerName,questionAskerCode,
-  questionAskerRole,questionForClass,questionForSection}= req.body;
+  questionAskerRole,questionForClass,questionForSection,questionDateTime}= req.body;
 
-questionDateTime = moment().format("L");
+
 
 if(questionAskerRole=="Teacher"){
  if(purposeOfQuestion=="Subject"){
@@ -106,8 +106,7 @@ router.post("/question/reply/create",authController.authenticate,(req,res,next)=
 organisation.findOne({orgCode}).then(orgFound=>{
 if(orgFound){
   var {questionId,reply,replierName,replierRole,
-    replierCode} = req.body;
-  var replyDateTime =  moment().format("L");
+    replierCode,replyDateTime} = req.body;
   var questionIndex= _.findIndex(orgFound.questionaire,{
     id:questionId
   });
