@@ -216,6 +216,7 @@ if(orgFound){
   if(questionReplySingle.active){
     replyActiveList.push({
       replyId:questionReplySingle.id,
+      reply:questionReplySingle.reply,
       replyDateTime:questionReplySingle.replyDateTime,
       replierName:questionReplySingle.replierName,
       replierRole: questionReplySingle.replierRole,

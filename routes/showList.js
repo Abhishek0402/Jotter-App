@@ -169,28 +169,39 @@ else{
 
 //edit teachers details
 router.post("/teacher/edit",authController.authenticate,(req,res,next)=>{
-var {orgCode,teacherCode} = req.body;
+var {orgCode,oldTeacherCode} = req.body;
 organisation.findOne({
 orgCode
 }).then(orgFound=>{
     if(orgFound){
 var teacherIndex= _.findIndex(orgFound.orgTeachers,{
-    teacherCode:teacherCode
+    teacherCode:oldTeacherCode
 });
 if(teacherIndex>=0){
 console.log(orgFound.orgTeachers[teacherIndex]);
+
+
+
+
+
+
+
+
+
+
+
 }
 else{
     console.log("Invalid_teacherCode");
-        res.send({
-            message:"invalid_teacherCode"
-        });
+    res.send({
+        message:"invalid_data"
+    });
 }
     }
     else{
         console.log("Invalid_orgCode");
         res.send({
-            message:"invalid_orgCode"
+            message:"invalid_data"
         });
     }
 }).catch(err=>console.log(err.message));
