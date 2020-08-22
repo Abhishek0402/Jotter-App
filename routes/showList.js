@@ -237,4 +237,46 @@ organisation.findOne({
 }).catch(err=>console.log(err.message));
 });
 
+
+router.post("/org/need",authController.authenticate,(req,res,next)=>{
+var {orgCode,need} = req.body;
+organisation.findOne({orgCode}).then(orgFound=>{
+ if(orgFound){
+if(need=="Teacher"){
+    var orgTeacher = new Array();
+var teacherList = orgFound.orgTeachers.map(teacher=>{
+orgTeacher.push(teacher.teacherName+"_"+teacher.teacherCode);
+});
+console.log(orgTeacher);
+res.send({
+    list:orgTeacher,
+    message: "list_found"
+});
+}
+else if(need == "Subject"){
+
+    var orgSubject = new Array();
+    var classList = orgFound.orgClasses.map(subject=>{
+        // console.log(subject);
+      var subjectList = subject.orgSubjects.map(singleClassSubject=>{
+orgSubject.push(singleClassSubject.subjects);
+      });
+    });
+    console.log(orgSubject);
+    res.send({
+        list:orgSubject,
+        message: "list_found"
+    });
+
+}
+ }
+ else{
+    console.log("Invalid_orgCode");
+    res.send({
+        message:"no_data"
+    });
+ }
+}).catch(err=>console.log(err.message));
+});
+
 module.exports = router;
