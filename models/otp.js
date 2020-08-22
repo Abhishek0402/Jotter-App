@@ -26,7 +26,7 @@ var changeSchema = new Schema({
 changeSchema.index({
     createdAt:1
 }, {
-    expireAfterSeconds: 600
+    expireAfterSeconds: 86400
 });
 
 
