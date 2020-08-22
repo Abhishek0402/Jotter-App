@@ -168,44 +168,54 @@ else{
 
 
 //edit teachers details
-router.post("/teacher/edit",authController.authenticate,(req,res,next)=>{
-var {orgCode,oldTeacherCode} = req.body;
-organisation.findOne({
-orgCode
-}).then(orgFound=>{
-    if(orgFound){
-var teacherIndex= _.findIndex(orgFound.orgTeachers,{
-    teacherCode:oldTeacherCode
-});
-if(teacherIndex>=0){
-console.log(orgFound.orgTeachers[teacherIndex]);
+// router.post("/teacher/edit",authController.authenticate,(req,res,next)=>{
+// var {orgCode,oldTeacherCode} = req.body;
+// organisation.findOne({
+// orgCode
+// }).then(orgFound=>{
+//     if(orgFound){
+// var teacherIndex= _.findIndex(orgFound.orgTeachers,{
+//     teacherCode:oldTeacherCode
+// });
+// if(teacherIndex>=0){
+// console.log(orgFound.orgTeachers[teacherIndex]);
+// var classLength = orgFound.orgTeachers[teacherIndex].teachingClasses;
+//  if(classLength>0){
+//     orgFound.orgTeachers[teacherIndex].teachingClasses = [];
+//  }
 
 
+// // {
 
 
+// //     teacherName: 'ash',
+// //     teacherAge: 25,
+// //     teacherDesignation: 'edut',
+// //     teacherCode: '356',
+// //     teacherGender: 'female',
+// //     role: 'Teacher',
+// //     teacherEmail: 'ash@gmail.com',
+// //     teacherPassword: '$2a$10$oc9.upbZzoAN6RKVWytTdOtvLDS8gqGWrSXq6QXNepOuVDqmd.s/W',
+// //     teacherMobile: 9876540123,
+// //     schedules: []
+// //   }
 
-
-
-
-
-
-
-}
-else{
-    console.log("Invalid_teacherCode");
-    res.send({
-        message:"invalid_data"
-    });
-}
-    }
-    else{
-        console.log("Invalid_orgCode");
-        res.send({
-            message:"invalid_data"
-        });
-    }
-}).catch(err=>console.log(err.message));
-});
+// }
+// else{
+//     console.log("Invalid_teacherCode");
+//     res.send({
+//         message:"invalid_data"
+//     });
+// }
+//     }
+//     else{
+//         console.log("Invalid_orgCode");
+//         res.send({
+//             message:"invalid_data"
+//         });
+//     }
+// }).catch(err=>console.log(err.message));
+// });
 
 
 

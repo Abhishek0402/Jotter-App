@@ -35,7 +35,7 @@ router.post(
             });
 
           } 
-          else if(role=="Teaccher" || role=="Student" || role=="Class") {
+          else if(role=="Teacher" || role=="Student" || role=="Class") {
             if (role == "Teacher" && methodToCreate == "Manual") {
               const {
                 teacherName,
@@ -865,7 +865,88 @@ orgSubjects: orgSubjects
                     .catch((err) => {
                       console.log(err.message);
                     });
-                } else {
+                } 
+                else if (role == "Organisation" && methodToCreate == "Manual") {
+                  
+                  const { orgName, orgType, orgAddress, orgEmail } = req.body;
+                  var orgPassword = "Smart@123";
+                  var orgMobile = mobile;
+                  var orgLogo = "https://smart-app-upload-csv.s3.ap-south-1.amazonaws.com/edulogofinal.jpg";
+                  console.log(orgLogo);
+                  console.log(req.body.role);
+
+                  organisation
+                    .findOne({ orgEmail })
+                    .then((orgEmailExists) => {
+                      console.log(orgEmailExists);
+                      if (orgEmailExists) {
+                        if (orgEmailExists.orgEmail == orgEmail) {
+                          console.log("email_exists");
+                          res.send({
+                            message: "invalid_entry",
+                          });
+                        } else if (orgEmailExists.orgMobile == orgMobile) {
+                          console.log("mobile_exists");
+                          res.send({
+                            message: "invalid_entry",
+                          });
+                        }
+                      } else {
+                        const newOrg = new organisation({
+                          orgName,
+                          orgCode,
+                          orgType,
+                          orgAddress,
+                          orgLogo,
+                          orgEmail,
+                          orgPassword,
+                          role,
+                          orgMobile,
+                        });
+
+                        const newUserData = new userData({
+                          orgCode,
+                          user: [
+                            {
+                              mobile: orgMobile,
+                              role,
+                              email:orgEmail
+                            },
+                          ],
+                        });
+                        newOrg
+                          .save()
+                          .then((org) => {
+                            console.log("Org_Created");
+                            newUserData
+                              .save()
+                              .then((orgCreated) => {
+                                res.send({
+                                  message: "org_created",
+                                });
+                              })
+                              .catch((err) => {
+                                console.log("abv");
+                                console.log(err.message);
+                                res.send({
+                                  message: "invalid_entry",
+                                });
+                              });
+                          })
+                          .catch((err) => {
+                            console.log("vdd");
+                            console.log(err.message);
+                            res.send({
+                              message: "invalid_entry",
+                            });
+                          });
+                      }
+                    })
+                    .catch((err) => {
+                      console.log(err.message);
+                    });
+                }
+                else {
                   console.log("org Code not exists");
                   res.send({
                     message: "invalid_entry",
