@@ -168,7 +168,7 @@ else{
 
 
 //edit teachers details
-router.post("/teacher/edit",(req,res,next)=>{
+router.post("/teacher/edit",authController.authenticate,(req,res,next)=>{
 var {orgCode,teacherCode} = req.body;
 organisation.findOne({
 orgCode
@@ -195,6 +195,8 @@ else{
     }
 }).catch(err=>console.log(err.message));
 });
+
+
 
 router.post("/student/subject",authController.authenticate,(req,res,next)=>{
 var {orgCode,studentClass,studentSection} = req.body;
@@ -245,7 +247,7 @@ organisation.findOne({orgCode}).then(orgFound=>{
 if(need=="Teacher"){
     var orgTeacher = new Array();
 var teacherList = orgFound.orgTeachers.map(teacher=>{
-orgTeacher.push(teacher.teacherName+"_"+teacher.teacherCode);
+orgTeacher.push(teacher.teacherName);
 });
 console.log(orgTeacher);
 res.send({
