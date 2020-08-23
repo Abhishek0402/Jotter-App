@@ -27,26 +27,24 @@
                                         </div>
                                         <div>
                                             <div style="padding: 50px 50px;">
-                                                <p style="margin: 0 0 45px;">Hey user.</p>
-                                                <p style="margin: 20px 0;">Here is your OTP to {{purpose}}</p>
-                                                {{!-- <p style="margin: 20px 0;">Here is your registration link for THE INITIATIVE'20</p> --}}
+                                                <p style="margin: 0 0 45px;">Hi {{receiverName}}.</p>
+                                                <p style="margin: 20px 0;">{{purpose}}</p>
 
                                                 <div
-                                                    style="border-style: dotted;border-radius:4px;border-color:#F68716;border-width:2px;text-align: center;position: relative;">
+                                                    style="border-style: dotted;border-radius:4px;border-color:#6F3FBA;border-width:2px;text-align: center;position: relative;">
                                                     <p
                                                         style="font-size: 24px;font-weight: bold;margin: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">
-                                                        {{otp}}</p>
+                                                        {{scheduleSubject}} - By: {{teacherName}}
+                                                        <br>
+                                                        {{scheduleDate}} {{scheduleTime}}
+                                                    </p>
 
                                                 </div>
-
-                                                <p style="margin: 20px 0 0;">It will be valid for 10minutes.Please do
-                                                    not share OTP with anyone.</p><br />
-
-
-
+                                                <p style="margin: 20px 0 0;">Please, don't forget to join the above
+                                                    schedule on time.</p><br />
                                                 <div style="margin: 0;">
-                                                    <p style="margin:0; line-height: 150%;">Thank you,<br /> Team
-                                                        4prosper</p>
+                                                    <p style="margin:0; line-height: 150%;">Thank you,<br />{{orgName}}
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>

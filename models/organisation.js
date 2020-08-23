@@ -38,7 +38,7 @@ var orgSchema = new Schema({
     type: String,
     trim: true,
     minlength: 2,
-    maxlength: 500,
+    maxlength: 1000,
   },
   orgLogo: {
     type: String,
@@ -90,7 +90,7 @@ var orgSchema = new Schema({
         {
           subjects: {
             type: String,
-          },
+          }
         },
       ],
     },
@@ -112,8 +112,6 @@ var orgSchema = new Schema({
       },
       teacherCode: {
         type: String,
-        // unique:true,
-        // required:true
       },
       teacherGender: {
         type: String,
@@ -127,7 +125,6 @@ var orgSchema = new Schema({
       },
       teacherEmail: {
         type: String,
-        // unique:true,
         minlength: 5,
         maxlength: 50,
         validate: [
@@ -140,7 +137,7 @@ var orgSchema = new Schema({
         minlength: 8,
         maxlength: 5000,
         trim: true,
-        // required: "password is required",
+        required: "password is required",
         validate: [
           validations.validatePassword,
           "Please fill a valid password",
@@ -148,8 +145,6 @@ var orgSchema = new Schema({
       },
       teacherMobile: {
         type: Number,
-        // unique:true,
-        // required:true,
         min: 6000000000,
         max: 9999999999,
       },
@@ -181,9 +176,7 @@ var orgSchema = new Schema({
         maxlength: 50,
       },
       studentRollNo: {
-        type: String,
-        // unique:true,
-        // required:true
+        type: String
       },
       studentClass: {
         type: String,
@@ -203,8 +196,6 @@ var orgSchema = new Schema({
       },
       studentEmail: {
         type: String,
-        // required:true,
-        // unique:true,
         minlength: 5,
         maxlength: 50,
         validate: [
@@ -214,8 +205,6 @@ var orgSchema = new Schema({
       },
       studentMobile: {
         type: Number,
-        // unique:true,
-        // required:true,
         min: 6000000000,
         max: 9999999999,
       },
@@ -230,7 +219,7 @@ var orgSchema = new Schema({
         minlength: 8,
         maxlength: 5000,
         trim: true,
-        // required: "password is required",
+        required: "password is required",
         validate: [
           validations.validatePassword,
           "Please fill a valid password",
@@ -259,23 +248,23 @@ var orgSchema = new Schema({
       questionAskerName: {
         type: String,
       },
-      questionAskerRole:{
-           //teacher or student
-        type:String
+      questionAskerRole: {
+        //teacher or student
+        type: String,
       },
       questionAskerCode: {
         // Teacher Code or roll no.
         type: String,
       },
-  questionForClass: {
+      questionForClass: {
         type: String,
       },
       questionForSection: {
         type: String,
       },
-      active:{
-        type:Boolean,
-        default:1
+      active: {
+        type: Boolean,
+        default: 1,
       },
       replies: [
         {
@@ -290,23 +279,25 @@ var orgSchema = new Schema({
           replierName: {
             type: String,
           },
-          replierRole:{
-type:String
+          replierRole: {
+            type: String,
           },
           replierCode: {
             type: String,
           },
-          replierClass:{ //only when student
-            type:String
+          replierClass: {
+            //only when student
+            type: String,
           },
-          replierSection:{//only when student
-            type:String
+          replierSection: {
+            //only when student
+            type: String,
           },
-          active:{
-        type:Boolean,
-        default:1
-      }
-        }
+          active: {
+            type: Boolean,
+            default: 1,
+          },
+        },
       ],
     },
   ],
@@ -327,42 +318,41 @@ type:String
       subjectScheduled: {
         type: String,
       },
-      active:{
-        type:Boolean,
-        default: 1
+      active: {
+        type: Boolean,
+        default: 1,
       },
-      createdAt:{
-type: String
+      createdAt: {
+        type: String,
       },
-      updatedAt:{
-type:String
+      updatedAt: {
+        type: String,
       },
-      scheduleDate:{
-        type:String
+      scheduleDate: {
+        type: String,
       },
-      scheduleTime:{
-        type:String
+      scheduleTime: {
+        type: String,
       },
       selectedStudents: [
         {
           studentRollNo: {
             type: String,
           },
-          studentEmail:{
-            type:String
+          studentEmail: {
+            type: String,
           },
-           studentName:{
-            type:String
-          }
+          studentName: {
+            type: String,
+          },
         },
       ],
-    }
+    },
   ],
-  
 });
 
+//@ hasing orgPassword
 orgSchema.pre("save", function (next) {
-  //can be said as a model method applicable on single document
   var user = this;
   if (user.role == "Organisation") {
     if (!user.isModified("orgPassword")) {
@@ -384,32 +374,27 @@ orgSchema.pre("save", function (next) {
 
 //@ MATCH TEXT PASSWORD WITH HASHED PASSWORD
 orgSchema.methods.comparePassword = function (password, role, mobile) {
-  //instance method for a single document
   console.log(role);
   if (role == "Organisation") {
-    return bcrypt.compareSync(password, this.orgPassword); // returns true or false
+    return bcrypt.compareSync(password, this.orgPassword); 
   } else if (role == "Teacher" || role == "teacher") {
     const teacherIndex = _.findIndex(this.orgTeachers, {
       teacherMobile: mobile,
     });
     hashPassword = this.orgTeachers[teacherIndex].teacherPassword;
-    return bcrypt.compareSync(password, hashPassword); // returns true or false
+    return bcrypt.compareSync(password, hashPassword);
   } else if (role == "Student") {
     const StudentIndex = _.findIndex(this.orgStudent, {
       studentMobile: mobile,
     });
     hashPassword = this.orgStudent[StudentIndex].studentPassword;
-    return bcrypt.compareSync(password, hashPassword); // returns true or false
+    return bcrypt.compareSync(password, hashPassword); 
   }
 };
 
 //@ generate jwt auth token
 orgSchema.methods.generateAuthToken = function (role, mobile) {
-  //instance method have access for a single document
   var user = this;
-  console.log(role);
-  console.log(user);
-  console.log("hello");
   var access = "auth";
   if (role == "Organisation") {
     var token = jwt

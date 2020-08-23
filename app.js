@@ -6,8 +6,8 @@ var cors = require("cors");
 var path = require("path");
 var multer = require("multer");
 var forms = multer();
-//routes
-//@ public login- signup
+
+//@ routes
 
 const register = require("./routes/register");
 const login = require("./routes/login");
@@ -31,8 +31,8 @@ mongoose
 mongoose.Promise = global.Promise;
 
 
-
 // app.use(forms.array());
+
 app.use(bodyParser.urlencoded({
     extended: false
   })
@@ -43,7 +43,6 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use(cors());
  
-//express app routes
 
 app.use("/api/app", register);
 app.use("/api/app", login);
@@ -52,7 +51,6 @@ app.use("/api/app", schedule);
 app.use("/api/app", question);
 app.use("/api/app", passwordChange);
 
-//3.error handling middle ware
 app.use((err, req, res, next) => {
   res.status(422).send({
     error: err.field

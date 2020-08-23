@@ -1,16 +1,17 @@
-//@ npm modules
 const nodemailer = require("nodemailer");
 var Handlebars = require('handlebars');
 var fs = require('fs');
 var path = require('path');
 
-//@ self made modules to be used
-const emailConfig = require("../config/email"); //email configurations
+const emailConfig = require("../config/email");
 
 //@ Open template file
 var source = fs.readFileSync(path.join(__dirname, '../views/mailTemplate.hbs'), 'utf8');
+var sourceSchedule = fs.readFileSync(path.join(__dirname,'../views/schedueTemplate.hbs'),'utf-8');
+
 //@ compile template file
 var template = Handlebars.compile(source);
+var templateSchedule = Handlebars.compile(sourceSchedule);
 
 //@ create the mail transporter
 const transporter = nodemailer.createTransport({
@@ -26,18 +27,23 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-//for subject
-exports.scheduleMail = (mailList) => {
-  var replacements = {
-    purpose: "hii",
-    otp: "class"
+//for schedule mail
+exports.scheduleMail = (mailList,details,subject) => {
+ let replacements = {
+    receiverName:details.receiverName,
+    scheduleSubject:details.scheduleSubject,
+    teacherName:details.teacherName,
+    scheduleDate:details.scheduleDate,
+    scheduleTime:details.scheduleTime,
+    orgName:details.orgName,
+    purpose: details.purpose,
 };
 console.log("mailer running");
   transporter.sendMail({
       from: emailConfig.email,
       to: mailList,
-      subject:"add",
-      html: template(replacements)
+      subject:subject,
+      html: templateSchedule(replacements)
     },
     (error, info) => {
       //(to,subject,text,html,callback)
@@ -53,7 +59,7 @@ console.log("mailer running");
 
 // otp mail
 exports.otpMail = (user, subject,purpose) => {
-  var replacements = {
+  let replacements = {
     purpose: purpose,
     otp: user.otp
 };
@@ -64,7 +70,6 @@ exports.otpMail = (user, subject,purpose) => {
       html: template(replacements)
     },
     (error, info) => {
-      //(to,subject,text,html,callback)
       if (error) {
         console.log(error);
       } else {
