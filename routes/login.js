@@ -6,7 +6,7 @@ const userData = require("../models/userData");
 const _ = require("lodash");
 
 router.post("/login",(req,res,next) => {
-const {password}= req.body;
+const {password,deviceToken}= req.body;
 var mobile = parseFloat(req.body.mobile);
 console.log(req.body);
 userData.findOne({
@@ -111,26 +111,37 @@ var teacherDataIndex= _.findIndex(orgExists.orgTeachers,{
   teacherMobile:mobile
 });
 if(orgExists.orgTeachers[teacherDataIndex].active){
+ 
+
   orgExists.generateAuthToken(role,mobile).then((token) => {
     console.log("token "+ token);
     var teacher = orgExists.orgTeachers[teacherDataIndex];
   
-res.header('x-auth', token).send({
-  user:{
-  teacherName: teacher.teacherName,
-  teacherAge: teacher.teacherAge,
-  teacherDesignation: teacher.teacherDesignation,
-  teacherCode: teacher.teacherCode,
-  teacherGender: teacher.teacherGender,
-  role: teacher.role,
-  teacherEmail:teacher.teacherEmail,
-  teacherMobile:teacher.teacherMobile,
-  teacherClasses: teacher.teachingClasses,
-  orgCode: orgCode
-  },
-  message: "loggedIn"
-});
-}).catch(err => console.log(err));
+    orgExists.orgTeachers[teacherDataIndex].deviceToken = deviceToken;
+
+    orgExists.save().then(deviceTokenSaved=>{
+      res.header('x-auth', token).send({
+        user:{
+        teacherName: teacher.teacherName,
+        teacherAge: teacher.teacherAge,
+        teacherDesignation: teacher.teacherDesignation,
+        teacherCode: teacher.teacherCode,
+        teacherGender: teacher.teacherGender,
+        role: teacher.role,
+        teacherEmail:teacher.teacherEmail,
+        teacherMobile:teacher.teacherMobile,
+        teacherClasses: teacher.teachingClasses,
+        orgCode: orgCode
+        },
+        message: "loggedIn"
+      });
+      }).catch(err => console.log(err));
+    }).catch(err=>{
+  console.log(err);
+  res.send({
+    message: "Invalid_Password"
+  });
+    });
 }
 else{
   console.log("active user");
@@ -156,7 +167,11 @@ else{
       if(orgExists.orgStudent[studentDataIndex].active){
         orgExists.generateAuthToken(role,mobile).then((token) => {
           console.log("token "+ token);
-          var student = orgExists.orgStudent[studentDataIndex];
+orgExists.orgStudent[studentDataIndex].deviceToken = deviceToken;
+
+orgExists.save().then(deviceTokenSaved=>{
+  var student = orgExists.orgStudent[studentDataIndex];
+  
       res.header('x-auth', token).send({
         user:{
       studentName: student.studentName,
@@ -174,6 +189,14 @@ else{
         },
         message: "loggedIn"
       });
+}).catch(err=>{
+  console.log(err.message);
+
+})
+
+        
+
+
       }).catch(err => console.log(err));
       }
       else{

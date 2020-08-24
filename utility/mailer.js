@@ -30,13 +30,13 @@ const transporter = nodemailer.createTransport({
 //for schedule mail
 exports.scheduleMail = (mailList,details,subject) => {
  let replacements = {
-    receiverName:details.receiverName,
     scheduleSubject:details.scheduleSubject,
     teacherName:details.teacherName,
     scheduleDate:details.scheduleDate,
     scheduleTime:details.scheduleTime,
     orgName:details.orgName,
     purpose: details.purpose,
+    orgLogo: details.orgLogo
 };
 console.log("mailer running");
   transporter.sendMail({

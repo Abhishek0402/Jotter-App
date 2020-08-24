@@ -148,6 +148,9 @@ var orgSchema = new Schema({
         min: 6000000000,
         max: 9999999999,
       },
+      deviceToken:{
+        type:String
+      },
       teachingClasses: [
         {
           teacherClass: {
@@ -225,6 +228,9 @@ var orgSchema = new Schema({
           "Please fill a valid password",
         ],
       },
+      deviceToken:{
+        type:String
+      }
     },
   ],
   questionaire: [

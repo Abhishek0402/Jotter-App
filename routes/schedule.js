@@ -42,8 +42,29 @@ organisation.findOne({
 orgFound.schedules.push({
     teacherCode,classScheduled,sectionScheduled,topicScheduled,subjectScheduled,createdAt,updatedAt,scheduleDate,scheduleTime,selectedStudents: studentsList
 });
-
-// mailer.scheduleMail(mailList);
+var teacherIndex = _.findIndex(orgFound.orgTeachers,{
+    teacherCode:teacherCode
+});
+var teacherName = orgFound.orgTeachers[teacherIndex].teacherName;
+var subjectForMail;
+if(topicScheduled==="Subject"){
+subjectForMail=subjectScheduled;
+}
+else{
+subjectForMail="General Talk";
+}
+var orgLogo = orgFound.orgLogo;
+var details = {
+    scheduleSubject: subjectForMail,
+    teacherName: teacherName,
+    scheduleDate:scheduleDate,
+    scheduleTime:scheduleTime,
+    orgName:orgFound.orgName,
+    purpose:"You have a new schedule as below :",
+    orgLogo:orgLogo
+}
+var subjectMail = "Schedule"
+mailer.scheduleMail(mailList,details,subjectMail);
 
 console.log(mailList);
 orgFound.save().then(scheduleCreate=>{
@@ -178,6 +199,17 @@ console.log(orgFound.schedules[scheduleIndex]);
 //     email: studentEmail.studentEmail
 // };
 // });
+// var details = {
+//     scheduleSubject: subjectForMail,
+//     teacherName: teacherName,
+//     scheduleDate:scheduleDate,
+//     scheduleTime:scheduleTime,
+//     orgName:orgFound.orgName,
+//     purpose:"You have a new schedule as below :",
+//     orgLogo:orgLogo
+// }
+// var subjectMail = "Schedule"
+// mailer.scheduleMail(mailList,details,subjectMail);
 
 
 orgFound.save().then(data=>{
