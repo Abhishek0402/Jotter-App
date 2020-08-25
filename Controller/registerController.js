@@ -251,7 +251,7 @@ var studentMobile= mobile;
                         studentName,
                         studentRollNo,
                         studentClass,
-                        studentSection,
+                       studentSection,
                         studentFatherName,
                         role,
                         studentEmail,

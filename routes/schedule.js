@@ -113,10 +113,15 @@ orgFound.orgTeachers[teacherIndex].notification.push({
 //student details
 
 var studentNotify = studentsList.map(studentDetail =>{
+    console.log(studentDetail);
 var studentIndex = _.findIndex(orgFound.orgStudent,{
-    studentEmail:studentDetail.studentEmail,studentRollNo:studentRollNo
+    studentEmail:studentDetail.studentEmail
 });
+console.log(studentIndex);
 if(studentIndex>=0 && orgFound.orgStudent[studentIndex].active){
+    console.log(orgFound.orgStudent[studentIndex]);
+    
+    console.log(orgFound.orgStudent[studentIndex].deviceToken);
 registrationTokens.push(orgFound.orgStudent[studentIndex].deviceToken);
 orgFound.orgStudent[studentIndex].notification.push({
     message: messageBody
