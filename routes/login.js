@@ -132,8 +132,8 @@ if(orgExists.orgTeachers[teacherDataIndex].active){
         teacherMobile:teacher.teacherMobile,
         teacherClasses: teacher.teachingClasses,
         orgCode: orgCode,
-        orgName:orgName,
-        orgLogo:orgLogo
+        orgName:orgExists.orgName,
+        orgLogo:orgExists.orgLogo
         },
         message: "loggedIn"
       });

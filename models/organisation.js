@@ -168,6 +168,13 @@ var orgSchema = new Schema({
           ],
         },
       ],
+      notification:[
+        {
+          message:{
+            type:String
+          }
+        }
+      ]
     },
   ],
   orgStudent: [
@@ -230,7 +237,14 @@ var orgSchema = new Schema({
       },
       deviceToken:{
         type:String
-      }
+      },
+      notification:[
+        {
+          message:{
+            type:String
+          }
+        }
+      ]
     },
   ],
   questionaire: [

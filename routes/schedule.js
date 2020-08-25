@@ -26,6 +26,7 @@ for (var selectedStudentDetails in studentSplitter) {
 var studentEmail = studentNewData[2];
                 mailList.push(studentEmail);
 // console.log(studentName);
+
                 studentsList.push({
                 studentRollNo: studentRollNo,
           studentEmail: studentEmail,
@@ -47,6 +48,7 @@ orgFound.schedules.push({
 var teacherIndex = _.findIndex(orgFound.orgTeachers,{
     teacherCode:teacherCode
 });
+
 var teacherName = orgFound.orgTeachers[teacherIndex].teacherName;
 var subjectForMail;
 if(topicScheduled==="Subject") {
@@ -68,12 +70,17 @@ var details = {
 
 var subjectMail = "Schedule";
 
+mailList.push(orgFound.orgTeachers[teacherIndex].teacherEmail);
+console.log(mailList);
+
 mailer.scheduleMail(mailList,details,subjectMail);
 
 //notification
 var sender = new gcm.Sender("AAAAuwomdSw:APA91bHggMBtVnwYr9oAOR8b9GKBZnPLmdJtt45FPi_sbXrnqqUTyCPxUHzKYgKege71ItHLWHspOlswjQtFdLB6nyfwAixKjZ4t9trWvAtxgraO7Gxnu3WseVe0Mua4j4JMGv4PfgZY");
 
 console.log(sender);
+
+var messageBody =  `You have a new schedule for ${details.scheduleSubject} at ${details.scheduleTime} on ${details.scheduleDate} by ${details.teacherName}.`;
 
 var message = new gcm.Message({
     // collapseKey: 'demo',
@@ -85,22 +92,41 @@ var message = new gcm.Message({
     dryRun: false,
     data: {
         key1: 'message1'
-        // key2: 'message2'
     },
     notification: {
         title: "New Schedule",
         icon: "ic_launcher",
-        body: `You have a new schedule for ${details.scheduleSubject} at ${details.scheduleTime} on ${details.scheduleDate} by ${details.teacherName}.`
+        body: messageBody
     }
 });
 
-// message.addData('key1','message1');
-// message.addData('key2','message2');
 
 console.log(message);
 
 var registrationTokens = new Array();
-registrationTokens.push('fhHQcz8nR4SQ5X-gtZUL71:APA91bE1y-0Ean6QfY3LMSmaT1tihT2Hq_kSs791LePVy4qn2v1P5334dqKHDA8FthuNcNgAQLKwwJ1df75bDk9GdoJ8696ailU2hsJ9qdfNlQQqBJMJ8tP8g8nd1qzJgL_1Jvpk47ey');
+
+registrationTokens.push(orgFound.orgTeachers[teacherIndex].deviceToken);
+
+orgFound.orgTeachers[teacherIndex].notification.push({
+    message:messageBody
+});
+//student details
+
+var studentNotify = studentsList.map(studentDetail =>{
+var studentIndex = _.findIndex(orgFound.orgStudent,{
+    studentEmail:studentDetail.studentEmail,studentRollNo:studentRollNo
+});
+if(studentIndex>=0 && orgFound.orgStudent[studentIndex].active){
+registrationTokens.push(orgFound.orgStudent[studentIndex].deviceToken);
+orgFound.orgStudent[studentIndex].notification.push({
+    message: messageBody
+});
+}
+});
+
+
+
+// registrationTokens.push('fhHQcz8nR4SQ5X-gtZUL71:APA91bE1y-0Ean6QfY3LMSmaT1tihT2Hq_kSs791LePVy4qn2v1P5334dqKHDA8FthuNcNgAQLKwwJ1df75bDk9GdoJ8696ailU2hsJ9qdfNlQQqBJMJ8tP8g8nd1qzJgL_1Jvpk47ey');
 
 // var tokenList = orgFound.orgStudent.map(studentToken=>{
 
@@ -119,7 +145,6 @@ sender.sendNoRetry(message, {registrationTokens: registrationTokens}, function(e
 
         console.log(response);
 
-console.log(mailList);
 orgFound.save().then(scheduleCreate=>{
     console.log("schedule created");
     res.send({
@@ -152,6 +177,10 @@ res.send({
 }).catch(err=>console.log(err.message));
 
 });
+
+
+
+
 
 
 router.post("/schedule/read",authController.authenticate,(req,res,next)=>{
