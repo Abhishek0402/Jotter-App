@@ -131,7 +131,9 @@ if(orgExists.orgTeachers[teacherDataIndex].active){
         teacherEmail:teacher.teacherEmail,
         teacherMobile:teacher.teacherMobile,
         teacherClasses: teacher.teachingClasses,
-        orgCode: orgCode
+        orgCode: orgCode,
+        orgName:orgName,
+        orgLogo:orgLogo
         },
         message: "loggedIn"
       });
@@ -184,7 +186,9 @@ orgExists.save().then(deviceTokenSaved=>{
       studentMobile:student.studentMobile,
       studentDOB:student.studentDOB,
       studentGender: student.studentGender,
-      orgCode: orgCode
+      orgCode: orgCode,
+      orgName:orgName,
+      orgLogo:orgLogo
 
         },
         message: "loggedIn"

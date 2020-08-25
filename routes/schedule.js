@@ -7,6 +7,8 @@ const _ = require("lodash");
 var moment = require("moment");
 const authController = require("../Controller/authController");
 const mailer = require("../utility/mailer");
+var gcm = require('node-gcm');
+
 
 router.post("/schedule/create",authController.authenticate,(req,res,next)=>{
 var {orgCode,teacherCode,classScheduled,sectionScheduled,topicScheduled,subjectScheduled,scheduleDate,scheduleTime,selectedStudents}=req.body;
@@ -15,13 +17,13 @@ console.log(req.body);
 var studentsList = new Array();
 var mailList = new Array();
 console.log(studentSplitter);
+
 for (var selectedStudentDetails in studentSplitter) {
                 var studentNewData = _.split(studentSplitter[selectedStudentDetails], "_");
                 console.log(studentNewData);
                 var studentName = studentNewData[0];
                 var studentRollNo = studentNewData[1];
 var studentEmail = studentNewData[2];
-
                 mailList.push(studentEmail);
 // console.log(studentName);
                 studentsList.push({
@@ -38,7 +40,7 @@ organisation.findOne({
     orgCode
 }).then(orgFound =>{
     console.log("orgFound");
-    if(orgFound){
+    if(orgFound) {
 orgFound.schedules.push({
     teacherCode,classScheduled,sectionScheduled,topicScheduled,subjectScheduled,createdAt,updatedAt,scheduleDate,scheduleTime,selectedStudents: studentsList
 });
@@ -47,10 +49,10 @@ var teacherIndex = _.findIndex(orgFound.orgTeachers,{
 });
 var teacherName = orgFound.orgTeachers[teacherIndex].teacherName;
 var subjectForMail;
-if(topicScheduled==="Subject"){
-subjectForMail=subjectScheduled;
+if(topicScheduled==="Subject") {
+ subjectForMail=subjectScheduled;
 }
-else{
+else {
 subjectForMail="General Talk";
 }
 var orgLogo = orgFound.orgLogo;
@@ -63,13 +65,65 @@ var details = {
     purpose:"You have a new schedule as below :",
     orgLogo:orgLogo
 }
-var subjectMail = "Schedule"
+
+var subjectMail = "Schedule";
+
 mailer.scheduleMail(mailList,details,subjectMail);
+
+//notification
+var sender = new gcm.Sender("AAAAuwomdSw:APA91bHggMBtVnwYr9oAOR8b9GKBZnPLmdJtt45FPi_sbXrnqqUTyCPxUHzKYgKege71ItHLWHspOlswjQtFdLB6nyfwAixKjZ4t9trWvAtxgraO7Gxnu3WseVe0Mua4j4JMGv4PfgZY");
+
+console.log(sender);
+
+var message = new gcm.Message({
+    // collapseKey: 'demo',
+    priority: 'high',
+    contentAvailable: true,
+    delayWhileIdle: true,
+    timeToLive: 60,
+    // restrictedPackageName: "somePackageName",
+    dryRun: false,
+    data: {
+        key1: 'message1'
+        // key2: 'message2'
+    },
+    notification: {
+        title: "New Schedule",
+        icon: "ic_launcher",
+        body: `You have a new schedule for ${details.scheduleSubject} at ${details.scheduleTime} on ${details.scheduleDate} by ${details.teacherName}.`
+    }
+});
+
+// message.addData('key1','message1');
+// message.addData('key2','message2');
+
+console.log(message);
+
+var registrationTokens = new Array();
+registrationTokens.push('fhHQcz8nR4SQ5X-gtZUL71:APA91bE1y-0Ean6QfY3LMSmaT1tihT2Hq_kSs791LePVy4qn2v1P5334dqKHDA8FthuNcNgAQLKwwJ1df75bDk9GdoJ8696ailU2hsJ9qdfNlQQqBJMJ8tP8g8nd1qzJgL_1Jvpk47ey');
+
+// var tokenList = orgFound.orgStudent.map(studentToken=>{
+
+// });
+
+console.log(registrationTokens);
+
+sender.sendNoRetry(message, {registrationTokens: registrationTokens}, function(err, response) {
+    if(err) {
+        console.error(err);
+        res.send({
+            message:"class_not_scheduled"
+        });
+    }
+    else {
+
+        console.log(response);
 
 console.log(mailList);
 orgFound.save().then(scheduleCreate=>{
     console.log("schedule created");
     res.send({
+        response: response,
         message: "class_scheduled"
     });
 }).catch(err=>{
@@ -77,8 +131,18 @@ orgFound.save().then(scheduleCreate=>{
     res.send({
         message:"class_not_scheduled"
     });
-})
-    }
+});
+
+}  
+  });
+
+
+
+console.log("notification ends");
+
+  //notification end
+
+}
     else{
 console.log("org not found");
 res.send({
