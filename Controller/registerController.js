@@ -710,17 +710,40 @@ var {list} = req.body;
                   
                           const orgClasses = await list.map((item) => {
                             var teachSubject = _.split(item.subjects, ",");
-                            var orgSubjects = new Array();
-                            for (var i in teachSubject) {
-                              orgSubjects.push({
-                                subjects: teachSubject[i],
-                              });
-                            }
-                            orgFoundForClass.orgClasses.push({
-                              orgClass: item.orgClass,
-                              orgSection: item.orgSection,
-                              orgSubjects: orgSubjects,
+                            var classIndex = _.findIndex(orgFoundForClass.orgClasses,{
+                              orgClass:item.orgClass,orgSection: item.orgSection
                             });
+                            if(classIndex>=0){
+
+                              for (var i in teachSubject) {
+                                var subjectIndex = _.findIndex(orgFoundForClass.orgClasses[classIndex].orgSubjects,{
+                                  subjects:teachSubject[i]
+                                });
+                                if(subjectIndex<0){
+                                  orgFoundForClass.orgClasses[classIndex].orgSubjects.push({
+                                    subjects:teachSubject[i]
+                                  });
+                                }
+                            
+                            }
+                          }
+                            else{
+
+                              var orgSubjects = new Array();
+                              for (var i in teachSubject) {
+                                orgSubjects.push({
+                                  subjects: teachSubject[i],
+                                });
+                              }
+                              orgFoundForClass.orgClasses.push({
+                                orgClass: item.orgClass,
+                                orgSection: item.orgSection,
+                                orgSubjects: orgSubjects,
+                              });
+
+
+                            }
+                            
                           });
 
                           orgFoundForClass
