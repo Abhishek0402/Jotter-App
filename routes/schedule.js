@@ -7,7 +7,10 @@ const _ = require("lodash");
 var moment = require("moment");
 const authController = require("../Controller/authController");
 const mailer = require("../utility/mailer");
+var notificationKey = require("../config/notification");
 var gcm = require('node-gcm');
+
+var sender = new gcm.Sender(notificationKey.serverKey);
 
 
 router.post("/schedule/create",authController.authenticate,(req,res,next)=>{
@@ -43,7 +46,8 @@ organisation.findOne({
     console.log("orgFound");
     if(orgFound) {
 orgFound.schedules.push({
-    teacherCode,classScheduled,sectionScheduled,topicScheduled,subjectScheduled,createdAt,updatedAt,scheduleDate,scheduleTime,selectedStudents: studentsList
+    teacherCode,classScheduled,sectionScheduled,topicScheduled,subjectScheduled,createdAt,updatedAt,
+    scheduleDate,scheduleTime,selectedStudents: studentsList
 });
 var teacherIndex = _.findIndex(orgFound.orgTeachers,{
     teacherCode:teacherCode
@@ -65,7 +69,9 @@ var details = {
     scheduleTime:scheduleTime,
     orgName:orgFound.orgName,
     purpose:"You have a new schedule as below :",
-    orgLogo:orgLogo
+    orgLogo:orgLogo,
+    footerMessage:"Please, don't forget to join the above schedule on time."
+
 }
 
 var subjectMail = "Schedule";
@@ -76,7 +82,6 @@ console.log(mailList);
 mailer.scheduleMail(mailList,details,subjectMail);
 
 //notification
-var sender = new gcm.Sender("AAAAuwomdSw:APA91bHggMBtVnwYr9oAOR8b9GKBZnPLmdJtt45FPi_sbXrnqqUTyCPxUHzKYgKege71ItHLWHspOlswjQtFdLB6nyfwAixKjZ4t9trWvAtxgraO7Gxnu3WseVe0Mua4j4JMGv4PfgZY");
 
 console.log(sender);
 
@@ -129,13 +134,6 @@ orgFound.orgStudent[studentIndex].notification.push({
 }
 });
 
-
-
-// registrationTokens.push('fhHQcz8nR4SQ5X-gtZUL71:APA91bE1y-0Ean6QfY3LMSmaT1tihT2Hq_kSs791LePVy4qn2v1P5334dqKHDA8FthuNcNgAQLKwwJ1df75bDk9GdoJ8696ailU2hsJ9qdfNlQQqBJMJ8tP8g8nd1qzJgL_1Jvpk47ey');
-
-// var tokenList = orgFound.orgStudent.map(studentToken=>{
-
-// });
 
 console.log(registrationTokens);
 
@@ -282,41 +280,116 @@ var scheduleIndex = _.findIndex(orgFound.schedules,{
 console.log(scheduleIndex);
 // console.log(typeOf(scheduleIndex));
 if(orgFound.schedules[scheduleIndex].active && orgFound.schedules[scheduleIndex].teacherCode == teacherCode){
+    
     orgFound.schedules[scheduleIndex].scheduleDate = newScheduleDate;
 orgFound.schedules[scheduleIndex].scheduleTime = newScheduleTime;
 orgFound.schedules[scheduleIndex].updatedAt = updatedAt;
 
 console.log(orgFound.schedules[scheduleIndex]);
+var mailList = new Array();
+var registrationTokens = new Array();
 
-
-//mailer
-// var mailList = new Array();
-// var studentEmailList = selectedStudents.map((studentEmail)=>{
-//     mailList.push(studentEmail.studentEmail);
-// return {
-//     email: studentEmail.studentEmail
-// };
-// });
-// var details = {
-//     scheduleSubject: subjectForMail,
-//     teacherName: teacherName,
-//     scheduleDate:scheduleDate,
-//     scheduleTime:scheduleTime,
-//     orgName:orgFound.orgName,
-//     purpose:"You have a new schedule as below :",
-//     orgLogo:orgLogo
-// }
-// var subjectMail = "Schedule"
-// mailer.scheduleMail(mailList,details,subjectMail);
-
-
-orgFound.save().then(data=>{
-    console.log("updated");
-res.send({
-    message:"schedule_updated"
+var teacherIndex = _.findIndex(orgFound.orgTeachers,{
+    teacherCode:teacherCode
 });
+
+registrationTokens.push(orgFound.orgTeachers[teacherIndex].deviceToken);
+
+mailList.push(orgFound.orgTeachers[teacherIndex].teacherEmail);
+
+
+
+
+if(orgFound.schedules[scheduleIndex].topicScheduled==="Subject"){
+    var scheduleSubject = orgFound.schedules[scheduleIndex].subjectScheduled;
+    }
+    else{
+    var scheduleSubject = "General Talk";
+    }
+    var details = {
+        scheduleSubject:scheduleSubject,
+        teacherName: orgFound.orgTeachers[teacherIndex].teacherName,
+        scheduleDate:newScheduleDate,
+        scheduleTime:newScheduleTime,
+        orgName:orgFound.orgName,
+        purpose:"You have a update in your schedule as below",
+        orgLogo:orgFound.orgLogo,
+        footerMessage:"Please, don't forget to join the above schedule on time."
+    }
+    var subjectMail = "Schedule Change"
     
-}).catch(err=>console.log(err.message));
+
+    
+
+var messageBody =  `Your schedule for ${details.scheduleSubject} by ${orgFound.orgTeachers[teacherIndex].teacherName} 
+has been shifted at ${orgFound.schedules[scheduleIndex].scheduleTime} on ${orgFound.schedules[scheduleIndex].scheduleDate}.`;
+orgFound.orgTeachers[teacherIndex].notification.push({
+    message:messageBody
+});
+var selectedStudents = orgFound.schedules[scheduleIndex].selectedStudents.map(std =>{
+    mailList.push(std.studentEmail);
+
+    var studentIndex = _.findIndex(orgFound.orgStudent,{
+        studentEmail:std.studentEmail,studentRollNo:std.studentRollNo
+    });
+    if(studentIndex>=0 && orgFound.orgStudent[studentIndex].active){
+registrationTokens.push(orgFound.orgStudent[studentIndex].deviceToken);
+orgFound.orgStudent[studentIndex].notification.push({
+    message:messageBody
+});
+    }
+});
+
+mailer.scheduleMail(mailList,details,subjectMail);
+
+
+var message = new gcm.Message({
+    // collapseKey: 'demo',
+    priority: 'high',
+    contentAvailable: true,
+    delayWhileIdle: true,
+    timeToLive: 60,
+    // restrictedPackageName: "somePackageName",
+    dryRun: false,
+    data: {
+        key1: 'message1'
+    },
+    notification: {
+        title: "Schedule Update",
+        icon: "ic_launcher",
+        body: messageBody
+    }
+});
+
+
+sender.sendNoRetry(message, {registrationTokens: registrationTokens}, function(err, response) {
+    if(err) {
+        console.error(err);
+        res.send({
+            message:"update_not_allowed"
+        });
+    }
+    else {
+
+        console.log(response);
+
+orgFound.save().then(scheduleUpdated=>{
+    console.log("schedule updated");
+    res.send({
+        message:"schedule_updated"
+    });
+        
+}).catch(err=>{
+    console.log(err.message);
+    res.send({
+        message:"update_not_allowed"
+    });
+});
+
+}  
+  });
+
+
 }
 else {
     console.log("inactive_schedule or wrong_teacherCode");
@@ -359,22 +432,117 @@ orgFound.schedules[scheduleIndex].updatedAt = updatedAt;
 
 console.log(orgFound.schedules[scheduleIndex]);
 
-//mailer
-// var mailList = new Array();
-// var studentEmailList = selectedStudents.map((studentEmail)=>{
-//     mailList.push(studentEmail.studentEmail);
-// return {
-//     email: studentEmail.studentEmail
-// };
-// });
+var mailList = new Array();
+var registrationTokens = new Array();
 
-orgFound.save().then(data=>{
-    console.log("deleted");
-res.send({
-    message:"schedule_deleted"
+var teacherIndex = _.findIndex(orgFound.orgTeachers,{
+    teacherCode:teacherCode
 });
+
+registrationTokens.push(orgFound.orgTeachers[teacherIndex].deviceToken);
+
+mailList.push(orgFound.orgTeachers[teacherIndex].teacherEmail);
+
+
+
+
+if(orgFound.schedules[scheduleIndex].topicScheduled==="Subject"){
+    var scheduleSubject = orgFound.schedules[scheduleIndex].subjectScheduled;
+    }
+    else{
+    var scheduleSubject = "General Talk";
+    }
+    var details = {
+        scheduleSubject:scheduleSubject,
+        teacherName: orgFound.orgTeachers[teacherIndex].teacherName,
+        scheduleDate:orgFound.schedules[scheduleIndex].scheduleDate,
+        scheduleTime:orgFound.schedules[scheduleIndex].scheduleTime,
+        orgName:orgFound.orgName,
+        purpose:"Your below schedule has been cancelled",
+        orgLogo:orgFound.orgLogo,
+        footerMessage:"Sorry for the inconvenience caused."
+    }
+    var subjectMail = "Schedule Cancel"
     
-}).catch(err=>console.log(err.message));
+
+    
+
+var messageBody =  `Your schedule for ${details.scheduleSubject} by ${orgFound.orgTeachers[teacherIndex].teacherName}
+ at ${orgFound.schedules[scheduleIndex].scheduleTime} on ${orgFound.schedules[scheduleIndex].scheduleDate} has been cancelled.`;
+orgFound.orgTeachers[teacherIndex].notification.push({
+    message:messageBody
+});
+var selectedStudents = orgFound.schedules[scheduleIndex].selectedStudents.map(std =>{
+    mailList.push(std.studentEmail);
+
+    var studentIndex = _.findIndex(orgFound.orgStudent,{
+        studentEmail:std.studentEmail,studentRollNo:std.studentRollNo
+    });
+    if(studentIndex>=0 && orgFound.orgStudent[studentIndex].active){
+registrationTokens.push(orgFound.orgStudent[studentIndex].deviceToken);
+orgFound.orgStudent[studentIndex].notification.push({
+    message:messageBody
+});
+    }
+});
+
+
+mailer.scheduleMail(mailList,details,subjectMail);
+
+var message = new gcm.Message({
+    // collapseKey: 'demo',
+    priority: 'high',
+    contentAvailable: true,
+    delayWhileIdle: true,
+    timeToLive: 60,
+    // restrictedPackageName: "somePackageName",
+    dryRun: false,
+    data: {
+        key1: 'message1'
+    },
+    notification: {
+        title: "Schedule Cancelled",
+        icon: "ic_launcher",
+        body: messageBody
+    }
+});
+
+
+
+
+
+sender.sendNoRetry(message, {registrationTokens: registrationTokens}, function(err, response) {
+    if(err) {
+        console.error(err);
+        res.send({
+            message:"delete_not_allowed"
+        });
+    }
+    else {
+
+        console.log(response);
+
+orgFound.save().then(scheduleUpdated=>{
+    console.log("schedule_deleted");
+    res.send({
+        message:"schedule_deleted"
+    });
+        
+}).catch(err=>{
+    console.log(err.message);
+    res.send({
+        message:"delete_not_allowed"
+    });
+});
+
+}  
+  });
+
+
+
+
+
+
 }
 else {
     console.log("inactive_schedule or wrong_teacherCode");

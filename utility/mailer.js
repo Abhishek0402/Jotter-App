@@ -36,7 +36,8 @@ exports.scheduleMail = (mailList,details,subject) => {
     scheduleTime:details.scheduleTime,
     orgName:details.orgName,
     purpose: details.purpose,
-    orgLogo: details.orgLogo
+    orgLogo: details.orgLogo,
+    footerMessage: details.footerMessage
 };
 console.log("mailer running");
   transporter.sendMail({
