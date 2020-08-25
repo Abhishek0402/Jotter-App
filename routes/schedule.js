@@ -153,7 +153,7 @@ sender.sendNoRetry(message, {registrationTokens: registrationTokens}, function(e
 orgFound.save().then(scheduleCreate=>{
     console.log("schedule created");
     res.send({
-        response: response,
+        // response: response,
         message: "class_scheduled"
     });
 }).catch(err=>{
