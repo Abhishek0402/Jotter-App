@@ -302,4 +302,65 @@ orgSubject.push(singleClassSubject.subjects);
 }).catch(err=>console.log(err.message));
 });
 
+
+
+router.post("/notification/list",(req,res,next)=>{
+var {orgCode,role}= req.body;
+var list=[];
+organisation.findOne({orgCode}).then(orgFound=>{
+if(orgFound){
+if(role==="Teacher"){
+    console.log("Teacher");
+   var {teacherCode}= req.body;
+   var teacherIndex = _.findIndex(orgFound.orgTeachers,{
+       teacherCode:teacherCode
+   });
+   if(teacherIndex>=0){
+    list = orgFound.orgTeachers[teacherIndex].notification;
+   }
+   else{
+    console.log("teacher not found");
+    res.send({
+        message:"no_data"
+    }); 
+   }
+}
+else if(role=="Student"){
+var {studentClass,studentSection,studentRollNo}= req.body;
+var studentIndex= _.findIndex(orgFound.orgStudent,{
+    studentClass:studentClass,studentSection:studentSection,studentRollNo:studentRollNo
+});
+console.log(studentIndex);
+if(studentIndex>=0){
+ list = orgFound.orgStudent[studentIndex].notification;
+}
+else{
+    console.log("student not found");
+    res.send({
+        message:"no_data"
+    });
+}
+}
+var finalList= new Array();
+var notificationList = list.map(noti=>{
+finalList.push(noti.message);
+});
+console.log(list);
+res.send({
+    list:finalList,
+    message:"list_found"
+})
+
+}
+else{
+    console.log("invalid_orgCode");
+    res.send({
+        message:"no_data"
+    });
+}
+}).catch(err=>{
+    console.log(err.message);
+})
+});
+
 module.exports = router;
