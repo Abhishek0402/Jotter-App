@@ -647,17 +647,41 @@ res.send({
                     var classNewFindLength = classNewFind.length;
                     var orgClass = classNewFind[0];
                     var orgSection = classNewFind[1];
-                    var Subject = new Array();
 
-                    for (var i = 2; i < classNewFindLength; i++) {
-                      Subject.push({ subjects: classNewFind[i] });
+                    var classIndex = _.findIndex(orgFoundForClass.orgClasses,{
+                      orgClass:orgClass, orgSection:orgSection
+                    })
+                    if(classIndex>=0){
+
+                      for (var i = 2; i < classNewFindLength; i++) {
+                        var subjectIndex =_.findIndex(orgFoundForClass.orgClasses[classIndex].orgSubjects,{
+                          subjects:classNewFind[i] 
+                        });
+                        if(subjectIndex<0){
+                          orgFoundForClass.orgClasses[classIndex].orgSubjects.push({ subjects: classNewFind[i] });
+
+                        }
+                      }
+
                     }
-                    orgFoundForClass.orgClasses.push({
-                      orgClass: orgClass,
-                      orgSection: orgSection,
-                      orgSubjects: Subject,
-                    });
+                    else{
+                      var Subject = new Array();
+
+                      for (var i = 2; i < classNewFindLength; i++) {
+                        
+                        Subject.push({ subjects: classNewFind[i] });
+                      }
+                      orgFoundForClass.orgClasses.push({
+                        orgClass: orgClass,
+                        orgSection: orgSection,
+                        orgSubjects: Subject,
+                      });
+
+
+                    }
+                   
                   }
+
                   orgFoundForClass
                     .save()
                     .then((ClassCreated) => {
