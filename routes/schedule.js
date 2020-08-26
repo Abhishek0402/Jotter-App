@@ -96,8 +96,8 @@ var message = new gcm.Message({
     // restrictedPackageName: "somePackageName",
     dryRun: false,
     data: {
-        title: 'Push',
-        body: 'This is push notification',
+        title: 'New Schedule',
+        body: messageBody,
         icon: "ic_launcher",
     },
     notification: {
