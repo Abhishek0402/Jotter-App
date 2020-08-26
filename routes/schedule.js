@@ -95,16 +95,24 @@ var message = new gcm.Message({
     timeToLive: 60,
     // restrictedPackageName: "somePackageName",
     dryRun: false,
-    data: {
-        key1: 'message1'
-    },
-    notification: {
-        title: "New Schedule",
-        icon: "ic_launcher",
-        body: messageBody
-    }
+    // data: {
+    //     key1: 'message1'
+    // },
+    // notification: {
+    //     title: "New Schedule",
+    //     icon: "ic_launcher",
+    //     body: messageBody
+    // }
 });
 
+// var message = new gcm.Message();
+
+message.addData({
+    title: 'Push',
+    body: 'This is push notification',
+    icon: "ic_launcher",
+    otherProperty: true,
+  });
 
 console.log(message);
 
@@ -151,7 +159,8 @@ sender.sendNoRetry(message, {registrationTokens: registrationTokens}, function(e
 orgFound.save().then(scheduleCreate=>{
     console.log("schedule created");
     res.send({
-        // response: response,
+        response: response,
+        notification: message,
         message: "class_scheduled"
     });
 }).catch(err=>{
