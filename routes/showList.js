@@ -304,7 +304,7 @@ orgSubject.push(singleClassSubject.subjects);
 
 
 
-router.post("/notification/list",(req,res,next)=>{
+router.post("/notification/list",authController.authenticate,(req,res,next)=>{
 var {orgCode,role}= req.body;
 var list=[];
 organisation.findOne({orgCode}).then(orgFound=>{
