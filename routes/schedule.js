@@ -162,7 +162,7 @@ orgFound.save().then(scheduleCreate=>{
     console.log("schedule created");
     res.send({
         // response: response,
-        notification: message.params,
+        notify: message.params,
         message: "class_scheduled"
     });
 }).catch(err=>{
