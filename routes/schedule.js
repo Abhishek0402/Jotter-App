@@ -365,7 +365,9 @@ var message = new gcm.Message({
     // restrictedPackageName: "somePackageName",
     dryRun: false,
     data: {
-        key1: 'message1'
+        title: 'Schedule Update',
+        body: messageBody,
+        icon: "ic_launcher",
     },
     notification: {
         title: "Schedule Update",
@@ -389,6 +391,8 @@ sender.sendNoRetry(message, {registrationTokens: registrationTokens}, function(e
 orgFound.save().then(scheduleUpdated=>{
     console.log("schedule updated");
     res.send({
+        data: message.params.data,
+        notification:message.params.notification,
         message:"schedule_updated"
     });
         
@@ -511,7 +515,9 @@ var message = new gcm.Message({
     // restrictedPackageName: "somePackageName",
     dryRun: false,
     data: {
-        key1: 'message1'
+        title: 'Schedule Cancelled',
+        body: messageBody,
+        icon: "ic_launcher",
     },
     notification: {
         title: "Schedule Cancelled",
@@ -538,6 +544,8 @@ sender.sendNoRetry(message, {registrationTokens: registrationTokens}, function(e
 orgFound.save().then(scheduleUpdated=>{
     console.log("schedule_deleted");
     res.send({
+        data: message.params.data,
+        notification:message.params.notification,
         message:"schedule_deleted"
     });
         
