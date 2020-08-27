@@ -489,6 +489,13 @@ var messageBody =  `Your schedule for ${details.scheduleSubject} by ${orgFound.o
 orgFound.orgTeachers[teacherIndex].notification.push({
     message:messageBody
 });
+
+
+// var today = new Date();
+// var date = today.getDate()+'-'+(today.getMonth()+1)+'-'+today.getFullYear();
+// var time = today.getHours() + ":" + today.getMinutes();
+
+
 var selectedStudents = orgFound.schedules[scheduleIndex].selectedStudents.map(std =>{
     mailList.push(std.studentEmail);
 
