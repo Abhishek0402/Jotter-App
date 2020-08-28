@@ -35,6 +35,7 @@ organisation.findOne({orgCode}).then(orgFound=>{
             return{ 
                 teacherName:teachers.teacherName,
                 teacherCode: teachers.teacherCode,
+                teacherClass:teachers.teachingClasses,
                 active:teachers.active
             }
         });
