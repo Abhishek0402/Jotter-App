@@ -229,7 +229,7 @@ exports.orgNeed = (req, res, next) => {
     .findOne({ orgCode })
     .then((orgFound) => {
       if (orgFound) {
-        if (need == "Teacher") {
+        if (need === "Teacher") {
           var orgTeacher = new Array();
           var teacherList = orgFound.orgTeachers.map((teacher) => {
             orgTeacher.push(teacher.teacherName);
@@ -239,7 +239,7 @@ exports.orgNeed = (req, res, next) => {
             list: orgTeacher,
             message: "list_found",
           });
-        } else if (need == "Subject") {
+        } else if (need === "Subject") {
           var orgSubject = new Array();
           var classList = orgFound.orgClasses.map((subject) => {
             // console.log(subject);
@@ -252,6 +252,30 @@ exports.orgNeed = (req, res, next) => {
             list: orgSubject,
             message: "list_found",
           });
+        }
+        else if(need==="Student"){
+          var studentList = orgFound.orgStudent.map(student=>{
+return {
+  studentName:student.studentName,
+  studentRollNo:student.studentRollNo,
+  studentClass:student.studentClass,
+  studentSection:student.studentSection
+}
+          });
+          console.log(studentList);
+          res.send({
+            list:studentList,
+            message:"list_found"
+          });
+        }
+
+        else if(need==="Class"){
+console.log(orgFound.orgClasses);
+res.send({
+  list:orgFound.orgClasses,
+  message: "list_found"
+});
+
         }
       } else {
         console.log("Invalid_orgCode");
