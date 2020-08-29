@@ -31,7 +31,7 @@ exports.register = (req, res, next) => {
   console.log(req.body);
   userData
     .findOne({
-      orgCode,
+      orgCode, 
     })
     .then((orgExists) => {
       if (orgExists) {
