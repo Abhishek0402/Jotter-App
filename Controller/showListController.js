@@ -108,7 +108,7 @@ exports.showList = (req, res, next) => {
 
 //@ show classes and subjects teacher teaching in
 exports.teacherDetails = (req, res, next) => {
-  var { orgCode, teacherCode} = req.body;
+  var { orgCode, teacherCode } = req.body;
   organisation
     .findOne({ orgCode })
     .then((orgFound) => {
@@ -325,10 +325,10 @@ exports.notificationList = (req, res, next) => {
 
 //@ teacher class edit
 exports.teacherEdit = (req, res, next) => {
-  var {orgCode,teacherCode,class_section_subject} = req.body;
+  var { orgCode, teacherCode, class_section_subject } = req.body;
   organisation
     .findOne({
-      orgCode
+      orgCode,
     })
     .then((orgFound) => {
       if (orgFound) {
@@ -336,8 +336,8 @@ exports.teacherEdit = (req, res, next) => {
           teacherCode: teacherCode,
         });
         if (teacherIndex >= 0) {
-          console.log(orgFound.orgTeachers[teacherIndex]);
-          var classLength = (orgFound.orgTeachers[teacherIndex].teachingClasses).length;
+          var classLength =
+            orgFound.orgTeachers[teacherIndex].teachingClasses.length;
           if (classLength > 0) {
             orgFound.orgTeachers[teacherIndex].teachingClasses = [];
           }
@@ -360,22 +360,22 @@ exports.teacherEdit = (req, res, next) => {
               teachingSubjects: subjects,
             });
           }
-          //classes array is for teachingClasses
-          // orgFound.orgTeachers[teacherIndex].teachingClasses.push(classes);
-          console.log(orgFound.orgTeachers[teacherIndex]);
 
-          orgFound.save().then(classChanged=>{
-            console.log("class saved");
+          orgFound
+            .save()
+            .then((classChanged) => {
+              console.log("class saved");
 
-            res.send({
-              message:"teacher_updated"
+              res.send({
+                message: "teacher_updated",
+              });
             })
-          }).catch(err=>{console.log(err)
-          res.send({
-            message:"invalid_data"
-          });
-          });
-        
+            .catch((err) => {
+              console.log(err);
+              res.send({
+                message: "invalid_data",
+              });
+            });
         } else {
           console.log("Invalid_teacherCode");
           res.send({
