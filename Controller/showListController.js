@@ -268,14 +268,12 @@ return {
             message:"list_found"
           });
         }
-
         else if(need==="Class"){
 console.log(orgFound.orgClasses);
 res.send({
   list:orgFound.orgClasses,
   message: "list_found"
 });
-
         }
       } else {
         console.log("Invalid_orgCode");
