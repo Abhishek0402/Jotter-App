@@ -323,7 +323,7 @@ exports.notificationList = (req, res, next) => {
     });
 };
 
-//@ teacher class edit
+//@ edit class section subject of teacher
 exports.teacherEdit = (req, res, next) => {
   var { orgCode, teacherCode, class_section_subject } = req.body;
   organisation
