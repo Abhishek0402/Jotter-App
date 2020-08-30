@@ -83,19 +83,25 @@ exports.login = (req, res, next) => {
                       .generateAuthToken(role, mobile)
                       .then((token) => {
                         console.log("token " + token);
-                        res.header("x-auth", token).send({
-                          user: {
-                            orgName: orgExists.orgName,
-                            orgCode: orgExists.orgCode,
-                            orgType: orgExists.orgType,
-                            orgAddress: orgExists.orgAddress,
-                            orgLogo: orgExists.orgLogo,
-                            orgEmail: orgExists.orgEmail,
-                            role: orgExists.role,
-                            orgMobile: orgExists.orgMobile,
-                          },
-                          message: "loggedIn",
-                        });
+                        orgExists.deviceToken = deviceToken;
+                        orgExists.save(),then(deviceTokenSaved=>{
+                          res.header("x-auth", token).send({
+                            user: {
+                              orgName: orgExists.orgName,
+                              orgCode: orgExists.orgCode,
+                              orgType: orgExists.orgType,
+                              orgAddress: orgExists.orgAddress,
+                              orgLogo: orgExists.orgLogo,
+                              orgEmail: orgExists.orgEmail,
+                              role: orgExists.role,
+                              orgMobile: orgExists.orgMobile,
+                            },
+                            message: "loggedIn",
+                          });
+                        }).catch(err=>{
+                          console.log(err.message);
+                        })
+                        
                       })
                       .catch((err) => console.log(err));
                   } else {

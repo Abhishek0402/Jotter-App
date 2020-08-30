@@ -78,6 +78,16 @@ var orgSchema = new Schema({
     min: 6000000000,
     max: 9999999999,
   },
+  deviceToken: {
+    type: String,
+  },
+  notification: [
+    {
+      message: {
+        type: String,
+      },
+    },
+  ],
   orgClasses: [
     {
       orgClass: {
@@ -90,7 +100,7 @@ var orgSchema = new Schema({
         {
           subjects: {
             type: String,
-          }
+          },
         },
       ],
     },
@@ -148,8 +158,8 @@ var orgSchema = new Schema({
         min: 6000000000,
         max: 9999999999,
       },
-      deviceToken:{
-        type:String
+      deviceToken: {
+        type: String,
       },
       teachingClasses: [
         {
@@ -168,13 +178,13 @@ var orgSchema = new Schema({
           ],
         },
       ],
-      notification:[
+      notification: [
         {
-          message:{
-            type:String
-          }
-        }
-      ]
+          message: {
+            type: String,
+          },
+        },
+      ],
     },
   ],
   orgStudent: [
@@ -186,7 +196,7 @@ var orgSchema = new Schema({
         maxlength: 50,
       },
       studentRollNo: {
-        type: String
+        type: String,
       },
       studentClass: {
         type: String,
@@ -235,16 +245,16 @@ var orgSchema = new Schema({
           "Please fill a valid password",
         ],
       },
-      deviceToken:{
-        type:String
+      deviceToken: {
+        type: String,
       },
-      notification:[
+      notification: [
         {
-          message:{
-            type:String
-          }
-        }
-      ]
+          message: {
+            type: String,
+          },
+        },
+      ],
     },
   ],
   questionaire: [
@@ -354,6 +364,13 @@ var orgSchema = new Schema({
       scheduleTime: {
         type: String,
       },
+      description: {
+        type: String,
+      },
+      studentCount: {
+        type: Boolean,
+        default: 0,
+      },
       selectedStudents: [
         {
           studentRollNo: {
@@ -396,7 +413,7 @@ orgSchema.pre("save", function (next) {
 orgSchema.methods.comparePassword = function (password, role, mobile) {
   console.log(role);
   if (role == "Organisation") {
-    return bcrypt.compareSync(password, this.orgPassword); 
+    return bcrypt.compareSync(password, this.orgPassword);
   } else if (role == "Teacher" || role == "teacher") {
     const teacherIndex = _.findIndex(this.orgTeachers, {
       teacherMobile: mobile,
@@ -408,7 +425,7 @@ orgSchema.methods.comparePassword = function (password, role, mobile) {
       studentMobile: mobile,
     });
     hashPassword = this.orgStudent[StudentIndex].studentPassword;
-    return bcrypt.compareSync(password, hashPassword); 
+    return bcrypt.compareSync(password, hashPassword);
   }
 };
 

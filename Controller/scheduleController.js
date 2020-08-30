@@ -1,5 +1,3 @@
-var gcm = require("node-gcm");
-
 const admin = require("../models/admin");
 const organisation = require("../models/organisation");
 const userData = require("../models/userData");
@@ -7,28 +5,131 @@ const userData = require("../models/userData");
 const _ = require("lodash");
 var moment = require("moment");
 const mailer = require("../utility/mailer");
-var notificationKey = require("../config/notification");
+const notify = require("../utility/notification");
 
-var sender = new gcm.Sender(notificationKey.serverKey);
 
 //@create schedule
 exports.createSchedule = (req, res, next) => {
   var {
     orgCode,
     teacherCode,
-    classScheduled,
-    sectionScheduled,
     topicScheduled,
     subjectScheduled,
     scheduleDate,
     scheduleTime,
-    selectedStudents,
+    description,
+    studentCount,
+    classScheduled,
+    sectionScheduled,
+    selectedStudents
   } = req.body;
+
+  var createdAt = moment().format();
+  var updatedAt = moment().format();
+  
+  console.log(studentsList);
+ 
+  organisation
+    .findOne({
+      orgCode
+    })
+    .then((orgFound) => {
+      console.log("orgFound");
+      if (orgFound) {
+
+        var subjectForMail;
+        if (topicScheduled === "Subject") {
+          subjectForMail = subjectScheduled;
+        } else {
+          subjectForMail = "General Talk";
+        }
+
+        var orgLogo = orgFound.orgLogo;
+
+        var details = {
+          scheduleSubject: subjectForMail,
+          scheduleDate: scheduleDate,
+          scheduleTime: scheduleTime,
+          orgName: orgFound.orgName,
+          purpose: "You have a new schedule as below :",
+          orgLogo: orgLogo,
+          footerMessage:
+            "Please, don't forget to join the above schedule on time.",
+        };
+  
+        var subjectMail = "Schedule";
+  
+
+
+
+        var studentsList = new Array();
+var mailList = new Array();
+var registrationTokens = new Array();
+
+if(teacherCode==="Organisation"){
+  registrationTokens.push(orgFound.deviceToken);
+  mailList.push(orgFound.orgEmail);
+ 
+details.teacherName = orgFound.orgName;
+var messageBody = `You have a new schedule for ${details.scheduleSubject} at ${details.scheduleTime} on ${details.scheduleDate} by ${details.teacherName}.`;
+orgFound.notification.push({
+  message:messageBody
+});
+
+if(studentCount){
+var std = orgFound.orgStudent.map(student =>{
+if(student.active){
+  registrationTokens.push(student.deviceToken);
+  mailList.push(student.studentEmail);
+  student.notification.push({
+    message:messageBody
+  });
+}
+});
+  }
+  else{
+    var studentSplitter = _.split(selectedStudents, ",");
+
+    for (var selectedStudentDetails in studentSplitter) {
+      var studentNewData = _.split(studentSplitter[selectedStudentDetails], "_");
+      console.log(studentNewData);
+      var studentName = studentNewData[0];
+      var studentRollNo = studentNewData[1];
+      var studentEmail = studentNewData[2];
+      mailList.push(studentEmail);
+  
+      var studentIndex = _.findIndex(orgFound.orgStudent, {
+        studentEmail:studentEmail
+      });
+      if (studentIndex >= 0 && orgFound.orgStudent[studentIndex].active) {
+        registrationTokens.push(
+          orgFound.orgStudent[studentIndex].deviceToken
+        );
+        orgFound.orgStudent[studentIndex].notification.push({
+          message: messageBody,
+        });
+      }
+      studentsList.push({
+        studentRollNo: studentRollNo,
+        studentEmail: studentEmail,
+        studentName: studentName,
+      });
+    }
+  }
+}
+else{
+  var teacherIndex = _.findIndex(orgFound.orgTeachers, {
+    teacherCode: teacherCode,
+  });
+  registrationTokens.push(orgFound.orgTeachers[teacherIndex].deviceToken);
+  mailList.push(orgFound.orgTeachers[teacherIndex].teacherEmail);
+  details.teacherName = orgFound.orgTeachers[teacherIndex].teacherName;
+  var messageBody = `You have a new schedule for ${details.scheduleSubject} at ${details.scheduleTime} on ${details.scheduleDate} by ${details.teacherName}.`;
+  orgFound.orgTeachers[teacherIndex].notification.push({
+    message: messageBody,
+  });
+  //student
   var studentSplitter = _.split(selectedStudents, ",");
-  console.log(req.body);
-  var studentsList = new Array();
-  var mailList = new Array();
-  console.log(studentSplitter);
 
   for (var selectedStudentDetails in studentSplitter) {
     var studentNewData = _.split(studentSplitter[selectedStudentDetails], "_");
@@ -38,6 +139,17 @@ exports.createSchedule = (req, res, next) => {
     var studentEmail = studentNewData[2];
     mailList.push(studentEmail);
 
+    var studentIndex = _.findIndex(orgFound.orgStudent, {
+      studentEmail:studentEmail
+    });
+    if (studentIndex >= 0 && orgFound.orgStudent[studentIndex].active) {
+      registrationTokens.push(
+        orgFound.orgStudent[studentIndex].deviceToken
+      );
+      orgFound.orgStudent[studentIndex].notification.push({
+        message: messageBody,
+      });
+    }
     studentsList.push({
       studentRollNo: studentRollNo,
       studentEmail: studentEmail,
@@ -45,137 +157,80 @@ exports.createSchedule = (req, res, next) => {
     });
   }
 
-  console.log(studentsList);
-  var createdAt = moment().format();
-  var updatedAt = moment().format();
-  organisation
-    .findOne({
-      orgCode,
-    })
-    .then((orgFound) => {
-      console.log("orgFound");
-      if (orgFound) {
-        orgFound.schedules.push({
-          teacherCode,
-          classScheduled,
-          sectionScheduled,
-          topicScheduled,
-          subjectScheduled,
-          createdAt,
-          updatedAt,
-          scheduleDate,
-          scheduleTime,
-          selectedStudents: studentsList,
-        });
-        var teacherIndex = _.findIndex(orgFound.orgTeachers, {
-          teacherCode: teacherCode,
-        });
+}
 
-        var teacherName = orgFound.orgTeachers[teacherIndex].teacherName;
-        var subjectForMail;
-        if (topicScheduled === "Subject") {
-          subjectForMail = subjectScheduled;
-        } else {
-          subjectForMail = "General Talk";
-        }
-        var orgLogo = orgFound.orgLogo;
-        var details = {
-          scheduleSubject: subjectForMail,
-          teacherName: teacherName,
-          scheduleDate: scheduleDate,
-          scheduleTime: scheduleTime,
-          orgName: orgFound.orgName,
-          purpose: "You have a new schedule as below :",
-          orgLogo: orgLogo,
-          footerMessage:
-            "Please, don't forget to join the above schedule on time.",
-        };
+var message = new gcm.Message({
+  // collapseKey: 'demo',
+  priority: "high",
+  contentAvailable: true,
+  delayWhileIdle: true,
+  timeToLive: 60,
+  // restrictedPackageName: "somePackageName",
+  dryRun: false,
+  data: {
+    title: "New Schedule",
+    body: messageBody,
+    icon: "ic_launcher",
+  },
+  notification: {
+    title: "New Schedule",
+    icon: "ic_launcher",
+    body: messageBody,
+  },
+});
 
-        var subjectMail = "Schedule";
 
-        mailList.push(orgFound.orgTeachers[teacherIndex].teacherEmail);
-        console.log(mailList);
+orgFound.schedules.push({
+  teacherCode,
+  classScheduled,
+  sectionScheduled,
+  topicScheduled,
+  subjectScheduled,
+  createdAt,
+  updatedAt,
+  scheduleDate,
+  scheduleTime,
+  studentCount,
+  description,
+  selectedStudents: studentsList,
+});
 
-        mailer.scheduleMail(mailList, details, subjectMail);
+//trigger mailer
+mailer.scheduleMail(mailList, details, subjectMail);
 
-        //notification
-        var messageBody = `You have a new schedule for ${details.scheduleSubject} at ${details.scheduleTime} on ${details.scheduleDate} by ${details.teacherName}.`;
+sender.sendNoRetry(
+  message,
+  { registrationTokens: registrationTokens },
+  function (err, response) {
+    if (err) {
+      console.error(err);
+      res.send({
+        message: "class_not_scheduled",
+      });
+    } else {
+      console.log(response);
 
-        var message = new gcm.Message({
-          // collapseKey: 'demo',
-          priority: "high",
-          contentAvailable: true,
-          delayWhileIdle: true,
-          timeToLive: 60,
-          // restrictedPackageName: "somePackageName",
-          dryRun: false,
-          data: {
-            title: "New Schedule",
-            body: messageBody,
-            icon: "ic_launcher",
-          },
-          notification: {
-            title: "New Schedule",
-            icon: "ic_launcher",
-            body: messageBody,
-          },
-        });
+      orgFound
+        .save()
+        .then((scheduleCreate) => {
+          console.log("schedule created");
 
-        var registrationTokens = new Array();
-
-        registrationTokens.push(orgFound.orgTeachers[teacherIndex].deviceToken);
-
-        orgFound.orgTeachers[teacherIndex].notification.push({
-          message: messageBody,
-        });
-
-        //student details
-        var studentNotify = studentsList.map((studentDetail) => {
-          var studentIndex = _.findIndex(orgFound.orgStudent, {
-            studentEmail: studentDetail.studentEmail,
+          res.send({
+            data: message.params.data,
+            notification: message.params.notification,
+            message: "class_scheduled",
           });
-          if (studentIndex >= 0 && orgFound.orgStudent[studentIndex].active) {
-            registrationTokens.push(
-              orgFound.orgStudent[studentIndex].deviceToken
-            );
-            orgFound.orgStudent[studentIndex].notification.push({
-              message: messageBody,
-            });
-          }
+        })
+        .catch((err) => {
+          console.log(err.message);
+          res.send({
+            message: "class_not_scheduled",
+          });
         });
+    }
+  }
+);
 
-        sender.sendNoRetry(
-          message,
-          { registrationTokens: registrationTokens },
-          function (err, response) {
-            if (err) {
-              console.error(err);
-              res.send({
-                message: "class_not_scheduled",
-              });
-            } else {
-              console.log(response);
-
-              orgFound
-                .save()
-                .then((scheduleCreate) => {
-                  console.log("schedule created");
-
-                  res.send({
-                    data: message.params.data,
-                    notification: message.params.notification,
-                    message: "class_scheduled",
-                  });
-                })
-                .catch((err) => {
-                  console.log(err.message);
-                  res.send({
-                    message: "class_not_scheduled",
-                  });
-                });
-            }
-          }
-        );
       } else {
         console.log("org not found");
         res.send({
@@ -213,6 +268,7 @@ exports.readSchedule = (req, res, next) => {
                 subjectScheduled: scheduleList.subjectScheduled,
                 scheduleDate: scheduleList.scheduleDate,
                 scheduleTime: scheduleList.scheduleTime,
+                scheduleDescription:scheduleList.description,
                 studentCount: scheduleList.selectedStudents.length,
               });
             }
@@ -246,6 +302,7 @@ exports.readSchedule = (req, res, next) => {
                   subjectScheduled: scheduleList.subjectScheduled,
                   scheduleDate: scheduleList.scheduleDate,
                   scheduleTime: scheduleList.scheduleTime,
+                  scheduleDescription:scheduleList.description,
                   studentCount: scheduleList.selectedStudents.length,
                   teacherName: teacherName,
                 });
@@ -573,4 +630,40 @@ exports.deleteSchedule = (req, res, next) => {
       }
     })
     .catch((err) => console.log(err.message));
+};
+
+
+//@ get list of students of any schedule
+exports.studentList = (req,res,next)=>{
+var {orgCode,scheduleId} = req.body;
+console.log("start");
+organisation.findOne({
+  orgCode
+}).then(orgFound=>{
+
+  if(orgFound){
+var scheduleIndex = _.findIndex(orgFound.schedules,{
+  id:scheduleId
+});
+if(scheduleIndex>=0){
+console.log("student lIst");
+res.send({
+  list:orgFound.schedules[scheduleIndex].selectedStudents,
+  message:"list_found"
+});
+}
+else{
+  console.log("schedule id not found");
+  res.send({
+    message:"invalid_data"
+  });
+}
+  }
+  else{
+    console.log("org code not found");
+    res.send({
+      message:"invalid_data"
+    });
+  }
+}).catch(err=> console.log(err.message));
 };
