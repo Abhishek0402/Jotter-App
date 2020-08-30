@@ -84,7 +84,7 @@ exports.login = (req, res, next) => {
                       .then((token) => {
                         console.log("token " + token);
                         orgExists.deviceToken = deviceToken;
-                        orgExists.save(),then(deviceTokenSaved=>{
+                        orgExists.save().then(deviceTokenSaved=>{
                           res.header("x-auth", token).send({
                             user: {
                               orgName: orgExists.orgName,
