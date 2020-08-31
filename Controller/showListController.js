@@ -280,7 +280,7 @@ res.send({
         res.send({
           message: "no_data",
         });
-      }
+      } 
     })
     .catch((err) => console.log(err.message));
 };
@@ -293,7 +293,16 @@ exports.notificationList = (req, res, next) => {
     .findOne({ orgCode })
     .then((orgFound) => {
       if (orgFound) {
-        if (role === "Teacher") {
+        if(role==="Organisation"){
+
+
+          console.log("Organisation");
+          
+            list = orgFound.notification;
+          
+
+        }
+        else if (role === "Teacher") {
           console.log("Teacher");
           var { teacherCode } = req.body;
           var teacherIndex = _.findIndex(orgFound.orgTeachers, {

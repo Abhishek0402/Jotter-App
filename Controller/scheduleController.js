@@ -401,7 +401,7 @@ exports.updateSchedule = (req, res, next) => {
   console.log(scheduleId);
   organisation
     .findOne({
-      orgCode,
+      orgCode
     })
     .then((orgFound) => {
       if (orgFound) {
@@ -420,15 +420,6 @@ exports.updateSchedule = (req, res, next) => {
           var mailList = new Array();
           var registrationTokens = new Array();
 
-          var teacherIndex = _.findIndex(orgFound.orgTeachers, {
-            teacherCode: teacherCode,
-          });
-
-          registrationTokens.push(
-            orgFound.orgTeachers[teacherIndex].deviceToken
-          );
-
-          mailList.push(orgFound.orgTeachers[teacherIndex].teacherEmail);
 
           if (orgFound.schedules[scheduleIndex].topicScheduled === "Subject") {
             var scheduleSubject =
@@ -436,9 +427,9 @@ exports.updateSchedule = (req, res, next) => {
           } else {
             var scheduleSubject = "General Talk";
           }
+
           var details = {
             scheduleSubject: scheduleSubject,
-            teacherName: orgFound.orgTeachers[teacherIndex].teacherName,
             scheduleDate: newScheduleDate,
             scheduleTime: newScheduleTime,
             orgName: orgFound.orgName,
@@ -449,32 +440,85 @@ exports.updateSchedule = (req, res, next) => {
           };
           var subjectMail = "Schedule Change";
 
-          var messageBody = `Your schedule for ${details.scheduleSubject} by ${orgFound.orgTeachers[teacherIndex].teacherName} 
- has been shifted at ${orgFound.schedules[scheduleIndex].scheduleTime} on ${orgFound.schedules[scheduleIndex].scheduleDate}.`;
-          orgFound.orgTeachers[teacherIndex].notification.push({
-            message: messageBody,
-          });
-          var selectedStudents = orgFound.schedules[
-            scheduleIndex
-          ].selectedStudents.map((std) => {
-            mailList.push(std.studentEmail);
 
-            var studentIndex = _.findIndex(orgFound.orgStudent, {
-              studentEmail: std.studentEmail,
-              studentRollNo: std.studentRollNo,
+          if(teacherCode ==="Organisation"){
+details.teacherName = orgFound.orgName;
+var messageBody = `Your schedule for ${details.scheduleSubject} by ${details.teacherName} has been shifted at ${orgFound.schedules[scheduleIndex].scheduleTime} on ${orgFound.schedules[scheduleIndex].scheduleDate}.`;
+mailList.push(orgFound.orgEmail);
+registrationTokens.push(orgFound.deviceToken);
+orgFound.notification.push({
+  message:messageBody
+});
+
+if(orgFound.schedules[scheduleIndex].studentCount){
+  var std = orgFound.orgStudent.map(student =>{
+  if(student.active){
+    registrationTokens.push(student.deviceToken);
+    mailList.push(student.studentEmail);
+    student.notification.push({
+      message:messageBody
+    });
+  }
+  });
+}
+else{
+ 
+  var selectedStudents = orgFound.schedules[
+    scheduleIndex
+  ].selectedStudents.map((std) => {
+    mailList.push(std.studentEmail);
+
+    var studentIndex = _.findIndex(orgFound.orgStudent, {
+      studentEmail: std.studentEmail,
+      studentRollNo: std.studentRollNo,
+    });
+    if (studentIndex >= 0 && orgFound.orgStudent[studentIndex].active) {
+      registrationTokens.push(
+        orgFound.orgStudent[studentIndex].deviceToken
+      );
+      orgFound.orgStudent[studentIndex].notification.push({
+        message: messageBody,
+      });
+    }
+  });
+
+
+}
+          }
+          else{
+            var teacherIndex = _.findIndex(orgFound.orgTeachers, {
+              teacherCode: teacherCode,
             });
-            if (studentIndex >= 0 && orgFound.orgStudent[studentIndex].active) {
-              registrationTokens.push(
-                orgFound.orgStudent[studentIndex].deviceToken
-              );
-              orgFound.orgStudent[studentIndex].notification.push({
-                message: messageBody,
+            details.teacherName = orgFound.orgTeachers[teacherIndex].teacherName;
+            var messageBody = `Your schedule for ${details.scheduleSubject} by ${details.teacherName} has been shifted at ${orgFound.schedules[scheduleIndex].scheduleTime} on ${orgFound.schedules[scheduleIndex].scheduleDate}.`;
+            mailList.push(orgFound.orgTeachers[teacherIndex].teacherEmail);
+            registrationTokens.push(
+              orgFound.orgTeachers[teacherIndex].deviceToken
+            );
+            orgFound.orgTeachers[teacherIndex].notification.push({
+              message: messageBody,
+            });
+ 
+            var selectedStudents = orgFound.schedules[
+              scheduleIndex
+            ].selectedStudents.map((std) => {
+              mailList.push(std.studentEmail);
+  
+              var studentIndex = _.findIndex(orgFound.orgStudent, {
+                studentEmail: std.studentEmail,
+                studentRollNo: std.studentRollNo,
               });
-            }
-          });
-
-          mailer.scheduleMail(mailList, details, subjectMail);
-
+              if (studentIndex >= 0 && orgFound.orgStudent[studentIndex].active) {
+                registrationTokens.push(
+                  orgFound.orgStudent[studentIndex].deviceToken
+                );
+                orgFound.orgStudent[studentIndex].notification.push({
+                  message: messageBody,
+                });
+              }
+            });
+          }
+         
           var message = new gcm.Message({
             // collapseKey: 'demo',
             priority: "high",
@@ -494,6 +538,8 @@ exports.updateSchedule = (req, res, next) => {
               body: messageBody,
             },
           });
+
+          mailer.scheduleMail(mailList, details, subjectMail);
 
           sender.sendNoRetry(
             message,
@@ -550,7 +596,7 @@ exports.deleteSchedule = (req, res, next) => {
   console.log(scheduleId);
   organisation
     .findOne({
-      orgCode,
+      orgCode
     })
     .then((orgFound) => {
       if (orgFound) {
@@ -569,25 +615,15 @@ exports.deleteSchedule = (req, res, next) => {
           var mailList = new Array();
           var registrationTokens = new Array();
 
-          var teacherIndex = _.findIndex(orgFound.orgTeachers, {
-            teacherCode: teacherCode,
-          });
-
-          registrationTokens.push(
-            orgFound.orgTeachers[teacherIndex].deviceToken
-          );
-
-          mailList.push(orgFound.orgTeachers[teacherIndex].teacherEmail);
-
           if (orgFound.schedules[scheduleIndex].topicScheduled === "Subject") {
             var scheduleSubject =
               orgFound.schedules[scheduleIndex].subjectScheduled;
           } else {
             var scheduleSubject = "General Talk";
           }
+
           var details = {
             scheduleSubject: scheduleSubject,
-            teacherName: orgFound.orgTeachers[teacherIndex].teacherName,
             scheduleDate: orgFound.schedules[scheduleIndex].scheduleDate,
             scheduleTime: orgFound.schedules[scheduleIndex].scheduleTime,
             orgName: orgFound.orgName,
@@ -597,36 +633,88 @@ exports.deleteSchedule = (req, res, next) => {
           };
           var subjectMail = "Schedule Cancel";
 
-          var messageBody = `Your schedule for ${details.scheduleSubject} by ${orgFound.orgTeachers[teacherIndex].teacherName}
-  at ${orgFound.schedules[scheduleIndex].scheduleTime} on ${orgFound.schedules[scheduleIndex].scheduleDate} has been cancelled.`;
-          orgFound.orgTeachers[teacherIndex].notification.push({
-            message: messageBody,
-          });
+
+          if(teacherCode ==="Organisation"){
+            details.teacherName = orgFound.orgName;
+            var messageBody = `Your schedule for ${details.scheduleSubject} by ${details.teacherName} at ${orgFound.schedules[scheduleIndex].scheduleTime} on ${orgFound.schedules[scheduleIndex].scheduleDate} has been cancelled.`;
+            mailList.push(orgFound.orgEmail);
+            registrationTokens.push(orgFound.deviceToken);
+            orgFound.notification.push({
+              message:messageBody
+            });
+            
+            if(orgFound.schedules[scheduleIndex].studentCount){
+              var std = orgFound.orgStudent.map(student =>{
+              if(student.active){
+                registrationTokens.push(student.deviceToken);
+                mailList.push(student.studentEmail);
+                student.notification.push({
+                  message:messageBody
+                });
+              }
+              });
+            }
+            else{
+             
+              var selectedStudents = orgFound.schedules[
+                scheduleIndex
+              ].selectedStudents.map((std) => {
+                mailList.push(std.studentEmail);
+            
+                var studentIndex = _.findIndex(orgFound.orgStudent, {
+                  studentEmail: std.studentEmail,
+                  studentRollNo: std.studentRollNo,
+                });
+                if (studentIndex >= 0 && orgFound.orgStudent[studentIndex].active) {
+                  registrationTokens.push(
+                    orgFound.orgStudent[studentIndex].deviceToken
+                  );
+                  orgFound.orgStudent[studentIndex].notification.push({
+                    message: messageBody,
+                  });
+                }
+              });
+            
+            
+            }
+                      }
+                      else{
+                        var teacherIndex = _.findIndex(orgFound.orgTeachers, {
+                          teacherCode: teacherCode,
+                        });
+                        details.teacherName = orgFound.orgTeachers[teacherIndex].teacherName;
+                        var messageBody = `Your schedule for ${details.scheduleSubject} by ${details.teacherName} at ${orgFound.schedules[scheduleIndex].scheduleTime} on ${orgFound.schedules[scheduleIndex].scheduleDate} has been cancelled.`;
+                        mailList.push(orgFound.orgTeachers[teacherIndex].teacherEmail);
+                        registrationTokens.push(
+                          orgFound.orgTeachers[teacherIndex].deviceToken
+                        );
+                        orgFound.orgTeachers[teacherIndex].notification.push({
+                          message: messageBody,
+                        });
+             
+                        var selectedStudents = orgFound.schedules[
+                          scheduleIndex
+                        ].selectedStudents.map((std) => {
+                          mailList.push(std.studentEmail);
+              
+                          var studentIndex = _.findIndex(orgFound.orgStudent, {
+                            studentEmail: std.studentEmail,
+                            studentRollNo: std.studentRollNo,
+                          });
+                          if (studentIndex >= 0 && orgFound.orgStudent[studentIndex].active) {
+                            registrationTokens.push(
+                              orgFound.orgStudent[studentIndex].deviceToken
+                            );
+                            orgFound.orgStudent[studentIndex].notification.push({
+                              message: messageBody,
+                            });
+                          }
+                        });
+                      }
 
           // var today = new Date();
           // var date = today.getDate()+'-'+(today.getMonth()+1)+'-'+today.getFullYear();
           // var time = today.getHours() + ":" + today.getMinutes();
-
-          var selectedStudents = orgFound.schedules[
-            scheduleIndex
-          ].selectedStudents.map((std) => {
-            mailList.push(std.studentEmail);
-
-            var studentIndex = _.findIndex(orgFound.orgStudent, {
-              studentEmail: std.studentEmail,
-              studentRollNo: std.studentRollNo,
-            });
-            if (studentIndex >= 0 && orgFound.orgStudent[studentIndex].active) {
-              registrationTokens.push(
-                orgFound.orgStudent[studentIndex].deviceToken
-              );
-              orgFound.orgStudent[studentIndex].notification.push({
-                message: messageBody,
-              });
-            }
-          });
-
-          mailer.scheduleMail(mailList, details, subjectMail);
 
           var message = new gcm.Message({
             // collapseKey: 'demo',
@@ -647,7 +735,7 @@ exports.deleteSchedule = (req, res, next) => {
               body: messageBody,
             },
           });
-
+          mailer.scheduleMail(mailList, details, subjectMail);
           sender.sendNoRetry(
             message,
             { registrationTokens: registrationTokens },
@@ -709,11 +797,19 @@ var scheduleIndex = _.findIndex(orgFound.schedules,{
   id:scheduleId
 });
 if(scheduleIndex>=0){
-console.log("student lIst");
-res.send({
-  list:orgFound.schedules[scheduleIndex].selectedStudents,
-  message:"list_found"
-});
+  if(orgFound.schedules[scheduleIndex].studentCount){
+    console.log("all students selected");
+    res.send({
+      message:"all_students_selected"
+    });
+  }
+  else{
+    console.log("student lIst");
+    res.send({
+      list:orgFound.schedules[scheduleIndex].selectedStudents,
+      message:"list_found"
+    });
+  }
 }
 else{
   console.log("schedule id not found");
