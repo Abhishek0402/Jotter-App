@@ -1,3 +1,5 @@
+var gcm = require("node-gcm");
+
 const admin = require("../models/admin");
 const organisation = require("../models/organisation");
 const userData = require("../models/userData");
@@ -5,7 +7,10 @@ const userData = require("../models/userData");
 const _ = require("lodash");
 var moment = require("moment");
 const mailer = require("../utility/mailer");
-const notify = require("../utility/notification");
+
+var notificationKey = require("../config/notification");
+
+var sender = new gcm.Sender(notificationKey.serverKey);
 
 
 //@create schedule
@@ -21,13 +26,11 @@ exports.createSchedule = (req, res, next) => {
     studentCount,
     classScheduled,
     sectionScheduled,
-    selectedStudents
-  } = req.body;
+    selectedStudents} = req.body;
 
   var createdAt = moment().format();
   var updatedAt = moment().format();
   
-  console.log(studentsList);
  
   organisation
     .findOne({
@@ -78,6 +81,8 @@ orgFound.notification.push({
 
 if(studentCount){
 var std = orgFound.orgStudent.map(student =>{
+  console.log("yess");
+
 if(student.active){
   registrationTokens.push(student.deviceToken);
   mailList.push(student.studentEmail);
@@ -87,7 +92,7 @@ if(student.active){
 }
 });
   }
-  else{
+  else{ 
     var studentSplitter = _.split(selectedStudents, ",");
 
     for (var selectedStudentDetails in studentSplitter) {
@@ -105,6 +110,8 @@ if(student.active){
         registrationTokens.push(
           orgFound.orgStudent[studentIndex].deviceToken
         );
+    console.log("yess");
+
         orgFound.orgStudent[studentIndex].notification.push({
           message: messageBody,
         });
@@ -230,7 +237,6 @@ sender.sendNoRetry(
     }
   }
 );
-
       } else {
         console.log("org not found");
         res.send({
@@ -251,7 +257,45 @@ exports.readSchedule = (req, res, next) => {
     })
     .then((orgFound) => {
       if (orgFound) {
-        if (role == "Teacher" || role == "teacher") {
+        if(role==="Organisation"){
+          var teacherCode = "Organisation";
+
+          var scList = new Array();
+          var teacherScheduleList = orgFound.schedules.map((scheduleList) => {
+            if (
+              scheduleList.teacherCode == teacherCode &&
+              scheduleList.active
+            ) {
+
+              if(scheduleList.studentCount){
+                studentCount = orgFound.orgStudent.length;
+              }
+              else{
+                studentCount= scheduleList.selectedStudents.length
+              }
+
+              scList.push({
+                scheduleId: scheduleList._id,
+                scheduledClass: scheduleList.classScheduled,
+                scheduledSection: scheduleList.sectionScheduled,
+                topicScheduled: scheduleList.topicScheduled,
+                subjectScheduled: scheduleList.subjectScheduled,
+                scheduleDate: scheduleList.scheduleDate,
+                scheduleTime: scheduleList.scheduleTime,
+                scheduleDescription:scheduleList.description,
+                studentALL: scheduleList.studentCount,
+                studentCount: studentCount,
+              });
+            }
+          });
+
+          console.log(scList);
+          res.send({
+            list: scList,
+            message: "list_found",
+          });
+        }
+        else if (role == "Teacher" || role == "teacher") {
           const { teacherCode } = req.body;
 
           var scList = new Array();
@@ -281,8 +325,20 @@ exports.readSchedule = (req, res, next) => {
           });
         } else if (role == "Student" || role == "student") {
           const { studentClass, studentSection, studentRollNo } = req.body;
+
+       
+
           var scList = new Array();
           var studentScheduleList = orgFound.schedules.map((scheduleList) => {
+
+            if(scheduleList.studentCount){
+              studentCount = orgFound.orgStudent.length;
+            }
+            else{
+              studentCount= scheduleList.selectedStudents.length
+            }
+
+
             if (
               scheduleList.classScheduled == studentClass &&
               scheduleList.sectionScheduled == studentSection &&
@@ -292,18 +348,25 @@ exports.readSchedule = (req, res, next) => {
                 studentRollNo: studentRollNo,
               });
               if (roleCheck >= 0) {
-                var teacherIndex = _.findIndex(orgFound.orgTeachers, {
-                  teacherCode: scheduleList.teacherCode,
-                });
-                var teacherName =
-                  orgFound.orgTeachers[teacherIndex].teacherName;
+                if(scheduleList.teacherCode ==="Organisation"){
+                  teacherName=orgFound.orgName;
+                }
+                else{
+                  var teacherIndex = _.findIndex(orgFound.orgTeachers, {
+                    teacherCode: scheduleList.teacherCode,
+                  });
+  
+                  var teacherName =
+                    orgFound.orgTeachers[teacherIndex].teacherName;
+                }
+              
                 scList.push({
                   topicScheduled: scheduleList.topicScheduled,
                   subjectScheduled: scheduleList.subjectScheduled,
                   scheduleDate: scheduleList.scheduleDate,
                   scheduleTime: scheduleList.scheduleTime,
                   scheduleDescription:scheduleList.description,
-                  studentCount: scheduleList.selectedStudents.length,
+                  studentCount,
                   teacherName: teacherName,
                 });
               }
