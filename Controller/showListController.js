@@ -57,7 +57,10 @@ exports.showList = (req, res, next) => {
             })
             .catch((err) => console.log(err.message));
         } else if (currentRole === "Teacher") {
+          
           const { studentClass, studentSection } = req.body;
+          console.log("hello");
+          console.log(req.body);
           organisation
             .findOne({ orgCode })
             .then((orgFound) => {
