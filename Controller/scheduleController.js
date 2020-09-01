@@ -78,7 +78,7 @@ var messageBody = `You have a new schedule for ${details.scheduleSubject} at ${d
 orgFound.notification.push({
   message:messageBody
 });
-
+console.log(`studentCount ${studentCount}`);
 if(studentCount){
 var std = orgFound.orgStudent.map(student =>{
   console.log("yess");
