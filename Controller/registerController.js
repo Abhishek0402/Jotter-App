@@ -386,7 +386,7 @@ organisation
           const orgTeachersMap = await list.map((item) => {
             //class section subject seperator
             var classes = new Array();
-            var classSeperator =_.split(item.class_section_subject,',');
+            var classSeperator =_.split(item.class_section_subject,'/');
             console.log(`class seperator ${classSeperator}`);
             var classLength = classSeperator.length;
             console.log(classLength);
@@ -710,7 +710,7 @@ var {list} = req.body;
                 if (orgFoundForClass) {
                   
                           const orgClasses = await list.map((item) => {
-                            var teachSubject = _.split(item.subjects, ',');
+                            var teachSubject = _.split(item.subjects, '/');
                             var classIndex = _.findIndex(orgFoundForClass.orgClasses,{
                               orgClass:item.orgClass,orgSection: item.orgSection
                             });
