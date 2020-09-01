@@ -386,14 +386,14 @@ organisation
           const orgTeachersMap = await list.map((item) => {
             //class section subject seperator
             var classes = new Array();
-            var classSeperator = _.split(item.class_section_subjects,",");
+            var classSeperator =_.split(item.class_section_subject,',');
             console.log(`class seperator ${classSeperator}`);
             var classLength = classSeperator.length;
             console.log(classLength);
             for (var classFinder in classSeperator) {
               var classNewFind = _.split(
                 classSeperator[classFinder],
-                "_"
+              '_'
               );
               console.log(classNewFind);
               var classNewFindLength = classNewFind.length;
