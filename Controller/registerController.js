@@ -405,12 +405,13 @@ organisation
                   subject: classNewFind[i],
                 });
               }
-              classes.push({
+              classes.push({ 
                 teacherClass: teacherClass,
                 teacherSection: teacherSection,
                 teachingSubjects: subjects,
               });
             }
+            console.log(classes);
             teacherPassword = "Smart@123";
             var teacherPassword = bcrypt.hashSync(
               teacherPassword,
