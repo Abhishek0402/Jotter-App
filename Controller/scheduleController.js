@@ -27,7 +27,8 @@ exports.createSchedule = (req, res, next) => {
     classScheduled,
     sectionScheduled,
     selectedStudents} = req.body;
-
+console.log("aashi");
+console.log(selectedStudents);
   var createdAt = moment().format();
   var updatedAt = moment().format();
   
