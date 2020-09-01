@@ -81,7 +81,7 @@ orgFound.notification.push({
   message:messageBody
 });
 console.log(`studentCount ${studentCount}`);
-if(studentCount){
+if(studentCount=="1"){
 var std = orgFound.orgStudent.map(student =>{
   console.log("yess");
 
