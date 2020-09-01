@@ -94,7 +94,7 @@ if(student.active){
   }
   else{ 
     var studentSplitter = _.split(selectedStudents, ",");
-console.log(selectedStudents);
+console.log("hellow schedule"+selectedStudents);
     for (var selectedStudentDetails in studentSplitter) {
       var studentNewData = _.split(studentSplitter[selectedStudentDetails], "_");
       console.log(studentNewData);
