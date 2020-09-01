@@ -68,9 +68,9 @@ exports.register = (req, res, next) => {
             var teacherPassword = bcrypt.hashSync(teacherPassword, 10);
 var teacherMobile= mobile;
             var classes = new Array();
-            var classSeperator = _.split(class_section_subject, ",");
+            var classSeperator = _.split(class_section_subject, ',');
             for (var classFinder in classSeperator) {
-              var classNewFind = _.split(classSeperator[classFinder], "_");
+              var classNewFind = _.split(classSeperator[classFinder], '_');
               var classNewFindLength = classNewFind.length;
               var teacherClass = classNewFind[0];
               var teacherSection = classNewFind[1];
@@ -639,11 +639,11 @@ res.send({
                 if (orgFoundForClass) {
                   var classes = new Array();
 
-                  var classSeperator = _.split(class_section_subject, ",");
+                  var classSeperator = _.split(class_section_subject, ',');
                   for (var classFinder in classSeperator) {
                     var classNewFind = _.split(
                       classSeperator[classFinder],
-                      "_"
+                      '_'
                     );
                     var classNewFindLength = classNewFind.length;
                     var orgClass = classNewFind[0];
@@ -710,7 +710,7 @@ var {list} = req.body;
                 if (orgFoundForClass) {
                   
                           const orgClasses = await list.map((item) => {
-                            var teachSubject = _.split(item.subjects, ",");
+                            var teachSubject = _.split(item.subjects, ',');
                             var classIndex = _.findIndex(orgFoundForClass.orgClasses,{
                               orgClass:item.orgClass,orgSection: item.orgSection
                             });
