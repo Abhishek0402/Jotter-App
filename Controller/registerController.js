@@ -390,12 +390,15 @@ organisation
               item.class_section_subjects,
               ","
             );
+            console.log(`class seperator ${classSeperator}`);
             var classLength = classSeperator.length;
+            console.log(classLength);
             for (var classFinder in classSeperator) {
               var classNewFind = _.split(
                 classSeperator[classFinder],
                 "_"
               );
+              console.log(classNewFind);
               var classNewFindLength = classNewFind.length;
               var teacherClass = classNewFind[0];
               var teacherSection = classNewFind[1];
