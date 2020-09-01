@@ -574,7 +574,7 @@ res.send({
                 studentName: item.name,
                 studentRollNo: item.rollNo,
                 studentClass: item.studentClass,
-                studentSection: item.section,
+                studentSection: item.studentSection,
                 studentFatherName: item.fatherName,
                 role: item.role,
                 studentEmail: item.email,
