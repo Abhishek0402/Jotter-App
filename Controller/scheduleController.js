@@ -280,7 +280,7 @@ console.log("yes");
               }
 
               scList.push({
-                scheduleId: scheduleList._id,
+                scheduleId: scheduleList.id,
                 scheduledClass: scheduleList.classScheduled,
                 scheduledSection: scheduleList.sectionScheduled,
                 topicScheduled: scheduleList.topicScheduled,
@@ -310,7 +310,7 @@ console.log("yes");
               scheduleList.active
             ) {
               scList.push({
-                scheduleId: scheduleList._id,
+                scheduleId: scheduleList.id,
                 scheduledClass: scheduleList.classScheduled,
                 scheduledSection: scheduleList.sectionScheduled,
                 topicScheduled: scheduleList.topicScheduled,
