@@ -94,7 +94,7 @@ if(student.active){
   }
   else{ 
     var studentSplitter = _.split(selectedStudents, ",");
-
+console.log(selectedStudents);
     for (var selectedStudentDetails in studentSplitter) {
       var studentNewData = _.split(studentSplitter[selectedStudentDetails], "_");
       console.log(studentNewData);
@@ -267,7 +267,7 @@ console.log(teacherCode);
               scheduleList.teacherCode == teacherCode &&
               scheduleList.active
             ) {
-console.log("yes");
+console.log("yes"); 
               if(scheduleList.studentCount){
                 studentCount = orgFound.orgStudent.length;
                 console.log(`student ${studentCount}`);
