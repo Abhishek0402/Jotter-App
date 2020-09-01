@@ -801,8 +801,9 @@ organisation.findOne({
 var scheduleIndex = _.findIndex(orgFound.schedules,{
   id:scheduleId
 });
+console.log(req.body);
 if(scheduleIndex>=0){
-  if(orgFound.schedules[scheduleIndex].studentCount=="1"){
+  if(orgFound.schedules[scheduleIndex].studentCount){
     console.log("all students selected");
     res.send({
       message:"all_students_selected"
