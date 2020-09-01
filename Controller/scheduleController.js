@@ -366,6 +366,7 @@ console.log("yes");
                 }
               
                 scList.push({
+                scheduleId: scheduleList.id,
                   topicScheduled: scheduleList.topicScheduled,
                   subjectScheduled: scheduleList.subjectScheduled,
                   scheduleDate: scheduleList.scheduleDate,
