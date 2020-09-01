@@ -259,19 +259,23 @@ exports.readSchedule = (req, res, next) => {
       if (orgFound) {
         if(role==="Organisation"){
           var teacherCode = "Organisation";
-
+console.log(role);
+console.log(teacherCode);
           var scList = new Array();
           var teacherScheduleList = orgFound.schedules.map((scheduleList) => {
             if (
               scheduleList.teacherCode == teacherCode &&
               scheduleList.active
             ) {
-
+console.log("yes");
               if(scheduleList.studentCount){
                 studentCount = orgFound.orgStudent.length;
+                console.log(`student ${studentCount}`);
               }
               else{
-                studentCount= scheduleList.selectedStudents.length
+                studentCount= scheduleList.selectedStudents.length;
+                console.log(`student yes yes ${studentCount}`);
+
               }
 
               scList.push({
