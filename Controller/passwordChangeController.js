@@ -9,15 +9,24 @@ const bcrypt = require("bcryptjs");
 
 //@ send otp
 exports.sendOtp = (req, res, next) => {
-  var { email } = req.body;
-
+  var { email,mobile } = req.body;
+mobile = parseFloat(mobile);
   userData
     .findOne({
-      user: { $elemMatch: { email: email } },
+      user: { $elemMatch: {mobile: mobile } },
     })
     .then((userExists) => {
       if (userExists) {
         console.log("user_Exsits");
+        console.log(userExists);
+        var mobileIndex = _.findIndex(userExists.user,{
+          mobile:mobile,email:email
+        });
+        console.log(mobileIndex);
+        if(mobileIndex>=0){
+console.log(userExists.user[mobileIndex]);
+
+
         var otpToSend = random.randomOtp();
         var time = new Date();
 
@@ -50,6 +59,15 @@ exports.sendOtp = (req, res, next) => {
             });
           })
           .catch((e) => console.log(e));
+
+        }
+        else{
+          console.log("user_not_found");
+          res.send({
+            message:"user_not_found"
+          });
+        }
+
       } else {
         console.log("user not found");
         res.send({
