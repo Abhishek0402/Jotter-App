@@ -27,6 +27,7 @@ exports.register = (req, res, next) => {
   if (role === "Student") {
     var email = studentEmail;
   }
+  mobile = parseFloat(mobile);
   console.log("registration starts");
   console.log(req.body);
   userData
