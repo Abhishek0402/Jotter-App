@@ -316,10 +316,11 @@ organisation
 
 
     const orgTeachersMap = await list.map((item) => {
+      
       var teacherMobilePresent = _.findIndex(
         orgFoundForTeacher.orgTeachers,
         {
-          teacherMobile: item.mobile,
+          teacherMobile: parseFloat(item.mobile),
         }
       );
 
@@ -341,14 +342,14 @@ organisation
       });
 
       var studentMobilePresent = _.findIndex(orgFoundForTeacher.orgStudent,{
-        studentMobile:item.mobile
+        studentMobile:parseFloat(item.mobile)
       });
 
       var orgEmailPresent = _.findIndex(orgFoundForTeacher,{
         orgEmail:item.email
       });
       var orgMobilePresent=_.findIndex(orgFoundForTeacher,{
-        orgMobile:mobile
+        orgMobile:parseFloat(item.mobile)
       });
 
 
@@ -427,12 +428,12 @@ organisation
               role: item.role,
               teacherEmail: item.email,
               teacherPassword: teacherPassword,
-              teacherMobile: item.mobile,
+              teacherMobile: parseFloat(item.mobile),
               teachingClasses: classes,
             });
             orgExists.user.push({
               role: item.role,
-              mobile: item.mobile,
+              mobile: parseFloat(item.mobile),
               email: item.email,
             });
           });
@@ -497,14 +498,14 @@ organisation
       var studentMobilePresent = _.findIndex(
         orgFoundForStudent.orgStudent,
         {
-          studentMobile: item.mobile,
+          studentMobile: parseFloat(item.mobile),
         }
       );
 
       var teacherMobilePresent = _.findIndex(
         orgFoundForStudent.orgTeachers,
         {
-          teacherMobile: item.mobile,
+          teacherMobile: parseFloat(item.mobile),
         }
       );
 
@@ -529,7 +530,7 @@ organisation
         orgEmail:item.email
       });
       var orgMobilePresent=_.findIndex(orgFoundForStudent,{
-        orgMobile:mobile
+        orgMobile:parseFloat(item.mobile)
       });
 
       if (
@@ -579,14 +580,14 @@ res.send({
                 studentFatherName: item.fatherName,
                 role: item.role,
                 studentEmail: item.email,
-                studentMobile: item.mobile,
+                studentMobile: parseFloat(item.mobile),
                 studentDOB: item.dob,
                 studentGender: item.gender,
                 studentPassword: studentPassword,
               });
               orgExists.user.push({
                 role: item.role,
-                mobile: item.mobile,
+                mobile: parseFloat(item.mobile),
                 email: item.email,
               });
             });
