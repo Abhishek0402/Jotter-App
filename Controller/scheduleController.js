@@ -72,6 +72,7 @@ var mailList = new Array();
 var registrationTokens = new Array();
 
 if(teacherCode==="Organisation"){
+  details.scheduleSubject = description;
   registrationTokens.push(orgFound.deviceToken);
   mailList.push(orgFound.orgEmail);
  
