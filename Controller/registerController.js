@@ -162,7 +162,7 @@ var teacherMobile= mobile;
                             .catch((err) => {
                               console.log(err.message);
                               res.send({
-                                message,
+                                message:"invalid_entry",
                               });
                             });
                         })
