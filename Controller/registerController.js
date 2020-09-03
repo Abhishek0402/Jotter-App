@@ -71,7 +71,7 @@ var teacherMobile= mobile;
 
 var classes = new Array();
 
-for(var classNew in class_section_subject){
+for(var classNew in class_section_subject) {
   var classNewFind = _.split(class_section_subject[classNew], '_');
   var classIndex = _.findIndex(classes,{
     teacherClass:classNewFind[0],teacherSection:classNewFind[1]

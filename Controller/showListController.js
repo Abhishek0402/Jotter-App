@@ -375,25 +375,39 @@ exports.teacherEdit = (req, res, next) => {
           if (classLength > 0) {
             orgFound.orgTeachers[teacherIndex].teachingClasses = [];
           }
-          var classes = new Array();
-          var classSeperator = _.split(class_section_subject, ",");
-          for (var classFinder in classSeperator) {
-            var classNewFind = _.split(classSeperator[classFinder], "_");
-            var classNewFindLength = classNewFind.length;
-            var teacherClass = classNewFind[0];
-            var teacherSection = classNewFind[1];
-            classNewFind = _.reverse(classNewFind);
-            var subjects = new Array();
+       
 
-            for (var i = 0; i < classNewFindLength - 2; i++) {
-              subjects.push({ subject: classNewFind[i] });
-            }
-            orgFound.orgTeachers[teacherIndex].teachingClasses.push({
-              teacherClass: teacherClass,
-              teacherSection: teacherSection,
-              teachingSubjects: subjects,
-            });
-          }
+for(var classNew in class_section_subject) {
+  var classNewFind = _.split(class_section_subject[classNew], '_');
+  var classIndex = _.findIndex(orgFound.orgTeachers[teacherIndex].teachingClasses,{
+    teacherClass:classNewFind[0],teacherSection:classNewFind[1]
+  });
+  if(classIndex>=0){
+    var subjectIndex = _.findIndex(orgFound.orgTeachers[teacherIndex].teachingClasses[classIndex].teachingSubjects,{
+    subject:classNewFind[2]
+    });
+    if(subjectIndex<0){
+      orgFound.orgTeachers[teacherIndex].teachingClasses[classIndex].teachingSubjects.push({
+        subject:classNewFind[2]
+      })
+    }
+
+  }
+  else{
+    var teacherClass = classNewFind[0];
+    var teacherSection = classNewFind[1];
+    var subjects = new Array();
+    subjects.push({
+      subject:classNewFind[2]
+    });
+    orgFound.orgTeachers[teacherIndex].teachingClasses.push({
+      teacherClass: teacherClass,
+      teacherSection: teacherSection,
+      teachingSubjects: subjects,
+    });
+  }
+
+}
 
           orgFound
             .save()
