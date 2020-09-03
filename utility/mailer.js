@@ -48,8 +48,11 @@ console.log("mailer running");
     },
     (error, info) => {
       //(to,subject,text,html,callback)
+      console.log("hello");
       if (error) {
+        console.log("hi");
         console.log(error);
+       
       } else {
         console.log("Email sent success.");
       }
@@ -64,6 +67,7 @@ exports.otpMail = (user, subject,purpose) => {
     purpose: purpose,
     otp: user.otp
 };
+console.log("running");
   transporter.sendMail({
       from: emailConfig.email,
       to: user.email,
@@ -72,6 +76,9 @@ exports.otpMail = (user, subject,purpose) => {
     },
     (error, info) => {
       if (error) {
+        console.log("hi");
+        console.log(info);
+        console.log("bye");
         console.log(error);
       } else {
         console.log("Email sent success.");
