@@ -24,6 +24,7 @@ const awsStorage = multerS3({
 
 const checkFileType = (methodToCreate,file, type, cb) => {
     let filetypes;
+    console.log("check 2")
     if(methodToCreate==="Manual"){
         next();
     }
@@ -35,6 +36,7 @@ const checkFileType = (methodToCreate,file, type, cb) => {
 console.log(`extension ${extname}`);
 console.log(`mimetype ${filetypes}`);
     if (mimetype || extname) {
+        console.log("check 3");
         return cb(null, true);
     } else {
         cb("Error: Invalid File Only!");
@@ -50,6 +52,7 @@ exports.uploadImage = multer({
     fileFilter: function (req, file, cb) {
         console.log(req.body);
         if(req.body.role==="Organisation") {
+            console.log("check1 pass");
             checkFileType(req.body.methodToCreate,file, "image", cb);
         }  
     }
