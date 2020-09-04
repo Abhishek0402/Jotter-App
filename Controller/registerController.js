@@ -853,7 +853,7 @@ var {list} = req.body;
                         var orgLogo = req.file.location;
                       } else if (methodToCreate === "Manual") {
                         var orgLogo =
-                          "https://smart-app-upload-csv.s3.ap-south-1.amazonaws.com/edulogofinal.jpg";
+                          "https://smartclassapp.s3.amazonaws.com/edulogofinal.jpg";
                       }
                       const { orgName, orgType, orgAddress } = req.body;
                       var orgPassword = "Smart@123";
