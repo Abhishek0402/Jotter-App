@@ -45,7 +45,7 @@ console.log(`mimetype ${filetypes}`);
 
 exports.uploadImage = multer({
     storage: awsStorage,
-    limits: { fileSize: 5000000 },
+    limits: { fileSize: 50000000 },
     key: function (req, file, cb) {     
             cb(null, file.originalname);
     },

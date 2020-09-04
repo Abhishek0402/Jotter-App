@@ -404,14 +404,11 @@ organisation
             //class section subject seperator
             var classes = new Array();
             var classSeperator =_.split(item.class_section_subject,'/');
-            console.log(`class seperator ${classSeperator}`);
+
             var classLength = classSeperator.length;
-            console.log(classLength);
+
             for (var classFinder in classSeperator) {
-              var classNewFind = _.split(
-                classSeperator[classFinder],
-              '_'
-              );
+              var classNewFind = _.split(classSeperator[classFinder],'_');
               console.log(classNewFind);
               var classNewFindLength = classNewFind.length;
               var teacherClass = classNewFind[0];
@@ -427,7 +424,9 @@ organisation
                 teacherSection: teacherSection,
                 teachingSubjects: subjects,
               });
+
             }
+
             console.log(classes);
             teacherPassword = "Smart@123";
             var teacherPassword = bcrypt.hashSync(
@@ -530,13 +529,6 @@ organisation
           teacherEmail: item.email,
         }
       );
-      // var studentRollNoPresent = _.findIndex(
-      //   orgFoundForStudent.orgStudent,
-      //   {
-      //     studentRollNo:item.rollNo
-      //   }
-      // );
-
       var studentEmailPresent = _.findIndex(orgFoundForStudent.orgStudent,{
         studentEmail:item.email
       });
@@ -649,7 +641,7 @@ res.send({
  else if (role == "Class" && methodToCreate == "Manual") {
             console.log("class creation");
             const { class_section_subject } = req.body;
-
+console.log(class_section_subject);
             organisation
               .findOne({ orgCode })
               .then((orgFoundForClass) => {
