@@ -12,24 +12,24 @@ const cron = require("node-cron");
 const mailer = require("./utility/mailer");
 
 //cron task
-cron.schedule("2 * * * * *", () => {
-//mail
-console.log("in");
-var details = {
-  scheduleSubject: "Testing",
-  scheduleDate: "aaj ka din",
-  scheduleTime: "subah subah",
-  orgName: "to chaliye shuru krte hain",
-  purpose: "scheduler bhai ki testing",
-  footerMessage:
-    "aa jaiyegga",
-};
-var mailList = ["abhishekedu4979@gmail.com","aashigupta165@gmail.com"];
+// cron.schedule("2 * * * * *", () => {
+// //mail
+// console.log("in");
+// var details = {
+//   scheduleSubject: "Testing",
+//   scheduleDate: "aaj ka din",
+//   scheduleTime: "subah subah",
+//   orgName: "to chaliye shuru krte hain",
+//   purpose: "scheduler bhai ki testing",
+//   footerMessage:
+//     "aa jaiyegga",
+// };
+// var mailList = ["abhishekedu4979@gmail.com","aashigupta165@gmail.com"];
 
-var subjectMail="Launch ki tayari";
-mailer.scheduleMail(mailList, details, subjectMail);
-console.log("out");
-});
+// var subjectMail="Launch ki tayari";
+// mailer.scheduleMail(mailList, details, subjectMail);
+// console.log("out");
+// });
 //@ routes
 
 const register = require("./routes/register");
