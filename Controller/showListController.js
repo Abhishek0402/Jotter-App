@@ -191,8 +191,7 @@ exports.studentSubjectList = (req, res, next) => {
   console.log(`${orgCode} and ${studentClass} and ${studentSection}`);
   organisation
     .findOne({
-      orgClasses: { $elemMatch: { orgClass: studentClass } },
-      orgClasses: { $elemMatch: { orgSection: studentSection } },
+     orgCode
     })
     .then((orgFound) => {
       console.log(orgFound.orgClasses);
