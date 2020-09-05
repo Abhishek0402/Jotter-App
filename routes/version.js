@@ -7,7 +7,7 @@ const router = express.Router(); //routing
 
 router.post("/version",(req,res) =>{
     var {version} = req.body;
-
+version = parseInt(version);
 var dbVersion =parseInt(process.env.VERSION);
 console.log(`version is ${version}`);
 console.log(`db version is ${dbVersion}`);
