@@ -197,8 +197,7 @@ exports.studentSubjectList = (req, res, next) => {
     .then((orgFound) => {
       if (orgFound) {
         var classIndex = _.findIndex(orgFound.orgClasses, {
-          orgClass: studentClass,
-          orgSection: studentSection,
+          orgClass: studentClass
         });
 
         console.log(classIndex);
