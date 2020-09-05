@@ -195,9 +195,11 @@ exports.studentSubjectList = (req, res, next) => {
       orgClasses: { $elemMatch: { orgSection: studentSection } },
     })
     .then((orgFound) => {
+      console.log(orgFound.orgClasses);
       if (orgFound) {
         var classIndex = _.findIndex(orgFound.orgClasses, {
-          orgClass: studentClass
+          orgClass: studentClass,
+          orgSection: studentSection,
         });
 
         console.log(classIndex);
