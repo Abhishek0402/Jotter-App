@@ -6,7 +6,12 @@ var cors = require("cors");
 var path = require("path");
 var multer = require("multer");
 var forms = multer();
+const cron = require("node-cron");
 
+//cron task
+cron.schedule("2 * * * * *", () => {
+console.log("hello");
+});
 //@ routes
 
 const register = require("./routes/register");
