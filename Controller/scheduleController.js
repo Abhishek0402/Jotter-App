@@ -449,7 +449,7 @@ exports.updateSchedule = (req, res, next) => {
 
 
           if(teacherCode ==="Organisation"){
-  details.scheduleSubject = description;
+  details.scheduleSubject = orgFound.schedules[scheduleIndex].description;
 
 details.teacherName = orgFound.orgName;
 var messageBody = `Your schedule for ${details.scheduleSubject} by ${details.teacherName} has been shifted at ${orgFound.schedules[scheduleIndex].scheduleTime} on ${orgFound.schedules[scheduleIndex].scheduleDate}.`;
@@ -644,7 +644,7 @@ exports.deleteSchedule = (req, res, next) => {
 
 
           if(teacherCode ==="Organisation"){
-  details.scheduleSubject = description;
+  details.scheduleSubject = orgFound.schedules[scheduleIndex].description;
 
             details.teacherName = orgFound.orgName;
             var messageBody = `Your schedule for ${details.scheduleSubject} by ${details.teacherName} at ${orgFound.schedules[scheduleIndex].scheduleTime} on ${orgFound.schedules[scheduleIndex].scheduleDate} has been cancelled.`;
