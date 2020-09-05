@@ -184,9 +184,9 @@ exports.changeTeacherState = (req, res, next) => {
 //@ student subject list
 exports.studentSubjectList = (req, res, next) => {
   var { orgCode, studentClass, studentSection } = req.body;
-  console.log(typeOf(orgCode));
+  console.log(typeof(orgCode));
   console.log(typeof(studentClass));
-  console.log(typeOf(studentSection));
+  console.log(typeof(studentSection));
 
   console.log(`${orgCode} and ${studentClass} and ${studentSection}`);
   organisation
