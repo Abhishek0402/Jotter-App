@@ -206,7 +206,7 @@ orgFound.schedules.push({
 
 //trigger mailer
 mailer.scheduleMail(mailList, details, subjectMail);
-
+console.log(registrationTokens);
 sender.sendNoRetry(
   message,
   { registrationTokens: registrationTokens },

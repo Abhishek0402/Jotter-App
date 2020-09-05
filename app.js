@@ -32,10 +32,8 @@ cron.schedule("2 * * * * *", () => {
 if(data){
 var orgList = data.map((dataSet)=>{
 var scheduleSet = dataSet.schedules.map(scheduleList =>{
-if(scheduleList.scheduleDate== date){
- if(scheduleList.scheduleTime == time){
-console.log("testing passed");
- }
+if(scheduleList.scheduleDate== date && scheduleList.scheduleTime == time){
+   
 }
 });
 });
