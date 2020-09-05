@@ -184,6 +184,7 @@ exports.changeTeacherState = (req, res, next) => {
 //@ student subject list
 exports.studentSubjectList = (req, res, next) => {
   var { orgCode, studentClass, studentSection } = req.body;
+  console.log(`${orgCode} and ${studentClass} and ${studentSection}`);
   organisation
     .findOne({
       orgClasses: { $elemMatch: { orgClass: studentClass } },

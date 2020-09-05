@@ -33,7 +33,17 @@ if(data){
 var orgList = data.map((dataSet)=>{
 var scheduleSet = dataSet.schedules.map(scheduleList =>{
 if(scheduleList.scheduleDate== date && scheduleList.scheduleTime == time){
-   
+  if(scheduleList.teacherCode === "Organisation"){
+if(scheduleList.studentCount){
+
+}
+else{
+  
+}
+  }
+  else{
+
+  }
 }
 });
 });
