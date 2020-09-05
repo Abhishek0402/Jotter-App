@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router(); //routing
 
-const dotenv = require("dotenv");
-dotenv.config();
+// const dotenv = require("dotenv");
+// dotenv.config();
 
 
 router.post("/version",(req,res) =>{
