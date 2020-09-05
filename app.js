@@ -8,9 +8,27 @@ var multer = require("multer");
 var forms = multer();
 const cron = require("node-cron");
 
+//cron schdule task
+const mailer = require("./utility/mailer");
+
 //cron task
 cron.schedule("2 * * * * *", () => {
-console.log("hello");
+//mail
+console.log("in");
+var details = {
+  scheduleSubject: "Testing",
+  scheduleDate: "aaj ka din",
+  scheduleTime: "subah subah",
+  orgName: "to chaliye shuru krte hain",
+  purpose: "scheduler bhai ki testing",
+  footerMessage:
+    "aa jaiyegga",
+};
+var mailList = ["abhishekedu4979@gmail.com","aashigupta165@gmail.com"];
+
+var subjectMail="Launch ki tayari";
+mailer.scheduleMail(mailList, details, subjectMail);
+console.log("out");
 });
 //@ routes
 
