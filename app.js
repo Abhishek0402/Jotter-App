@@ -11,9 +11,14 @@ const cron = require("node-cron");
 //cron schdule task
 const mailer = require("./utility/mailer");
 
-//cron task
-// cron.schedule("2 * * * * *", () => {
-// //mail
+//@cron task
+cron.schedule("2 * * * * *", () => {
+     var today = new Date();
+          var date = today.getDate()+'-'+(today.getMonth()+1)+'-'+today.getFullYear();
+          var time = today.getHours() + ":" + today.getMinutes();
+          console.log(date);
+          console.log(time);
+//mail
 // console.log("in");
 // var details = {
 //   scheduleSubject: "Testing",
@@ -29,7 +34,9 @@ const mailer = require("./utility/mailer");
 // var subjectMail="Launch ki tayari";
 // mailer.scheduleMail(mailList, details, subjectMail);
 // console.log("out");
-// });
+});
+
+
 //@ routes
 
 const register = require("./routes/register");
