@@ -1,5 +1,5 @@
-const mailer = require("./utility/mailer");
-const organisation = require("./models/organisation");
+const mailer = require("../utility/mailer");
+const organisation = require("../models/organisation");
 
 var notificationKey = require("../config/notification");
 
