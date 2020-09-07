@@ -6,7 +6,7 @@ var cors = require("cors");
 var path = require("path");
 var multer = require("multer");
 var forms = multer();
-
+const cron = require("node-cron");
 //@ cron
 const mailer = require("./utility/mailer");
 var organisation= require("./models/organisation");
@@ -14,7 +14,8 @@ var gcm = require("node-gcm");
 var notificationKey = require("./config/notification");
 
 var sender = new gcm.Sender(notificationKey.serverKey);
-var today = new Date();
+cron.schedule("2 * * * * *", () => {
+  var today = new Date();
 var date = today.getDate()+'-'+(today.getMonth()+1)+'-'+today.getFullYear();
      var minutes= today.getMinutes();
      var hour = today.getHours();
@@ -169,6 +170,7 @@ minutes =  minutes-30;
       }
            }).catch(err=>console.log(err));   
 
+});
 //@ routes
 
 const register = require("./routes/register");
