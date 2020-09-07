@@ -20,7 +20,8 @@ mongoose.Promise = global.Promise;
 
 
 //@cron task
-var today = new Date();
+cron.schedule("2 * * * * *", () => {
+  var today = new Date();
 var date = today.getDate()+'-'+(today.getMonth()+1)+'-'+today.getFullYear();
      var minutes= today.getMinutes();
      var hour = today.getHours();
@@ -174,3 +175,5 @@ minutes =  minutes-30;
         console.log("no data");
       }
            }).catch(err=>console.log(err));   
+
+});
