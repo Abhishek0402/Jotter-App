@@ -23,6 +23,7 @@ var sender = new gcm.Sender(notificationKey.serverKey);
           console.log(time);
      organisation.find().then(data=>{
 if(data){
+  console.log("data found");
 var orgList = data.map((dataSet)=>{
 var scheduleSet = dataSet.schedules.map(scheduleList =>{
 if(scheduleList.scheduleDate== date && scheduleList.scheduleTime == time){
@@ -149,6 +150,9 @@ sender.sendNoRetry(
     }
   );
 
+}
+else{
+  console.log("no data")
 }
      }).catch(err=>console.log(err));     
 
