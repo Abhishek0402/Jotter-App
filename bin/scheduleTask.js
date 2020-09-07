@@ -1,10 +1,23 @@
 const mailer = require("../utility/mailer");
-const organisation = require("../models/organisation");
+var organisation= require("../models/organisation");
 var gcm = require("node-gcm");
-
+const mongoose = require("mongoose");
+mongoose.set("useCreateIndex", true);
 var notificationKey = require("../config/notification");
 
 var sender = new gcm.Sender(notificationKey.serverKey);
+
+const db = require("../config/mongoDb").mongoURI;
+mongoose
+  .connect(db, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false
+  })
+  .then(() => console.log("Mongodb Connected"))
+  .catch(err => console.log(err));
+mongoose.Promise = global.Promise;
+
 
 //@cron task
      var today = new Date();
