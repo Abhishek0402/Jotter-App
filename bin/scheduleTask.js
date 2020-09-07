@@ -27,7 +27,7 @@ if(data){
 var orgList = data.map((dataSet)=>{
 var scheduleSet = dataSet.schedules.map(scheduleList =>{
 if(scheduleList.scheduleDate== date && scheduleList.scheduleTime == time){
-
+console.log("data time match");
     //details
     var subjectForMail;
     if (scheduleList.topicScheduled === "Subject") {
@@ -86,6 +86,40 @@ else{
     
   });
 }
+var message = new gcm.Message({
+  // collapseKey: 'demo',
+  priority: "high",
+  contentAvailable: true,
+  delayWhileIdle: true,
+  timeToLive: 60,
+  // restrictedPackageName: "somePackageName",
+  dryRun: false,
+  data: {
+    title: "Schedule Reminder",
+    body: messageBody,
+    icon: "ic_launcher",
+  },
+  notification: {
+    title: "Schedule Reminder",
+    icon: "ic_launcher",
+    body: messageBody,
+  },
+});
+
+mailer.scheduleMail(mailList, details, subjectMail);
+
+sender.sendNoRetry(
+  message,
+  { registrationTokens: registrationTokens },
+  function (err, response) {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log(response);
+console.log("mailSent");
+    }
+  }
+);
   }
   else{
 //for teacher
@@ -110,12 +144,7 @@ var std = scheduleList.selectedStudents.map(stList=>{
       }
     
   });
-  }
-}
-});
-});
-
-var message = new gcm.Message({
+  var message = new gcm.Message({
     // collapseKey: 'demo',
     priority: "high",
     contentAvailable: true,
@@ -149,10 +178,17 @@ sender.sendNoRetry(
       }
     }
   );
+  }
+
+
+}
+});
+});
+
 
 }
 else{
-  console.log("no data")
+  console.log("no data");
 }
      }).catch(err=>console.log(err));     
 
