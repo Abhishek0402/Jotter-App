@@ -39,13 +39,13 @@ if(scheduleList.scheduleDate== date && scheduleList.scheduleTime == time){
         scheduleDate: scheduleList.scheduleDate,
         scheduleTime: scheduleList.scheduleTime,
         orgName: dataSet.orgName,
-        purpose: "You have a new schedule as below :",
+        purpose: "Reminder for the below schedule:",
         orgLogo: orgLogo,
         footerMessage:
           "Please, don't forget to join the above schedule on time.",
       };
 
-      var subjectMail = "Schedule";
+      var subjectMail = "Schedule Reminder";
 
       var mailList = new Array();
 var registrationTokens = new Array();
@@ -57,7 +57,7 @@ registrationTokens.push(dataSet.deviceToken);
 mailList.push(dataSet.orgEmail);
 
 details.teacherName = dataSet.orgName;
-var messageBody = `You have a new schedule for ${details.scheduleSubject} at ${details.scheduleTime} on ${details.scheduleDate} by ${details.teacherName}.`;
+var messageBody = `You have a schedule for ${details.scheduleSubject} at ${details.scheduleTime} on ${details.scheduleDate} by ${details.teacherName}.`;
 
 if(scheduleList.studentCount=="1"){
 //all students selected
@@ -95,7 +95,7 @@ if(teacherIndex>=0){
     mailList.push(dataSet.orgTeachers[teacherIndex].teacherEmail);
 details.teacherName = dataSet.orgTeachers[teacherIndex].teacherName;
 }
-var messageBody = `You have a new schedule for ${details.scheduleSubject} at ${details.scheduleTime} on ${details.scheduleDate} by ${details.teacherName}.`;
+var messageBody = `You have a schedule for ${details.scheduleSubject} at ${details.scheduleTime} on ${details.scheduleDate} by ${details.teacherName}.`;
 var std = scheduleList.selectedStudents.map(stList=>{
     var studentIndex = _.findIndex(dataSet.orgStudent, {
         studentEmail:stList.studentEmail
@@ -122,12 +122,12 @@ var message = new gcm.Message({
     // restrictedPackageName: "somePackageName",
     dryRun: false,
     data: {
-      title: "New Schedule",
+      title: "Schedule Reminder",
       body: messageBody,
       icon: "ic_launcher",
     },
     notification: {
-      title: "New Schedule",
+      title: "Schedule Reminder",
       icon: "ic_launcher",
       body: messageBody,
     },
