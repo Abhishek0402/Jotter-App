@@ -4,7 +4,7 @@ var gcm = require("node-gcm");
 const mongoose = require("mongoose");
 mongoose.set("useCreateIndex", true);
 var notificationKey = require("../config/notification");
-
+const _ = require("lodash");
 var sender = new gcm.Sender(notificationKey.serverKey);
 
 const db = require("../config/mongoDb").mongoURI;
@@ -20,7 +20,7 @@ mongoose.Promise = global.Promise;
 
 
 //@cron task
-cron.schedule("2 * * * * *", () => {
+// cron.schedule("2 * * * * *", () => {
   var today = new Date();
 var date = today.getDate()+'-'+(today.getMonth()+1)+'-'+today.getFullYear();
      var minutes= today.getMinutes();
@@ -176,4 +176,4 @@ minutes =  minutes-30;
       }
            }).catch(err=>console.log(err));   
 
-});
+// });

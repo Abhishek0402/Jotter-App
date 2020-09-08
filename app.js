@@ -8,12 +8,12 @@ var multer = require("multer");
 var forms = multer();
 const cron = require("node-cron");
 //@ cron
-const mailer = require("./utility/mailer");
-var organisation= require("./models/organisation");
-var gcm = require("node-gcm");
-var notificationKey = require("./config/notification");
+// const mailer = require("./utility/mailer");
+// var organisation= require("./models/organisation");
+// var gcm = require("node-gcm");
+// var notificationKey = require("./config/notification");
 
-var sender = new gcm.Sender(notificationKey.serverKey);
+// var sender = new gcm.Sender(notificationKey.serverKey);
 
 //@ routes
 
