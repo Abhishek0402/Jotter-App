@@ -163,9 +163,6 @@ minutes =  minutes-30;
         );
       
       }
-      else{
-        console.log("no match");
-      }
       });
       });
       

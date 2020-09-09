@@ -17,6 +17,11 @@ exports.register = (req, res, next) => {
     teacherEmail,
     studentEmail,
   } = req.body;
+  email = _.toLower(email);
+  orgEmail = _.toLower(orgEmail);
+  teacherEmail = _.toLower(teacherEmail);
+studentEmail = _.toLower(studentEmail);
+
 
   if (role === "Organisation") {
     var email = orgEmail;
@@ -27,6 +32,8 @@ exports.register = (req, res, next) => {
   if (role === "Student") {
     var email = studentEmail;
   }
+  email = _.toLower(email);
+
   mobile = parseFloat(mobile);
   console.log("registration starts");
   console.log(req.body);
@@ -338,6 +345,7 @@ organisation
           teacherMobile: parseFloat(item.mobile),
         }
       );
+      item.email = _.toLower(item.email);
 
       var teacherEmailPresent = _.findIndex(
         orgFoundForTeacher.orgTeachers,
@@ -433,6 +441,8 @@ organisation
               teacherPassword,
               10
             );
+  item.email = _.toLower(item.email);
+
             orgFoundForTeacher.orgTeachers.push({
               teacherName: item.name,
               teacherAge: item.age,
@@ -508,7 +518,7 @@ organisation
     var emailArray = new Array();
 
     const orgStudentMap = await list.map((item) => {
-      
+      item.email = _.toLower(item.email);
       var studentMobilePresent = _.findIndex(
         orgFoundForStudent.orgStudent,
         {
@@ -578,7 +588,7 @@ res.send({
                 studentPassword,
                 10
               );
-
+              item.email = _.toLower(item.email);
               orgFoundForStudent.orgStudent.push({
                 studentName: item.name,
                 studentRollNo: item.rollNo,

@@ -10,6 +10,8 @@ const bcrypt = require("bcryptjs");
 //@ send otp
 exports.sendOtp = (req, res, next) => {
   var { email,mobile } = req.body;
+  email = _.toLower(email);
+  console.log(email);
 mobile = parseFloat(mobile);
   userData
     .findOne({
@@ -81,7 +83,7 @@ console.log(userExists.user[mobileIndex]);
 //@ verify otp
 exports.verifyOtp = (req, res, next) => {
   var { email, otpReceived } = req.body;
-
+email = _.toLower(email);
   console.log("entered " + otpReceived);
   console.log(email);
   otp
@@ -114,7 +116,7 @@ exports.verifyOtp = (req, res, next) => {
 //@ password change
 exports.changePassword = (req, res, next) => {
   var { email, newPassword } = req.body;
-
+email = _.toLower(email);
   userData
     .findOne({
       user: { $elemMatch: { email: email } },
