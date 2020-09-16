@@ -8,10 +8,12 @@ const emailConfig = require("../config/email");
 //@ Open template file
 var source = fs.readFileSync(path.join(__dirname, '../views/mailTemplate.hbs'), 'utf8');
 var sourceSchedule = fs.readFileSync(path.join(__dirname,'../views/schedueTemplate.hbs'),'utf-8');
+var userCreated = fs.readFileSync(path.join(__dirname,'../views/accountCreated.hbs'),'utf-8');
 
 //@ compile template file
 var template = Handlebars.compile(source);
 var templateSchedule = Handlebars.compile(sourceSchedule);
+var templateUserCreated = Handlebars.compile(userCreated);
 
 //@ create the mail transporter
 const transporter = nodemailer.createTransport({
@@ -86,3 +88,34 @@ console.log("running");
     }
   );
 };
+
+exports.userRegisterMail = (mailList,details,subject) => {
+  let replacements = {
+    Mobile:details.Mobile,
+    firstName:details.firstName,
+    Password:details.Password,
+     orgName:details.orgName,
+     purpose: details.purpose,
+     orgLogo: details.orgLogo,
+     footerMessage: details.footerMessage
+ };
+ console.log("mailer running");
+   transporter.sendMail({
+       from: emailConfig.email,
+       to: user.email,
+       subject:subject,
+       html: templateUserCreated(replacements)
+     },
+     (error, info) => {
+       //(to,subject,text,html,callback)
+       console.log("hello");
+       if (error) {
+         console.log("hi");
+         console.log(error);
+        
+       } else {
+         console.log("Email sent success.");
+       }
+     }
+   );
+ };

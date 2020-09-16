@@ -13,6 +13,10 @@ var changeSchema = new Schema({
         required: 'Email address is required',
         validate: [validations.validateEmail, "Please fill a valid email address"]
     },
+    loginId:{
+        type:String,
+        required: true
+      },
     otp: {
         type: String
     },

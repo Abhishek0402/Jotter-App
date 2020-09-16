@@ -9,24 +9,27 @@ const bcrypt = require("bcryptjs");
 
 //@ send otp
 exports.sendOtp = (req, res, next) => {
-  var { email,mobile } = req.body;
+  var { email,mobile,firstName} = req.body;
+
+  firstName= _.toLower(firstName);
+  var loginId = mobile+firstName;
+
   email = _.toLower(email);
   console.log(email);
-mobile = parseFloat(mobile);
   userData
     .findOne({
-      user: { $elemMatch: {mobile: mobile } },
+      user: { $elemMatch: {loginId:loginId } },
     })
     .then((userExists) => {
       if (userExists) {
         console.log("user_Exsits");
         console.log(userExists);
-        var mobileIndex = _.findIndex(userExists.user,{
-          mobile:mobile,email:email
+        var loginIdIndex = _.findIndex(userExists.user,{
+         email:email
         });
-        console.log(mobileIndex);
-        if(mobileIndex>=0){
-console.log(userExists.user[mobileIndex]);
+        console.log(loginIdIndex);
+        if(loginIdIndex>=0){
+console.log(userExists.user[loginIdIndex]);
 
 
         var otpToSend = random.randomOtp();
@@ -36,6 +39,7 @@ console.log(userExists.user[mobileIndex]);
           .findOneAndUpdate(
             {
               email,
+              loginId
             },
             {
               otp: otpToSend,
@@ -82,13 +86,15 @@ console.log(userExists.user[mobileIndex]);
 
 //@ verify otp
 exports.verifyOtp = (req, res, next) => {
-  var { email, otpReceived } = req.body;
+  var {email,otpReceived,mobile,firstName} = req.body;
 email = _.toLower(email);
+var loginId = mobile+firstName;
+
   console.log("entered " + otpReceived);
   console.log(email);
   otp
     .findOne({
-      email,
+     loginId,email
     })
     .then((changeUser) => {
       if (changeUser) {
@@ -115,11 +121,13 @@ email = _.toLower(email);
 
 //@ password change
 exports.changePassword = (req, res, next) => {
-  var { email, newPassword } = req.body;
+  var { email, newPassword,mobile,firstName } = req.body;
 email = _.toLower(email);
+var loginId = mobile+firstName;
+
   userData
     .findOne({
-      user: { $elemMatch: { email: email } },
+      user: { $elemMatch: { loginId:loginId,email:email } },
     })
     .then((userFound) => {
       if (userFound) {
@@ -127,7 +135,7 @@ email = _.toLower(email);
 
         var orgCode = userFound.orgCode;
         var roleIndex = _.findIndex(userFound.user, {
-          email: email,
+          loginId:loginId
         });
         console.log(roleIndex);
         console.log(userFound.user[roleIndex]);
@@ -137,7 +145,7 @@ email = _.toLower(email);
           if (orgCode === "Admin") {
             admin
               .findOne({
-                email,
+                loginId
               })
               .then((adminExists) => {
                 if (adminExists) {
@@ -176,25 +184,30 @@ email = _.toLower(email);
               })
               .then((orgFound) => {
                 if (orgFound) {
-                  if (role == "Organisation" && orgFound.orgEmail == email) {
+                  if (role == "Organisation" && orgFound.loginId ==loginId) {
                     orgFound.orgPassword = newPassword;
                   } else if (role == "Teacher" || role == "teachers") {
                     newPassword = bcrypt.hashSync(newPassword, 10);
                     var teacherIndex = _.findIndex(orgFound.orgTeachers, {
-                      teacherEmail: email,
+                      loginId:loginId
                     });
-                    orgFound.orgTeachers[
-                      teacherIndex
-                    ].teacherPassword = newPassword;
+                    if(teacherIndex>=0){
+                      orgFound.orgTeachers[
+                        teacherIndex
+                      ].teacherPassword = newPassword;
+                    }
+                   
                   } else if (role == "Student") {
                     newPassword = bcrypt.hashSync(newPassword, 10);
 
                     var studentIndex = _.findIndex(orgFound.orgStudent, {
-                      studentEmail: email,
+                      loginId:loginId
                     });
-                    orgFound.orgStudent[
-                      studentIndex
-                    ].studentPassword = newPassword;
+                    if(studentIndex>=0){
+                      orgFound.orgStudent[
+                        studentIndex
+                      ].studentPassword = newPassword;
+                    }
                   }
 
                   orgFound

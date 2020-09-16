@@ -4,12 +4,14 @@ const userData = require("../models/userData");
 const _ = require("lodash");
 
 exports.login = (req, res, next) => {
-  const { password, deviceToken } = req.body;
-  var mobile = parseFloat(req.body.mobile);
+  var { password, deviceToken,mobile,firstName} = req.body;
   console.log(req.body);
+  firstName= _.toLower(firstName);
+  var loginId = mobile+firstName;
+mobile = parseFloat(mobile);
   userData
     .findOne({
-      user: { $elemMatch: { mobile: mobile } },
+      user: { $elemMatch: {loginId:loginId } },
     })
     .then((userExists) => {
       if (userExists) {
@@ -17,7 +19,7 @@ exports.login = (req, res, next) => {
 
         var orgCode = userExists.orgCode;
         var roleIndex = _.findIndex(userExists.user, {
-          mobile: mobile,
+          loginId:loginId
         });
         console.log(roleIndex);
         console.log(userExists.user[roleIndex]);
@@ -26,16 +28,16 @@ exports.login = (req, res, next) => {
         } else {
           role = "";
         }
-        console.log(`${orgCode} + ${role} + ${mobile}`);
+        console.log(`${orgCode} + ${role} + ${loginId}`);
 
         if (orgCode === "Admin") {
           admin
             .findOne({
-              mobile,
+             loginId
             })
             .then((adminExists) => {
               if (adminExists) {
-                console.log("correct phone no");
+                console.log("correct loginId");
 
                 if (adminExists.comparePassword(password)) {
                   console.log("correct password");
@@ -46,7 +48,8 @@ exports.login = (req, res, next) => {
                       res.header("x-auth", token).send({
                         user: {
                           name: adminExists.name,
-                          mobile: adminExists.mobile,
+                          mobile: mobile,
+                          loginId:loginId,
                           email: adminExists.email,
                           role: adminExists.role,
                         },
@@ -61,9 +64,9 @@ exports.login = (req, res, next) => {
                   });
                 }
               } else {
-                console.log("Invalid_PhoneNo");
+                console.log("Invalid_details");
                 res.send({
-                  message: "Invalid_PhoneNo",
+                  message: "Invalid_details",
                 });
               }
             })
@@ -77,10 +80,11 @@ exports.login = (req, res, next) => {
             .then((orgExists) => {
               if (orgExists) {
                 if (role == "Organisation") {
-                  if (orgExists.comparePassword(password, role, mobile)) {
+                  if (orgExists.comparePassword(password, role, loginId)) {
                     console.log("correct password");
+                    var email = orgExists.orgEmail;
                     orgExists
-                      .generateAuthToken(role, mobile)
+                      .generateAuthToken(role, loginId,email)
                       .then((token) => {
                         console.log("token " + token);
                         orgExists.deviceToken = deviceToken;
@@ -95,6 +99,7 @@ exports.login = (req, res, next) => {
                               orgEmail: orgExists.orgEmail,
                               role: orgExists.role,
                               orgMobile: orgExists.orgMobile,
+                              loginId:loginId
                             },
                             message: "loggedIn",
                           });
@@ -111,14 +116,15 @@ exports.login = (req, res, next) => {
                     });
                   }
                 } else if (role == "Teacher" || role == "teacher") {
-                  if (orgExists.comparePassword(password, role, mobile)) {
+                  if (orgExists.comparePassword(password, role, loginId)) {
                     console.log("yes teacher");
                     var teacherDataIndex = _.findIndex(orgExists.orgTeachers, {
-                      teacherMobile: mobile,
+                      loginId:loginId
                     });
+                    var email = orgExists.orgTeachers[teacherDataIndex].teacherEmail;
                     if (orgExists.orgTeachers[teacherDataIndex].active) {
                       orgExists
-                        .generateAuthToken(role, mobile)
+                        .generateAuthToken(role, loginId,email)
                         .then((token) => {
                           console.log("token " + token);
                           var teacher = orgExists.orgTeachers[teacherDataIndex];
@@ -145,6 +151,7 @@ exports.login = (req, res, next) => {
                                   orgCode: orgCode,
                                   orgName: orgExists.orgName,
                                   orgLogo: orgExists.orgLogo,
+                                  loginId:loginId
                                 },
                                 message: "loggedIn",
                               });
@@ -170,14 +177,15 @@ exports.login = (req, res, next) => {
                     });
                   }
                 } else if (role == "Student") {
-                  if (orgExists.comparePassword(password, role, mobile)) {
+                  if (orgExists.comparePassword(password, role, loginId)) {
                     console.log("yes student");
                     var studentDataIndex = _.findIndex(orgExists.orgStudent, {
-                      studentMobile: mobile,
+                      loginId:loginId
                     });
                     if (orgExists.orgStudent[studentDataIndex].active) {
+                      var email = orgExists.orgStudent[studentDataIndex].studentEmail;
                       orgExists
-                        .generateAuthToken(role, mobile)
+                        .generateAuthToken(role,loginId,email)
                         .then((token) => {
                           console.log("token " + token);
                           orgExists.orgStudent[
@@ -205,6 +213,7 @@ exports.login = (req, res, next) => {
                                   orgCode: orgCode,
                                   orgName: orgExists.orgName,
                                   orgLogo: orgExists.orgLogo,
+                                  loginId:loginId
                                 },
                                 message: "loggedIn",
                               });
@@ -233,9 +242,9 @@ exports.login = (req, res, next) => {
                   });
                 }
               } else {
-                console.log("Invalid_PhoneNo");
+                console.log("Invalid_details");
                 res.send({
-                  message: "Invalid_PhoneNo",
+                  message: "Invalid_details",
                 });
               }
             })
@@ -243,9 +252,9 @@ exports.login = (req, res, next) => {
         }
       } else {
         console.log("user_not_exists");
-        console.log("Invalid_PhoneNo");
+        console.log("Invalid_loginId");
         res.send({
-          message: "Invalid_PhoneNo",
+          message: "Invalid_details",
         });
       }
     })

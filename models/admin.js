@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
 
-//@ validation module
+//@ validation module 
 const validations = require("../utility/validations");
 
 var adminSchema = new Schema({
@@ -18,7 +18,6 @@ var adminSchema = new Schema({
   },
   email: {
     type: String,
-    unique: true,
     trim: true,
     minlength: 5,
     maxlength: 100,
@@ -40,10 +39,13 @@ var adminSchema = new Schema({
   mobile: {
     type: Number,
     required: true,
-    unique: true,
     min: 6000000000,
     max: 9999999999,
   },
+  loginId:{
+    type:String,
+    required: true
+  }
 });
 
 //bcrypt password
@@ -77,7 +79,9 @@ adminSchema.methods.generateAuthToken = function () {
   var access = "auth";
   var token = jwt.sign(
       {
-        mobile: user.mobile,
+        email: user.email,
+        loginId: user.loginId,
+        role: user.role,
         access
       },
       process.env.JWT_SECRET,

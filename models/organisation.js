@@ -64,7 +64,6 @@ var orgSchema = new Schema({
   },
   orgEmail: {
     type: String,
-    unique: true,
     trim: true,
     minlength: 5,
     maxlength: 50,
@@ -73,13 +72,17 @@ var orgSchema = new Schema({
   },
   orgMobile: {
     type: Number,
-    unique: true,
     required: true,
     min: 6000000000,
     max: 9999999999,
   },
   deviceToken: {
     type: String,
+  },
+  loginId:{
+    type:String,
+    required: true,
+    unique:true
   },
   notification: [
     {
@@ -160,6 +163,10 @@ var orgSchema = new Schema({
       },
       deviceToken: {
         type: String,
+      },
+      loginId:{
+        type:String,
+        required: true
       },
       teachingClasses: [
         {
@@ -247,6 +254,10 @@ var orgSchema = new Schema({
       },
       deviceToken: {
         type: String,
+      },
+      loginId:{
+        type:String,
+        required: true
       },
       notification: [
         {
@@ -373,17 +384,66 @@ var orgSchema = new Schema({
       },
       selectedStudents: [
         {
-          studentRollNo: {
-            type: String,
-          },
-          studentEmail: {
-            type: String,
-          },
-          studentName: {
-            type: String,
-          },
+          studentId:{
+            type:String
+          }
         },
       ],
+    },
+  ],
+  assignment: [
+    {
+      teacherCode: {
+        type: String,
+      },
+      classAssignment: {
+        type: String,
+      },
+      sectionAssignment: {
+        type: String,
+      },
+      subjectAssignment: {
+        type: String,
+      },
+      active: {
+        type: Boolean,
+        default: 1,
+      }, 
+      assignmentDate: {
+        type: String,
+      },
+      assignmentTime: {
+        type: String,
+      },
+      description: {
+        type: String,
+      },
+      file:{
+        type:String
+      },
+      selectedStudents: [
+        {
+          studentId:{
+            type:String
+          },
+          teacherRemark:{
+            type:String
+          },
+          studentDescription:{
+            type:String
+          },
+          studentFile:{
+            type:String
+          },
+          submitDate:{
+            type:String
+          },
+          submitTime:{
+            type:String
+          }
+        },
+      ],
+
     },
   ],
 });
@@ -410,19 +470,19 @@ orgSchema.pre("save", function (next) {
 });
 
 //@ MATCH TEXT PASSWORD WITH HASHED PASSWORD
-orgSchema.methods.comparePassword = function (password, role, mobile) {
+orgSchema.methods.comparePassword = function (password, role, loginId) {
   console.log(role);
   if (role == "Organisation") {
     return bcrypt.compareSync(password, this.orgPassword);
   } else if (role == "Teacher" || role == "teacher") {
     const teacherIndex = _.findIndex(this.orgTeachers, {
-      teacherMobile: mobile,
+     loginId:loginId
     });
     hashPassword = this.orgTeachers[teacherIndex].teacherPassword;
     return bcrypt.compareSync(password, hashPassword);
   } else if (role == "Student") {
     const StudentIndex = _.findIndex(this.orgStudent, {
-      studentMobile: mobile,
+      loginId:loginId
     });
     hashPassword = this.orgStudent[StudentIndex].studentPassword;
     return bcrypt.compareSync(password, hashPassword);
@@ -430,14 +490,16 @@ orgSchema.methods.comparePassword = function (password, role, mobile) {
 };
 
 //@ generate jwt auth token
-orgSchema.methods.generateAuthToken = function (role, mobile) {
+orgSchema.methods.generateAuthToken = function (role, loginId,email) {
   var user = this;
   var access = "auth";
   if (role == "Organisation") {
     var token = jwt
       .sign(
         {
-          mobile: user.orgMobile,
+          email:user.orgEmail,
+          loginId:user.loginId,
+          role:user.role,
           access,
         },
         process.env.JWT_SECRET,
@@ -446,11 +508,13 @@ orgSchema.methods.generateAuthToken = function (role, mobile) {
         }
       )
       .toString();
-  } else if (role == "Teacher" || role == "teacher") {
+  } else if (role == "Teacher") {
     var token = jwt
       .sign(
         {
-          mobile,
+          email,
+          loginId,
+          role,
           access,
         },
         process.env.JWT_SECRET,
@@ -463,7 +527,9 @@ orgSchema.methods.generateAuthToken = function (role, mobile) {
     var token = jwt
       .sign(
         {
-          mobile,
+          email,
+          loginId,
+          role,
           access,
         },
         process.env.JWT_SECRET,

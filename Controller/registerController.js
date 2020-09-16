@@ -5,66 +5,53 @@ const userData = require("../models/userData");
 const _ = require("lodash");
 const bcrypt = require("bcryptjs");
 
-
 exports.register = (req, res, next) => {
-  var {
-    role,
-    mobile,
-    orgCode,
-    methodToCreate,
-    email,
-    orgEmail,
-    teacherEmail,
-    studentEmail,
-  } = req.body;
-  email = _.toLower(email);
+console.log("hi");
+  var {role,mobile,orgCode,methodToCreate,email,orgEmail,teacherEmail,studentEmail,name,orgName,teacherName,studentName} = req.body;
+
   orgEmail = _.toLower(orgEmail);
   teacherEmail = _.toLower(teacherEmail);
 studentEmail = _.toLower(studentEmail);
 
+var loginId = mobile+((_.split((_.toLower(name))," "))[0]);
 
   if (role === "Organisation") {
     var email = orgEmail;
+       loginId = mobile+((_.split((_.toLower(orgName))," "))[0]);
   }
   if (role === "Teacher") {
     var email = teacherEmail;
+    loginId = mobile+((_.split((_.toLower(teacherName))," "))[0]);
   }
   if (role === "Student") {
     var email = studentEmail;
+    loginId = mobile+((_.split((_.toLower(studentName))," "))[0]);
   }
   email = _.toLower(email);
-
   mobile = parseFloat(mobile);
+console.log(loginId);
   console.log("registration starts");
   console.log(req.body);
   userData
     .findOne({
-      orgCode, 
+      orgCode
     })
     .then((orgExists) => {
       if (orgExists) {
         console.log("org Exists");
 
-        var userMobilePresent = _.findIndex(orgExists.user, {
-          mobile: mobile,
+        var userLoginIdPresent = _.findIndex(orgExists.user, {
+          loginId:loginId
         });
-        var userEmailPresent = _.findIndex(orgExists.user, {
-          email: email,
-        });
-        if (userMobilePresent >= 0) {
+       
+        if (userLoginIdPresent >= 0) {
           console.log("mobile Already existing");
-          res.send({
-            message: "invalid_entry",
-          });
-        } else if (userEmailPresent >= 0) {
-          console.log("email Already existing");
           res.send({
             message: "invalid_entry",
           });
         } else if (role == "Teacher" || role == "Student" || role == "Class") {
           if (role == "Teacher" && methodToCreate == "Manual") {
             const {
-              teacherName,
               teacherAge,
               teacherDesignation,
               teacherCode,
@@ -107,7 +94,6 @@ for(var classNew in class_section_subject) {
       teachingSubjects: subjects,
     });
   }
-
 }
 console.log(classes);        
 
@@ -123,28 +109,21 @@ console.log(classes);
                       teacherCode: teacherCode,
                     }
                   );
-                  var teacherEmailPresent = _.findIndex(
+                  var teacherloginIdPresent = _.findIndex(
                     orgFoundForTeacher.orgTeachers,
                     {
-                      teacherEmail: teacherEmail,
+                      loginId:loginId
                     }
                   );
-                  var teacherMobilePresent = _.findIndex(orgFoundForTeacher.orgTeachers,{
-                    teacherMobile:teacherMobile
+                  var studentloginIdPresent= _.findIndex(orgFoundForTeacher.orgStudent,{
+                    loginId:loginId
                   });
-                  var studentEmailPresent= _.findIndex(orgFoundForTeacher.orgStudent,{
-                    studentEmail:teacherEmail
+                
+                  var orgloginIdPresent = _.findIndex(orgFoundForTeacher,{
+                    loginId:loginId
                   });
-                  var studentMobilePresent = _.findIndex(orgFoundForTeacher.orgStudent,{
-                    studentMobile:teacherMobile
-                  });
-                  var orgEmailPresent = _.findIndex(orgFoundForTeacher,{
-                    orgEmail:teacherEmail
-                  });
-                  var orgMobilePresent = _.findIndex(orgFoundForTeacher,{
-                    orgMobile:teacherMobile
-                  });
-                  if ((teacherCodeExists >= 0)|| (teacherEmailPresent>=0) || (teacherMobilePresent>=0) ||(studentEmailPresent>=0) || (studentMobilePresent>=0) || (orgEmailPresent>=0)|| (orgMobilePresent>=0)) {
+
+                  if ((teacherCodeExists >= 0)|| (teacherloginIdPresent>=0) || (studentloginIdPresent>=0)||(orgloginIdPresent>=0)) {
                     console.log("teacher code exists");
                     res.send({
                       message: "invalid_entry",
@@ -154,7 +133,7 @@ console.log(classes);
                       //push new user to userDate schema
                       orgExists.user.push({
                         role,
-                        mobile,
+                        loginId,
                         email: teacherEmail,
                       });
    
@@ -169,6 +148,7 @@ console.log(classes);
                         teacherPassword: teacherPassword,
                         teacherMobile: mobile,
                         teachingClasses: classes,
+                        loginId: loginId
                       });
 
                       orgExists
@@ -208,7 +188,6 @@ console.log(classes);
           
           else if (role == "Student" && methodToCreate == "Manual") {
             const {
-              studentName,
               studentRollNo,
               studentClass,
               studentSection,
@@ -226,37 +205,30 @@ var studentMobile= mobile;
               })
               .then((orgFoundForStudent) => {
                 if (orgFoundForStudent) {
-                  // var studentRollNoExists = _.findIndex(
-                  //   orgFoundForStudent.orgStudent,
-                  //   {
-                  //     studentRollNo: studentRollNo,
-                  //   }
-                  // );
-
-
-                  var teacherEmailPresent = _.findIndex(
-                    orgFoundForStudent.orgTeachers,
+                  var studentRollNoExists = _.findIndex(
+                    orgFoundForStudent.orgStudent,
                     {
-                      teacherEmail: studentEmail,
+                      studentRollNo:studentRollNo,
+                      studentClass:studentClass,
+                      studentSection: studentSection
                     }
                   );
-                  var teacherMobilePresent = _.findIndex(orgFoundForStudent.orgTeachers,{
-                    teacherMobile:studentMobile
-                  });
-                  var studentEmailPresent= _.findIndex(orgFoundForStudent.orgStudent,{
-                    studentEmail:studentEmail
-                  });
-                  var studentMobilePresent = _.findIndex(orgFoundForStudent.orgStudent,{
-                    studentMobile:studentMobile
-                  });
-                  var orgEmailPresent = _.findIndex(orgFoundForStudent,{
-                    orgEmail:studentEmail
-                  });
-                  var orgMobilePresent = _.findIndex(orgFoundForStudent,{
-                    orgMobile:studentMobile
+                  var teacherloginIdPresent = _.findIndex(
+                    orgFoundForStudent.orgTeachers,
+                    {
+                      loginId:loginId
+                    }
+                  );
+                  var studentloginIdPresent= _.findIndex(orgFoundForStudent.orgStudent,{
+                    loginId:loginId
                   });
                 
-                  if ((teacherEmailPresent>=0) || (teacherMobilePresent>=0) ||(studentEmailPresent>=0) || (studentMobilePresent>=0) || (orgEmailPresent>=0)|| (orgMobilePresent>=0)) {
+                  var orgloginIdPresent = _.findIndex(orgFoundForStudent,{
+                    loginId:loginId
+                  });
+
+                
+                  if ((studentRollNoExists>=0) || (teacherloginIdPresent>=0) ||(studentloginIdPresent>=0) || (orgloginIdPresent>=0)) {
                     console.log("student roll no. exists");
                     res.send({
                       message: "invalid_entry",
@@ -266,7 +238,7 @@ var studentMobile= mobile;
                       //push new user to userDate schema
                       orgExists.user.push({
                         role,
-                        mobile,
+                        loginId,
                         email: studentEmail,
                       });
 
@@ -282,6 +254,7 @@ var studentMobile= mobile;
                         studentDOB,
                         studentGender,
                         studentPassword,
+                        loginId
                       });
 
                       orgExists
@@ -333,26 +306,20 @@ organisation
     var dataLength = list.length;
     var c = 0;
     var codeArray = new Array();
-    var mobileArray = new Array();
-    var emailArray = new Array();
+    var loginIdArray = new Array();
 
 
     const orgTeachersMap = await list.map((item) => {
       
-      var teacherMobilePresent = _.findIndex(
-        orgFoundForTeacher.orgTeachers,
-        {
-          teacherMobile: parseFloat(item.mobile),
-        }
-      );
-      item.email = _.toLower(item.email);
+      var loginId = item.mobile+((_.split((_.toLower(item.name))," "))[0]);
 
-      var teacherEmailPresent = _.findIndex(
+      var teacherloginIdPresent = _.findIndex(
         orgFoundForTeacher.orgTeachers,
         {
-          teacherEmail: item.email,
+          loginId: loginId,
         }
       );
+      console.log("ccc"+loginId);
       var teacherCodePresent = _.findIndex(
         orgFoundForTeacher.orgTeachers,
         {
@@ -360,38 +327,29 @@ organisation
         }
       );
 
-      var studentEmailPresent = _.findIndex(orgFoundForTeacher.orgStudent,{
-        studentEmail:item.email
+      var studentloginIdPresent = _.findIndex(orgFoundForTeacher.orgStudent,{
+        loginId:loginId
       });
 
-      var studentMobilePresent = _.findIndex(orgFoundForTeacher.orgStudent,{
-        studentMobile:parseFloat(item.mobile)
-      });
-
-      var orgEmailPresent = _.findIndex(orgFoundForTeacher,{
-        orgEmail:item.email
-      });
-      var orgMobilePresent=_.findIndex(orgFoundForTeacher,{
-        orgMobile:parseFloat(item.mobile)
+      var orgloginIdPresent=_.findIndex(orgFoundForTeacher,{
+        loginId:loginId
       });
 
 
       if (
         codeArray.includes(item.code) ||
-        mobileArray.includes(item.mobile) ||
-        emailArray.includes(item.email)
+        loginIdArray.includes(loginId)
       ) {
         console.log("redundant data");
         console.log(
-          `${item.code}  ${item.email} ${item.mobile}`
+          `${item.code} ${loginId}`
         );
         res.send({
           error: `redundant entry at line ${item.sno}`,
           message: "invalid_entry",
         });
-      } else if((teacherCodePresent>=0) || (teacherEmailPresent>=0)||(teacherMobilePresent>=0)||(studentEmailPresent>=0)||
-      (studentMobilePresent>=0)||(orgEmailPresent>=0) || (orgMobilePresent>=0)){
-      
+      } else if((teacherCodePresent>=0) || (teacherloginIdPresent>=0)||(studentloginIdPresent>=0)||(orgloginIdPresent>=0)){
+      console.log(`${teacherCodePresent} ${teacherloginIdPresent} ${studentloginIdPresent} ${orgloginIdPresent}`);
         res.send({
           mistake: `invalid entry at line ${item.sno}`,
           message: "invalid_entry",
@@ -402,13 +360,14 @@ organisation
         }
       
       codeArray.push(item.code);
-      mobileArray.push(item.mobile);
-      emailArray.push(item.email);
+      loginIdArray.push(loginId);
     }); //map ends
 
         //new map
         if (c == dataLength) {
           const orgTeachersMap = await list.map((item) => {
+             var loginId = item.mobile+((_.split((_.toLower(item.name))," "))[0]);
+
             //class section subject seperator
             var classes = new Array();
             var classSeperator =_.split(item.class_section_subject,'/');
@@ -454,10 +413,11 @@ organisation
               teacherPassword: teacherPassword,
               teacherMobile: parseFloat(item.mobile),
               teachingClasses: classes,
+              loginId:loginId
             });
             orgExists.user.push({
               role: item.role,
-              mobile: parseFloat(item.mobile),
+              loginId:loginId,
               email: item.email,
             });
           });
@@ -513,59 +473,52 @@ organisation
   if (orgFoundForStudent) {
     var dataLength = list.length;
     var c = 0;
-    var rollNoArray = new Array();
-    var mobileArray = new Array();
-    var emailArray = new Array();
+
+    var loginIdArray = new Array();
 
     const orgStudentMap = await list.map((item) => {
-      item.email = _.toLower(item.email);
-      var studentMobilePresent = _.findIndex(
+
+      var loginId = item.mobile+((_.split((_.toLower(item.name))," "))[0]);
+
+      var studentRollNoExists = _.findIndex(
         orgFoundForStudent.orgStudent,
         {
-          studentMobile: parseFloat(item.mobile),
+          studentRollNo: item.rollNo,
+          studentClass:item.studentClass,
+          studentSection: item.studentSection
         }
       );
 
-      var teacherMobilePresent = _.findIndex(
+      var teacherloginIdPresent = _.findIndex(
         orgFoundForStudent.orgTeachers,
         {
-          teacherMobile: parseFloat(item.mobile),
+          loginId:loginId
         }
       );
 
-      var teacherEmailPresent = _.findIndex(
-        orgFoundForStudent.orgTeachers,
-        {
-          teacherEmail: item.email,
-        }
-      );
-      var studentEmailPresent = _.findIndex(orgFoundForStudent.orgStudent,{
-        studentEmail:item.email
+      var studentloginIdPresent = _.findIndex(orgFoundForStudent.orgStudent,{
+        loginId:loginId
       });
 
-      var orgEmailPresent = _.findIndex(orgFoundForStudent,{
-        orgEmail:item.email
-      });
-      var orgMobilePresent=_.findIndex(orgFoundForStudent,{
-        orgMobile:parseFloat(item.mobile)
+      var orgloginIdPresent=_.findIndex(orgFoundForStudent,{
+        loginId:loginId
       });
 
       if (
-        rollNoArray.includes(item.rollNo) ||
-        mobileArray.includes(item.mobile) ||
-        emailArray.includes(item.email)
+        loginIdArray.includes(loginId)
       ) {
         console.log("redundant data");
         console.log(
-          `${item.rollNo}  ${item.email} ${item.mobile}`
+          `${loginId}`
         );
         res.send({
           error: `redundant entry at line ${item.sno}`,
           message: "invalid_entry",
         });
       } 
-      else if((teacherEmailPresent>=0)||(teacherMobilePresent>=0)||(studentEmailPresent>=0)||
-      (studentMobilePresent>=0)||(orgEmailPresent>=0) || (orgMobilePresent>=0)){
+      else if((studentRollNoExists>=0)||(teacherloginIdPresent>=0)||(studentloginIdPresent>=0)||
+      (orgloginIdPresent>=0)){
+        console.log(`${studentRollNoExists} ${teacherloginIdPresent} ${studentloginIdPresent} ${orgloginIdPresent}`);
 console.log("invalid entry at line "+ item.sno);
 res.send({
   error:`invalid entry at line ${item.sno}`
@@ -574,9 +527,7 @@ res.send({
       else {
         c++;
       }
-      rollNoArray.push(item.rollNo);
-      mobileArray.push(item.mobile);
-      emailArray.push(item.email);
+     loginIdArray.push(loginId);
     }); //map ends
 
            //new map
@@ -588,7 +539,10 @@ res.send({
                 studentPassword,
                 10
               );
+               var loginId = item.mobile+((_.split((_.toLower(item.name))," "))[0]);
+
               item.email = _.toLower(item.email);
+
               orgFoundForStudent.orgStudent.push({
                 studentName: item.name,
                 studentRollNo: item.rollNo,
@@ -601,10 +555,11 @@ res.send({
                 studentDOB: item.dob,
                 studentGender: item.gender,
                 studentPassword: studentPassword,
+                loginId:loginId
               });
               orgExists.user.push({
                 role: item.role,
-                mobile: parseFloat(item.mobile),
+                loginId:loginId,
                 email: item.email,
               });
             });
@@ -792,72 +747,77 @@ var {list} = req.body;
         }
       } else {
         userData
-          .findOne({ user: { $elemMatch: { mobile: mobile } } })
-          .then((mobilePresent) => {
-            if (mobilePresent) {
-              console.log("mobile exists");
+          .findOne({ user: { $elemMatch: { loginId: loginId } } })
+          .then((loginIdPresent) => {
+            if (loginIdPresent) {
+              console.log("login id exists");
               res.send({
                 message: "invalid_entry",
               });
             } else {
-              userData
-                .findOne({
-                  user: { $elemMatch: { email: email } },
-                })
-                .then((emailPresent) => {
-                  if (emailPresent) {
-                    console.log("email exists");
-                    res.send({
-                      message: "invalid_entry",
-                    });
-                  } else {
                     if (role == "Admin" && methodToCreate == "Manual") {
-                      const { name } = req.body;
-                      var password = "SmartApp@123";
-                      const newAdmin = new admin({
-                        name,
-                        email,
-                        password,
-                        mobile,
-                        role,
-                      });
-                      console.log(newAdmin);
-                      const newUserData = new userData({
-                        orgCode: "Admin",
-                        user: [
-                          {
-                            mobile,
-                            role,
-                            email,
-                          },
-                        ],
-                      });
+                      admin.findOne({
+                        loginId:loginId
+                      }).then(adminExists=>{
+if(adminExists){
+  console.log("admin exists");
+  res.send({
+    message: "invalid_entry"
+   });
+}
+else {
+  var password = "SmartApp@123";
+  const newAdmin = new admin({
+    name,
+    email,
+    password,
+    mobile,
+    role,
+    loginId
+  });
+  console.log(newAdmin);
+  const newUserData = new userData({
+    orgCode: "Admin",
+    user: [
+      {
+        role,
+        email,
+        loginId
+      },
+    ],
+  });
 
-                      newAdmin
-                        .save()
-                        .then((admin) => {
-                          console.log("Admin_Created");
-                          newUserData
-                            .save()
-                            .then((adminCreated) => {
-                              res.send({
-                                message: "admin_created",
-                              });
-                            })
-                            .catch((err) => {
-                              console.log(err.message);
-                              res.send({
-                                message: "invalid_entry",
-                              });
-                            });
-                        })
-                        .catch((err) => {
-                          console.log(err.message);
-                          res.send({
-                            message: "invalid_entry",
-                          });
-                        });
-                    } else if (role === "Organisation") {
+  newAdmin
+    .save()
+    .then((admin) => {
+      console.log("Admin_Created");
+      newUserData
+        .save()
+        .then((adminCreated) => {
+          res.send({
+            message: "admin_created",
+          });
+        })
+        .catch((err) => {
+          console.log(err.message);
+          res.send({
+            message: "invalid_entry",
+          });
+        });
+    })
+    .catch((err) => {
+      console.log(err.message);
+      res.send({
+        message: "invalid_entry",
+      });
+    });
+}
+                      }).catch(err=>{
+                         console.log(err);
+                      });
+                
+                    } 
+                    else if (role === "Organisation") {
                       if (methodToCreate == "File") {
                         const file = req.file;
                         var orgLogo = req.file.location;
@@ -865,30 +825,21 @@ var {list} = req.body;
                         var orgLogo =
                           "https://smartclassapp.s3.amazonaws.com/edulogofinal.jpg";
                       }
-                      const { orgName, orgType, orgAddress } = req.body;
+                      const {orgType, orgAddress } = req.body;
                       var orgPassword = "Smart@123";
                       var orgMobile = mobile;
-
+console.log(`login id ${loginId}`);
                       organisation
-                        .findOne({ orgEmail })
-                        .then((orgEmailExists) => {
-                          console.log(orgEmailExists);
-                          if (orgEmailExists) {
-                            console.log("email_exists");
+                        .findOne({loginId:loginId})
+                        .then((orgIdExists) => {
+                          console.log(orgIdExists);
+                          if (orgIdExists) {
+                            console.log("id_exists");
                             res.send({
                               message: "invalid_entry",
                             });
                           } else {
-                            organisation
-                              .findOne({ orgMobile: mobile })
-                              .then((orgMobileExists) => {
-                                if (orgMobileExists) {
-                                  console.log("mobile_exists");
-                                  res.send({
-                                    message: "invalid_entry",
-                                  });
-                                } else {
-                                  const newOrg = new organisation({
+                           const newOrg = new organisation({
                                     orgName,
                                     orgCode,
                                     orgType,
@@ -898,13 +849,14 @@ var {list} = req.body;
                                     orgPassword,
                                     role,
                                     orgMobile,
+                                    loginId
                                   });
 
                                   const newUserData = new userData({
                                     orgCode,
                                     user: [
                                       {
-                                        mobile: orgMobile,
+                                        loginId:loginId,
                                         role,
                                         email: orgEmail,
                                       },
@@ -937,9 +889,8 @@ var {list} = req.body;
                                         message: "invalid_entry",
                                       });
                                     });
-                                }
-                              })
-                              .catch((err) => console.log(err.message));
+                                
+                            
                           }
                         })
                         .catch((err) => {
@@ -951,11 +902,7 @@ var {list} = req.body;
                         message: "invalid_entry",
                       });
                     }
-                  }
-                })
-                .catch((err) => {
-                  console.log(err.message);
-                });
+              
             }
           })
           .catch((err) => console.log(err.message));

@@ -20,7 +20,7 @@ exports.askQuestion = (req, res, next) => {
           question,
           questionAskerName,
           questionAskerCode,
-          questionAskerRole,
+          questionAskerRole, 
           questionForClass,
           questionForSection,
           questionDateTime,

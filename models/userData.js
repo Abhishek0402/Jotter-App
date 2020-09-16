@@ -22,16 +22,8 @@ var userDataSchema = new Schema({
         type: String,
         required: true,
       },
-      mobile: {
-        type: Number,
-        required: true,
-        unique: true,
-        min: 6000000000,
-        max: 9999999999,
-      },
       email: {
         type: String,
-        unique: true,
         trim: true,
         minlength: 5,
         maxlength: 50,
@@ -40,6 +32,11 @@ var userDataSchema = new Schema({
           validations.validateEmail, "Please fill a valid email address",
         ],
       },
+      loginId:{
+        type:String,
+        required: true,
+        unique:true
+      }
     },
   ],
 });
@@ -56,7 +53,10 @@ userDataSchema.statics.findByToken = function (token) {
     return Promise.reject();
   }
   return User.findOne({
-    user: { $elemMatch: { mobile: decoder.mobile } },
+    user: { $elemMatch: { loginId: decoder.loginId,
+    email:decoder.email,
+    role: decoder.role
+    }}
   });
 };
 

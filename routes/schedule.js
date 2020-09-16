@@ -15,5 +15,4 @@ router.post("/schedule/delete",authController.authenticate,scheduleController.de
 
 router.post("/schedule/student/list",authController.authenticate,scheduleController.studentList);
 
-
 module.exports = router;

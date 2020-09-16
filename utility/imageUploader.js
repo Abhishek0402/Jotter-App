@@ -9,6 +9,7 @@ AWS.config.update({
     accessKeyId: awsConfig.accessKeyId,
     region: awsConfig.region
 });
+
 const s3 = new AWS.S3();
 
 const awsStorage = multerS3({
@@ -31,6 +32,9 @@ const checkFileType = (methodToCreate,file, type, cb) => {
     if (type === "image") {
         filetypes = /jpeg|jpg|png|gif/;
     } 
+    if(type==="pdf"){
+        filetypes = /pdf/;
+    }
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
 console.log(`extension ${extname}`);
@@ -55,5 +59,11 @@ exports.uploadImage = multer({
             console.log("check1 pass");
             checkFileType(req.body.methodToCreate,file, "image", cb);
         }  
+        else if(req.body.role ==="Assignment" && req.body.assignmentType==="image"){
+            checkFileType("File",file,"image",cb);
+        }
+        else if(req.body.role ==="Assignment" && req.body.assignmentType==="pdf"){
+            checkFileType("File",file,"pdf",cb);
+        }
     }
 });

@@ -27,7 +27,7 @@ exports.createSchedule = (req, res, next) => {
     classScheduled,
     sectionScheduled,
     selectedStudents} = req.body;
-console.log("aashi");
+console.log("just a check");
 console.log(selectedStudents);
   var createdAt = moment().format();
   var updatedAt = moment().format();
@@ -63,7 +63,7 @@ console.log(selectedStudents);
   
         var subjectMail = "Schedule";
   
-        console.log("hellow schedule"+selectedStudents);
+        console.log("hello schedule "+selectedStudents);
 
 
 
@@ -96,32 +96,27 @@ if(student.active){
 });
   }
   else{ 
-    var studentSplitter = _.split(selectedStudents, ",");
+      var studentSplitter = _.split(selectedStudents, ",");
+      
     for (var selectedStudentDetails in studentSplitter) {
-      var studentNewData = _.split(studentSplitter[selectedStudentDetails], "_");
-      console.log(studentNewData);
-      var studentName = studentNewData[0];
-      var studentRollNo = studentNewData[1];
-      var studentEmail = studentNewData[2];
-      mailList.push(studentEmail);
-  
+      var studentId = studentSplitter[selectedStudentDetails];
+
       var studentIndex = _.findIndex(orgFound.orgStudent, {
-        studentEmail:studentEmail
+        id:studentId
       });
+
       if (studentIndex >= 0 && orgFound.orgStudent[studentIndex].active) {
         registrationTokens.push(
           orgFound.orgStudent[studentIndex].deviceToken
         );
-    console.log("yess");
-
+        mailList.push(orgFound.orgStudent[studentIndex].studentEmail);
+  
         orgFound.orgStudent[studentIndex].notification.push({
           message: messageBody,
         });
       }
       studentsList.push({
-        studentRollNo: studentRollNo,
-        studentEmail: studentEmail,
-        studentName: studentName,
+        studentId: studentId
       });
     }
   }
@@ -137,35 +132,31 @@ else{
   orgFound.orgTeachers[teacherIndex].notification.push({
     message: messageBody,
   });
+  
   //student
   var studentSplitter = _.split(selectedStudents, ",");
+      
+    for (var selectedStudentDetails in studentSplitter) {
+      var studentId = studentSplitter[selectedStudentDetails];
 
-  for (var selectedStudentDetails in studentSplitter) {
-    var studentNewData = _.split(studentSplitter[selectedStudentDetails], "_");
-    console.log(studentNewData);
-    var studentName = studentNewData[0];
-    var studentRollNo = studentNewData[1];
-    var studentEmail = studentNewData[2];
-    mailList.push(studentEmail);
+      var studentIndex = _.findIndex(orgFound.orgStudent, {
+        id:studentId
+      });
 
-    var studentIndex = _.findIndex(orgFound.orgStudent, {
-      studentEmail:studentEmail
-    });
-    if (studentIndex >= 0 && orgFound.orgStudent[studentIndex].active) {
-      registrationTokens.push(
-        orgFound.orgStudent[studentIndex].deviceToken
-      );
-      orgFound.orgStudent[studentIndex].notification.push({
-        message: messageBody,
+      if (studentIndex >= 0 && orgFound.orgStudent[studentIndex].active) {
+        registrationTokens.push(
+          orgFound.orgStudent[studentIndex].deviceToken
+        );
+        mailList.push(orgFound.orgStudent[studentIndex].studentEmail);
+  
+        orgFound.orgStudent[studentIndex].notification.push({
+          message: messageBody,
+        });
+      }
+      studentsList.push({
+        studentId: studentId
       });
     }
-    studentsList.push({
-      studentRollNo: studentRollNo,
-      studentEmail: studentEmail,
-      studentName: studentName,
-    });
-  }
-
 }
 
 var message = new gcm.Message({
@@ -206,7 +197,7 @@ orgFound.schedules.push({
 
 //trigger mailer
 mailer.scheduleMail(mailList, details, subjectMail);
-console.log(registrationTokens);
+console.log(`${registrationTokens} ${mailList}`);
 sender.sendNoRetry(
   message,
   { registrationTokens: registrationTokens },
@@ -331,9 +322,6 @@ console.log("yes");
           });
         } else if (role == "Student" || role == "student") {
           const { studentClass, studentSection, studentRollNo } = req.body;
-
-       
-
           var scList = new Array();
           var studentScheduleList = orgFound.schedules.map((scheduleList) => {
 
@@ -343,8 +331,6 @@ console.log("yes");
             else{
               studentCount= scheduleList.selectedStudents.length
             }
-
-
             if (
               scheduleList.classScheduled == studentClass &&
               scheduleList.sectionScheduled == studentSection &&
@@ -471,27 +457,29 @@ if(orgFound.schedules[scheduleIndex].studentCount){
   });
 }
 else{
- 
+
   var selectedStudents = orgFound.schedules[
     scheduleIndex
   ].selectedStudents.map((std) => {
-    mailList.push(std.studentEmail);
+
+    var studentId = std.studentId;
 
     var studentIndex = _.findIndex(orgFound.orgStudent, {
-      studentEmail: std.studentEmail,
-      studentRollNo: std.studentRollNo,
+      id:studentId
     });
+
     if (studentIndex >= 0 && orgFound.orgStudent[studentIndex].active) {
       registrationTokens.push(
         orgFound.orgStudent[studentIndex].deviceToken
       );
+      mailList.push(orgFound.orgStudent[studentIndex].studentEmail);
+
       orgFound.orgStudent[studentIndex].notification.push({
         message: messageBody,
       });
     }
+    
   });
-
-
 }
           }
           else{
@@ -511,20 +499,24 @@ else{
             var selectedStudents = orgFound.schedules[
               scheduleIndex
             ].selectedStudents.map((std) => {
-              mailList.push(std.studentEmail);
-  
+          
+              var studentId = std.studentId;
+          
               var studentIndex = _.findIndex(orgFound.orgStudent, {
-                studentEmail: std.studentEmail,
-                studentRollNo: std.studentRollNo,
+                id:studentId
               });
+          
               if (studentIndex >= 0 && orgFound.orgStudent[studentIndex].active) {
                 registrationTokens.push(
                   orgFound.orgStudent[studentIndex].deviceToken
                 );
+                mailList.push(orgFound.orgStudent[studentIndex].studentEmail);
+          
                 orgFound.orgStudent[studentIndex].notification.push({
                   message: messageBody,
                 });
               }
+              
             });
           }
          
@@ -670,22 +662,25 @@ exports.deleteSchedule = (req, res, next) => {
               var selectedStudents = orgFound.schedules[
                 scheduleIndex
               ].selectedStudents.map((std) => {
-                mailList.push(std.studentEmail);
+            
+                var studentId = std.studentId;
             
                 var studentIndex = _.findIndex(orgFound.orgStudent, {
-                  studentEmail: std.studentEmail,
-                  studentRollNo: std.studentRollNo,
+                  id:studentId
                 });
+            
                 if (studentIndex >= 0 && orgFound.orgStudent[studentIndex].active) {
                   registrationTokens.push(
                     orgFound.orgStudent[studentIndex].deviceToken
                   );
+                  mailList.push(orgFound.orgStudent[studentIndex].studentEmail);
+            
                   orgFound.orgStudent[studentIndex].notification.push({
                     message: messageBody,
                   });
                 }
+                
               });
-            
             
             }
                       }
@@ -706,20 +701,24 @@ exports.deleteSchedule = (req, res, next) => {
                         var selectedStudents = orgFound.schedules[
                           scheduleIndex
                         ].selectedStudents.map((std) => {
-                          mailList.push(std.studentEmail);
-              
+                      
+                          var studentId = std.studentId;
+                      
                           var studentIndex = _.findIndex(orgFound.orgStudent, {
-                            studentEmail: std.studentEmail,
-                            studentRollNo: std.studentRollNo,
+                            id:studentId
                           });
+                      
                           if (studentIndex >= 0 && orgFound.orgStudent[studentIndex].active) {
                             registrationTokens.push(
                               orgFound.orgStudent[studentIndex].deviceToken
                             );
+                            mailList.push(orgFound.orgStudent[studentIndex].studentEmail);
+                      
                             orgFound.orgStudent[studentIndex].notification.push({
                               message: messageBody,
                             });
                           }
+                          
                         });
                       }
 
@@ -816,9 +815,28 @@ if(scheduleIndex>=0){
     });
   }
   else{
+    var selectedStudents = orgFound.schedules[
+      scheduleIndex
+    ].selectedStudents.map((std) => {
+  
+      var studentId = std.studentId;
+  
+      var studentIndex = _.findIndex(orgFound.orgStudent, {
+        id:studentId
+      });
+      var student = orgFound.orgStudent[studentIndex];
+      if (studentIndex >= 0) {
+       return {
+         _id: student.id,
+         studentRollNo: student.studentRollNo,
+         studentEmail: student.studentEmail,
+         studentName: student.studentName
+       }
+      }    
+    });
     console.log("student lIst");
     res.send({
-      list:orgFound.schedules[scheduleIndex].selectedStudents,
+      list:selectedStudents,
       message:"list_found"
     });
   }

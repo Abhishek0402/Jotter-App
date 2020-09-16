@@ -77,6 +77,7 @@ exports.showList = (req, res, next) => {
                       studentName: student.studentName,
                       studentRollNo: student.studentRollNo,
                       studentEmail: student.studentEmail,
+                      studentId: student.id
                     });
                   }
                 });
@@ -267,7 +268,8 @@ return {
   studentName:student.studentName,
   studentRollNo:student.studentRollNo,
   studentClass:student.studentClass,
-  studentSection:student.studentSection
+  studentSection:student.studentSection,
+  studentId:student.id
 }
           });
           console.log(studentList);
@@ -301,14 +303,9 @@ exports.notificationList = (req, res, next) => {
     .findOne({ orgCode })
     .then((orgFound) => {
       if (orgFound) {
-        if(role==="Organisation"){
-
-
-          console.log("Organisation");
-          
+       if(role==="Organisation"){
+          console.log("Organisation");      
             list = orgFound.notification;
-          
-
         }
         else if (role === "Teacher") {
           console.log("Teacher");
