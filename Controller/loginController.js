@@ -213,7 +213,8 @@ mobile = parseFloat(mobile);
                                   orgCode: orgCode,
                                   orgName: orgExists.orgName,
                                   orgLogo: orgExists.orgLogo,
-                                  loginId:loginId
+                                  loginId:loginId,
+                                  studentId: student.id
                                 },
                                 message: "loggedIn",
                               });

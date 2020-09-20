@@ -396,6 +396,9 @@ var orgSchema = new Schema({
       teacherCode: {
         type: String,
       },
+      assignmentTitle:{
+type:String
+      },
       classAssignment: {
         type: String,
       },
@@ -408,7 +411,10 @@ var orgSchema = new Schema({
       active: {
         type: Boolean,
         default: 1,
-      }, 
+      },
+updatedAt:{
+  type:String
+},
       assignmentDate: {
         type: String,
       },
@@ -428,6 +434,10 @@ var orgSchema = new Schema({
           },
           teacherRemark:{
             type:String
+          },
+          active: {
+            type: Boolean,
+            default: 1,
           },
           studentDescription:{
             type:String

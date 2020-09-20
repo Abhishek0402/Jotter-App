@@ -1,13 +1,11 @@
 const express = require("express");
 const router = express.Router(); //routing
 
-const admin = require("../models/admin");
-const organisation = require("../models/organisation");
-const userData = require("../models/userData");
-
+const authController = require("../Controller/authController");
+const imageUploader = require("../utility/imageUploader");
 const assignmentController = require("../Controller/assignmentController");
 
-router.post("/assignment/create",assignmentController.createAssignment);
+router.post("/assignment/create", authController.authenticate,imageUploader.uploadImage.single("file"),assignmentController.createAssignment);
 
 router.post("/assignment/readAssignment",assignmentController.readAssignment);
 
