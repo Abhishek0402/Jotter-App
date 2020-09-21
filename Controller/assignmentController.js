@@ -97,7 +97,7 @@ var studentList = new Array();
   });
 
   var updatedAt = moment().format();
-
+console.log(req.file.location);
   orgFound.assignment.push({
     teacherCode,
     assignmentTitle,
@@ -397,11 +397,97 @@ console.log(messageBody);
 };
 
 exports.readStudent = (req, res, next) => {
-  var {orgCode,assignmentId}=req.body;
+  var {orgCode,assignmentId,role,studentId}=req.body;
   organisation.findOne({
-    orgCode,
-    
-  })
+    orgCode 
+  },{
+orgStudent:1,
+assignment:1
+  }).then(dataFound =>{
+    if(dataFound){
+      if(role=="Teacher"){
+        var assignmentIndex = _.findIndex(dataFound.assignment,{
+          id:assignmentId
+        });
+        if(assignmentIndex>=0){
+          var dataList = new Array();
+var listStudent = dataFound.assignment[assignmentIndex].selectedStudents.map((response)=>{
+   var studentIndex = _.findIndex(dataFound.orgStudent,{
+     id:response.studentId
+   });
+   if(studentIndex>=0){
+         dataList.push({
+studentName:dataFound.orgStudent[studentIndex].studentName,
+studentRollNo:dataFound.orgStudent[studentIndex].studentRollNo,
+studentId:response.studentId,
+teacherRemark: response.teacherRemark,
+active: response.active,
+studentDescription: response.studentDescription,
+studentFile: response.studentFile,
+submitDate : response.submitDate,
+submitTime:response.submitTime
+         });
+   }
+});
+console.log(dataList);
+res.send({
+ list: dataList,
+ message:"list_found"
+});
+        }
+        else{
+          console.log("invalid assignment Id");
+          res.send({
+            message:"invalid_assignmentId"
+          });
+        }
+      }
+     else if(role==="Student"){
+      
+      var assignmentIndex = _.findIndex(dataFound.assignment,{
+        id:assignmentId
+      });
+      if(assignmentIndex>=0){
+
+   var studentIndex = _.findIndex(dataFound.orgStudent,{
+     id:studentId
+   });
+   var studentPresentInAssignment = _.findIndex(dataFound.assignment[assignmentIndex].selectedStudent,{
+      studentId: studentId
+   });
+   if(studentIndex>=0 && studentPresentInAssignment){
+         res.send({
+           message:"list_found",
+           data:{
+            studentName:dataFound.orgStudent[studentIndex].studentName,
+            studentRollNo:dataFound.orgStudent[studentIndex].studentRollNo,
+            studentId: studentId,
+            teacherRemark: dataFound.assignment[assignmentIndex].selectedStudent[studentPresentInAssignment].teacherRemark,
+            active: dataFound.assignment[assignmentIndex].selectedStudent[studentPresentInAssignment].active,
+            studentDescription: dataFound.assignment[assignmentIndex].selectedStudent[studentPresentInAssignment].studentDescription,
+            studentFile: dataFound.assignment[assignmentIndex].selectedStudent[studentPresentInAssignment].studentFile,
+            submitDate : dataFound.assignment[assignmentIndex].selectedStudent[studentPresentInAssignment].submitDate,
+            submitTime:dataFound.assignment[assignmentIndex].selectedStudent[studentPresentInAssignment].submitTime
+           }
+
+         });
+   }
+      }
+      else  {
+        console.log("invalid assignment Id");
+        res.send({
+          message:"invalid_assignmentId"
+        });
+      }
+     } 
+    }
+    else{
+console.log("invalid_orgCode");
+res.send({
+  message:"invalid_orgCode"
+});
+    }
+  }).catch(err=>console.log(err));
 };
 
 exports.giveRemark = (req, res, next) => {
