@@ -7,17 +7,17 @@ const assignmentController = require("../Controller/assignmentController");
 
 router.post("/assignment/create", authController.authenticate,imageUploader.uploadImage.single("file"),assignmentController.createAssignment);
 
-router.post("/assignment/readAssignment",assignmentController.readAssignment);
+router.post("/assignment/readAssignment",authController.authenticate,assignmentController.readAssignment);
 
-router.post("/assignment/delete", assignmentController.deleteAssignment);
+router.post("/assignment/delete",authController.authenticate,assignmentController.deleteAssignment);
 
-router.post("/assignment/readStudent",assignmentController.readStudent);
+router.post("/assignment/readStudent",authController.authenticate,assignmentController.readStudent);
 
-router.post("/assignment/giveRemark",assignmentController.giveRemark);
+router.post("/assignment/submitAnswer",authController.authenticate,imageUploader.uploadImage.single("file"),assignmentController.submitAnswer);
 
-router.post("/assignment/submitAnswer",assignmentController.submitAnswer);
+router.post("/assignment/giveRemark",authController.authenticate,assignmentController.giveRemark);
 
-router.post("/assignment/deleteAnswer",assignmentController.deleteAnswer);
+router.post("/assignment/deleteAnswer",authController.authenticate,assignmentController.deleteAnswer);
 
 
 

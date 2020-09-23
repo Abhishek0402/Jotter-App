@@ -405,6 +405,7 @@ orgStudent:1,
 assignment:1
   }).then(dataFound =>{
     if(dataFound){
+      console.log("123");
       if(role=="Teacher"){
         var assignmentIndex = _.findIndex(dataFound.assignment,{
           id:assignmentId
@@ -421,7 +422,7 @@ studentName:dataFound.orgStudent[studentIndex].studentName,
 studentRollNo:dataFound.orgStudent[studentIndex].studentRollNo,
 studentId:response.studentId,
 teacherRemark: response.teacherRemark,
-active: response.active,
+responseActive: response.active,
 studentDescription: response.studentDescription,
 studentFile: response.studentFile,
 submitDate : response.submitDate,
@@ -429,7 +430,7 @@ submitTime:response.submitTime
          });
    }
 });
-console.log(dataList);
+// console.log(dataList);
 res.send({
  list: dataList,
  message:"list_found"
@@ -452,25 +453,28 @@ res.send({
    var studentIndex = _.findIndex(dataFound.orgStudent,{
      id:studentId
    });
-   var studentPresentInAssignment = _.findIndex(dataFound.assignment[assignmentIndex].selectedStudent,{
+   var studentPresentInAssignment = _.findIndex(dataFound.assignment[assignmentIndex].selectedStudents,{
       studentId: studentId
    });
-   if(studentIndex>=0 && studentPresentInAssignment){
+   if(studentIndex>=0 && studentPresentInAssignment>=0){
          res.send({
            message:"list_found",
            data:{
-            studentName:dataFound.orgStudent[studentIndex].studentName,
-            studentRollNo:dataFound.orgStudent[studentIndex].studentRollNo,
-            studentId: studentId,
-            teacherRemark: dataFound.assignment[assignmentIndex].selectedStudent[studentPresentInAssignment].teacherRemark,
-            active: dataFound.assignment[assignmentIndex].selectedStudent[studentPresentInAssignment].active,
-            studentDescription: dataFound.assignment[assignmentIndex].selectedStudent[studentPresentInAssignment].studentDescription,
-            studentFile: dataFound.assignment[assignmentIndex].selectedStudent[studentPresentInAssignment].studentFile,
-            submitDate : dataFound.assignment[assignmentIndex].selectedStudent[studentPresentInAssignment].submitDate,
-            submitTime:dataFound.assignment[assignmentIndex].selectedStudent[studentPresentInAssignment].submitTime
+            teacherRemark: dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].teacherRemark,
+            responseActive: dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].active,
+            studentDescription: dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].studentDescription,
+            studentFile: dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].studentFile,
+            submitDate : dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].submitDate,
+            submitTime:dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].submitTime
            }
 
          });
+   }
+   else {
+    console.log("invalid student Id");
+    res.send({
+      message:"invalid_studentId"
+    });
    }
       }
       else  {
@@ -490,14 +494,199 @@ res.send({
   }).catch(err=>console.log(err));
 };
 
-exports.giveRemark = (req, res, next) => {
-  console.log(req.body);
+
+//@ student submit answer
+exports.submitAnswer = (req, res, next) => {
+  var {orgCode,assignmentId,studentId,studentDescription,submitDate,submitTime} = req.body;
+
+  organisation.findOne({
+    orgCode 
+  }).then(dataFound =>{
+    if(dataFound){
+      var assignmentIndex = _.findIndex(dataFound.assignment,{
+        id:assignmentId
+      });
+      if(assignmentIndex>=0){
+        console.log("valid assignment");
+        var studentIndex = _.findIndex(dataFound.orgStudent,{
+          id:studentId
+         });
+         var studentPresentInAssignment = _.findIndex(dataFound.assignment[assignmentIndex].selectedStudents,{
+           studentId: studentId
+         });
+ 
+         var responseStatus = dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].active;
+console.log(responseStatus);
+         if(studentIndex>=0 && studentPresentInAssignment>=0  && dataFound.orgStudent[studentIndex].active && responseStatus==0){
+
+  dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].submitDate= submitDate;
+  dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].submitTime= submitTime;
+  dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].studentFile= req.file.location;
+  dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].studentDescription= studentDescription;
+  dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].active = 1;
+console.log("changes done");
+console.log(dataFound.assignment[assignmentIndex]);
+dataFound.save().then(responseSaved =>{
+console.log("student_assignment_save");
+res.send({
+  message:"assignment_response_saved"
+})
+}).catch(err=>{
+  console.log("delete not allowed");
+  res.send({
+    message:"submit_response_not_allowed"
+  });
+})
+}
+else {
+  console.log("delete not allowed");
+  res.send({
+    message:"submit_response_not_allowed"
+  });
+  
+}
+
+    }
+    else  {
+      console.log("invalid assignment Id");
+      res.send({
+        message:"invalid_assignmentId"
+      });
+    }
+    }
+      else{
+        console.log("invalid_orgCode");
+        res.send({
+          message:"invalid_orgCode"
+        });
+            }
+          }).catch(err=>console.log(err));
 };
 
-exports.submitAnswer = (req, res, next) => {
-  console.log(req.body);
+//@ teacher give remark to student
+exports.giveRemark = (req, res, next) => {
+ var {orgCode,teacherCode,assignmentId,studentId,teacherRemark} = req.body;
+ 
+ organisation.findOne({
+   orgCode 
+ }).then(dataFound =>{
+   if(dataFound){
+     var assignmentIndex = _.findIndex(dataFound.assignment,{
+       id:assignmentId
+     });
+     if(assignmentIndex>=0){
+       var studentIndex = _.findIndex(dataFound.orgStudent,{
+         id:studentId
+        });
+        var studentPresentInAssignment = _.findIndex(dataFound.assignment[assignmentIndex].selectedStudents,{
+          studentId: studentId
+        });
+
+        var responseStatus = dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].active;
+if(studentIndex>=0 && studentPresentInAssignment>=0 && responseStatus){
+
+ dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].teacherRemark= teacherRemark;
+
+dataFound.save().then(responseSaved =>{
+console.log("remark given");
+res.send({
+ message:"remark_saved"
+})
+}).catch(err=>{
+  console.log("delete not allowed");
+ res.send({
+   message:"remark_not_allowed"
+ });
+})
+}
+else {
+ console.log("delete not allowed");
+ res.send({
+   message:"remark_not_allowed"
+ });
+ 
+}
+   }
+   else  {
+     console.log("invalid assignment Id");
+     res.send({
+       message:"invalid_assignmentId"
+     });
+   }
+   }
+     else{
+       console.log("invalid_orgCode");
+       res.send({
+         message:"invalid_orgCode"
+       });
+           }
+         }).catch(err=>console.log(err));
+
 };
+
+
 
 exports.deleteAnswer = (req, res, next) => {
-  console.log(req.body);
+  var {orgCode,studentId,assignmentId} = req.body;
+
+
+  organisation.findOne({
+    orgCode 
+  }).then(dataFound =>{
+    if(dataFound){
+      var assignmentIndex = _.findIndex(dataFound.assignment,{
+        id:assignmentId
+      });
+      if(assignmentIndex>=0){
+        var studentIndex = _.findIndex(dataFound.orgStudent,{
+          id:studentId
+         });
+         var studentPresentInAssignment = _.findIndex(dataFound.assignment[assignmentIndex].selectedStudents,{
+           studentId: studentId
+         });
+ 
+         var responseStatus = dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].active;
+if(studentIndex>=0 && studentPresentInAssignment>=0  && dataFound.orgStudent[studentIndex].active && responseStatus){
+  dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].teacherRemark = "";
+  dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].submitDate= "";
+  dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].submitTime= "";
+  dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].studentFile= "";
+  dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].studentDescription= "";
+  dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].active = 0;
+
+dataFound.save().then(responseSaved =>{
+console.log("student_assignment_delete");
+res.send({
+  message:"assignment_response_deleted"
+})
+}).catch(err=>{
+  console.log("delete not allowed");
+  res.send({
+    message:"delete_response_not_allowed"
+  });
+})
+}
+else {
+  console.log("delete not allowed");
+  res.send({
+    message:"delete_response_not_allowed"
+  });
+  
+}
+
+    }
+    else  {
+      console.log("invalid assignment Id");
+      res.send({
+        message:"invalid_assignmentId"
+      });
+    }
+    }
+      else{
+        console.log("invalid_orgCode");
+        res.send({
+          message:"invalid_orgCode"
+        });
+            }
+          }).catch(err=>console.log(err));
 };
