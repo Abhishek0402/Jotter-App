@@ -550,14 +550,14 @@ else {
     else  {
       console.log("invalid assignment Id");
       res.send({
-        message:"invalid_assignmentId"
+        message:"submit_response_not_allowed"
       });
     }
     }
       else{
         console.log("invalid_orgCode");
         res.send({
-          message:"invalid_orgCode"
+          message:"submit_response_not_allowed"
         });
             }
           }).catch(err=>console.log(err));
@@ -610,14 +610,14 @@ else {
    else  {
      console.log("invalid assignment Id");
      res.send({
-       message:"invalid_assignmentId"
+       message:"remark_not_allowed"
      });
    }
    }
      else{
        console.log("invalid_orgCode");
        res.send({
-         message:"invalid_orgCode"
+         message:"remark_not_allowed"
        });
            }
          }).catch(err=>console.log(err));
@@ -678,14 +678,14 @@ else {
     else  {
       console.log("invalid assignment Id");
       res.send({
-        message:"invalid_assignmentId"
+        message:"delete_response_not_allowed"
       });
     }
     }
       else{
         console.log("invalid_orgCode");
         res.send({
-          message:"invalid_orgCode"
+          message:"delete_response_not_allowed"
         });
             }
           }).catch(err=>console.log(err));
