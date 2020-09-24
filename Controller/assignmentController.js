@@ -233,7 +233,14 @@ res.send({
 
             if(studentSubmissionIndex>=0){
               console.log(studentSubmissionIndex);
-            
+    var remark;
+    console.log(assignmentList.selectedStudents[studentSubmissionIndex].teacherRemark);
+              if(typeof(assignmentList.selectedStudents[studentSubmissionIndex].teacherRemark)==="undefined"){
+              remark = "";
+            }
+            else {
+              remark =assignmentList.selectedStudents[studentSubmissionIndex].teacherRemark;
+            }
               assList.push({
                 assignmentId: assignmentList.id,
                 assignmentTitle:assignmentList.assignmentTitle,
@@ -243,7 +250,7 @@ res.send({
                 description:assignmentList.description,
                 file: assignmentList.file,
                 submitCount: c,
-                teacherRemark: assignmentList.selectedStudents[studentSubmissionIndex].teacherRemark,
+                teacherRemark:remark,
                 active:assignmentList.selectedStudents[studentSubmissionIndex].active  
               });
 
