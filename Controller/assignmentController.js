@@ -233,6 +233,7 @@ res.send({
 
             if(studentSubmissionIndex>=0){
               console.log(studentSubmissionIndex);
+            
               assList.push({
                 assignmentId: assignmentList.id,
                 assignmentTitle:assignmentList.assignmentTitle,
@@ -242,6 +243,7 @@ res.send({
                 description:assignmentList.description,
                 file: assignmentList.file,
                 submitCount: c,
+                teacherRemark: assignmentList.selectedStudents[studentSubmissionIndex].teacherRemark,
                 active:assignmentList.selectedStudents[studentSubmissionIndex].active  
               });
 

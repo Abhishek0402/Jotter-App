@@ -58,9 +58,9 @@ mobile = parseFloat(mobile);
                     })
                     .catch((err) => console.log(err));
                 } else {
-                  console.log("Invalid password");
+                  console.log("Invalid_details");
                   res.send({
-                    message: "Invalid_Password",
+                    message: "Invalid_details",
                   });
                 }
               } else {
@@ -110,9 +110,9 @@ mobile = parseFloat(mobile);
                       })
                       .catch((err) => console.log(err));
                   } else {
-                    console.log("Invalid password");
+                    console.log("Invalid_details");
                     res.send({
-                      message: "Invalid_Password",
+                      message: "Invalid_details",
                     });
                   }
                 } else if (role == "Teacher" || role == "teacher") {
@@ -161,7 +161,7 @@ mobile = parseFloat(mobile);
                         .catch((err) => {
                           console.log(err);
                           res.send({
-                            message: "Invalid_Password",
+                            message: "Invalid_details",
                           });
                         });
                     } else {
@@ -171,9 +171,9 @@ mobile = parseFloat(mobile);
                       });
                     }
                   } else {
-                    console.log("Invalid password");
+                    console.log("Invalid_details");
                     res.send({
-                      message: "Invalid_Password",
+                      message: "Invalid_details",
                     });
                   }
                 } else if (role == "Student") {
@@ -231,15 +231,15 @@ mobile = parseFloat(mobile);
                       });
                     }
                   } else {
-                    console.log("Invalid password");
+                    console.log("Invalid_details");
                     res.send({
-                      message: "Invalid_Password",
+                      message: "Invalid_details",
                     });
                   }
                 } else {
-                  console.log("Invalid role");
+                  console.log("Invalid_details");
                   res.send({
-                    message: "Invalid_role",
+                    message: "Invalid_details",
                   });
                 }
               } else {
@@ -253,7 +253,7 @@ mobile = parseFloat(mobile);
         }
       } else {
         console.log("user_not_exists");
-        console.log("Invalid_loginId");
+        console.log("Invalid_details");
         res.send({
           message: "Invalid_details",
         });
