@@ -459,17 +459,26 @@ res.send({
       });
       if(assignmentIndex>=0){
 
+        
    var studentIndex = _.findIndex(dataFound.orgStudent,{
      id:studentId
    });
    var studentPresentInAssignment = _.findIndex(dataFound.assignment[assignmentIndex].selectedStudents,{
       studentId: studentId
    });
+   var remark;
+   console.log(dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].teacherRemark);
+             if(typeof(dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].teacherRemark)==="undefined"){
+             remark = "";
+           }
+           else {
+             remark =dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].teacherRemark
+           }
    if(studentIndex>=0 && studentPresentInAssignment>=0){
          res.send({
            message:"list_found",
            data:{
-            teacherRemark: dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].teacherRemark,
+            teacherRemark: remark,
             responseActive: dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].active,
             studentDescription: dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].studentDescription,
             studentFile: dataFound.assignment[assignmentIndex].selectedStudents[studentPresentInAssignment].studentFile,

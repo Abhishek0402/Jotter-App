@@ -321,8 +321,9 @@ console.log("yes");
             message: "list_found",
           });
         } else if (role == "Student" || role == "student") {
-          const { studentClass, studentSection, studentRollNo } = req.body;
+          const { studentId } = req.body;
           var scList = new Array();
+           
           var studentScheduleList = orgFound.schedules.map((scheduleList) => {
 
             if(scheduleList.studentCount){
@@ -332,12 +333,10 @@ console.log("yes");
               studentCount= scheduleList.selectedStudents.length
             }
             if (
-              scheduleList.classScheduled == studentClass &&
-              scheduleList.sectionScheduled == studentSection &&
               scheduleList.active
             ) {
               var roleCheck = _.findIndex(scheduleList.selectedStudents, {
-                studentRollNo: studentRollNo,
+                studentId: studentId,
               });
               if (roleCheck >= 0) {
                 if(scheduleList.teacherCode ==="Organisation"){
