@@ -425,13 +425,19 @@ var listStudent = dataFound.assignment[assignmentIndex].selectedStudents.map((re
    var studentIndex = _.findIndex(dataFound.orgStudent,{
      id:response.studentId
    });
+if(response.teacherRemark ==="undefined")response.teacherRemark="";
+if(response.studentDescription==="undefined") response.studentDescription= "";
+if(response.studentFile==="undefined") response.studentFile="";
+if(response.submitDate==="undefined") response.submitDate="";
+if(response.submitTime==="undefined") response.submitTime="";
+
    if(studentIndex>=0){
          dataList.push({
 studentName:dataFound.orgStudent[studentIndex].studentName,
 studentRollNo:dataFound.orgStudent[studentIndex].studentRollNo,
 studentId:response.studentId,
-teacherRemark: response.teacherRemark,
 responseActive: response.active,
+teacherRemark: response.teacherRemark,
 studentDescription: response.studentDescription,
 studentFile: response.studentFile,
 submitDate : response.submitDate,
