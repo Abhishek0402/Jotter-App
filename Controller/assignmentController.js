@@ -112,7 +112,7 @@ file:req.file.location,
 selectedStudents: studentList
   });
 
-  mailer.scheduleMail(mailList, details, subjectMail);
+  mailer.assignmentMail(mailList, details, subjectMail);
   console.log(`${registrationTokens} ${mailList}`);
 
   sender.sendNoRetry(
@@ -356,7 +356,7 @@ console.log(messageBody);
               body: messageBody,
             },
           });
-          mailer.scheduleMail(mailList, details, subjectMail);
+          mailer.assignmentMail(mailList, details, subjectMail);
           console.log(mailList);
           sender.sendNoRetry(
             message,

@@ -122,7 +122,7 @@ exports.userRegisterMail = (mailList,details,subject) => {
    );
  };
 
- exports.scheduleMail = (mailList,details,subject) => {
+ exports.assignmentMail = (mailList,details,subject) => {
   let replacements = {
     orgLogo: details.orgLogo,
     purpose: details.purpose,
