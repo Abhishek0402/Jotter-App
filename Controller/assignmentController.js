@@ -431,11 +431,11 @@ var listStudent = dataFound.assignment[assignmentIndex].selectedStudents.map((re
   var submitDate = response.submitDate;
   var submitTime = response.submitTime;
 
-if(remark ==="undefined")remark="";
-if(description==="undefined") description= "";
-if(studentFile==="undefined") studentFile="";
-if(submitDate==="undefined") submitDate="";
-if(submitTime==="undefined") submitTime="";
+if(typeof(remark) ==="undefined"){remark="";}
+if(typeof(description)==="undefined") {description= "";}
+if(typeof(studentFile)==="undefined") {studentFile="";}
+if(typeof(submitDate)==="undefined") {submitDate="";}
+if(typeof(submitTime)==="undefined") {submitTime="";}
 console.log(`${remark} ${description} ${studentFile} ${submitDate} ${submitTime}`);
    if(studentIndex>=0){
          dataList.push({
