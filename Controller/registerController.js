@@ -521,7 +521,8 @@ organisation
         console.log(`${studentRollNoExists} ${teacherloginIdPresent} ${studentloginIdPresent} ${orgloginIdPresent}`);
 console.log("invalid entry at line "+ item.sno);
 res.send({
-  error:`invalid entry at line ${item.sno}`
+  error:`invalid entry at line ${item.sno}`,
+  message: "invalid_entry",
 });
       }
       else {

@@ -425,24 +425,29 @@ var listStudent = dataFound.assignment[assignmentIndex].selectedStudents.map((re
    var studentIndex = _.findIndex(dataFound.orgStudent,{
      id:response.studentId
    });
-  
-if(response.teacherRemark ==="undefined")response.teacherRemark="";
-if(response.studentDescription==="undefined") response.studentDescription= "";
-if(response.studentFile==="undefined") response.studentFile="";
-if(response.submitDate==="undefined") response.submitDate="";
-if(response.submitTime==="undefined") response.submitTime="";
-console.log(`${response.teacherRemark} ${response.studentDescription} ${response.studentFile} ${response.submitDate} ${response.submitTime}`);
+  var remark = response.teacherRemark;
+  var description = response.studentDescription;
+  var studentFile = response.studentFile;
+  var submitDate = response.submitDate;
+  var submitTime = response.submitTime;
+
+if(remark ==="undefined")remark="";
+if(description==="undefined") description= "";
+if(studentFile==="undefined") studentFile="";
+if(submitDate==="undefined") submitDate="";
+if(submitTime==="undefined") submitTime="";
+console.log(`${remark} ${description} ${studentFile} ${submitDate} ${submitTime}`);
    if(studentIndex>=0){
          dataList.push({
 studentName:dataFound.orgStudent[studentIndex].studentName,
 studentRollNo:dataFound.orgStudent[studentIndex].studentRollNo,
 studentId:response.studentId,
 responseActive: response.active,
-teacherRemark: response.teacherRemark,
-studentDescription: response.studentDescription,
-studentFile: response.studentFile,
-submitDate : response.submitDate,
-submitTime:response.submitTime
+teacherRemark: remark,
+studentDescription: description,
+studentFile: studentFile,
+submitDate : submitDate,
+submitTime:submitTime
          });
    }
 });
