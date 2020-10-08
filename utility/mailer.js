@@ -91,36 +91,7 @@ console.log("running");
   );
 };
 
-exports.userRegisterMail = (mailList,details,subject) => {
-  let replacements = {
-    Mobile:details.Mobile,
-    firstName:details.firstName,
-    Password:details.Password,
-     orgName:details.orgName,
-     purpose: details.purpose,
-     orgLogo: details.orgLogo,
-     footerMessage: details.footerMessage
- };
- console.log("mailer running");
-   transporter.sendMail({
-       from: emailConfig.email,
-       to: user.email,
-       subject:subject,
-       html: templateUserCreated(replacements)
-     },
-     (error, info) => {
-       //(to,subject,text,html,callback)
-       console.log("hello");
-       if (error) {
-         console.log("hi");
-         console.log(error);
-        
-       } else {
-         console.log("Email sent success.");
-       }
-     }
-   );
- };
+
 
  exports.assignmentMail = (mailList,details,subject) => {
   let replacements = {

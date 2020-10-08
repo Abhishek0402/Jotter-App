@@ -1,5 +1,5 @@
-# Smart-Class
-Smart Class App
+# Jotter
+Jotter App
 
 //@ Admin
 1. Login

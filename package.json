@@ -1,7 +1,7 @@
 {
-  "name": "smart-class-app",
+  "name": "jotter",
   "version": "1.0.0",
-  "description": "Smart Class App",
+  "description": "Jotter Education App",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",

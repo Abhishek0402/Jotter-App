@@ -58,7 +58,7 @@ console.log(loginId);
               teacherGender,
               class_section_subject,
             } = req.body;
-            teacherPassword = "Smart@123";
+            teacherPassword = "Jotter@123";
 
             var teacherPassword = bcrypt.hashSync(teacherPassword, 10);
 var teacherMobile= mobile;
@@ -195,7 +195,7 @@ console.log(classes);
               studentDOB,
               studentGender,
             } = req.body;
-            studentPassword = "Smart@123";
+            studentPassword = "Jotter@123";
 
             var studentPassword = bcrypt.hashSync(studentPassword, 10);
 var studentMobile= mobile;
@@ -395,7 +395,7 @@ organisation
             }
 
             console.log(classes);
-            teacherPassword = "Smart@123";
+            teacherPassword = "Jotter@123";
             var teacherPassword = bcrypt.hashSync(
               teacherPassword,
               10
@@ -534,7 +534,7 @@ res.send({
            //new map
            if (c == dataLength) {
             const orgStudentEntryMap = await list.map((item) => {
-              var studentPassword = "Smart@123";
+              var studentPassword = "Jotter@123";
 
               studentPassword = bcrypt.hashSync(
                 studentPassword,
@@ -767,7 +767,7 @@ if(adminExists){
    });
 }
 else {
-  var password = "SmartApp@123";
+  var password = "JotterAdmin@123";
   const newAdmin = new admin({
     name,
     email,
@@ -827,7 +827,7 @@ else {
                           "https://smartclassapp.s3.amazonaws.com/edulogofinal.jpg";
                       }
                       const {orgType, orgAddress } = req.body;
-                      var orgPassword = "Smart@123";
+                      var orgPassword = "Jotter@123";
                       var orgMobile = mobile;
 console.log(`login id ${loginId}`);
                       organisation
