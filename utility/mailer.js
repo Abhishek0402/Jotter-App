@@ -8,13 +8,11 @@ const emailConfig = require("../config/email");
 //@ Open template file
 var source = fs.readFileSync(path.join(__dirname, '../views/mailTemplate.hbs'), 'utf8');
 var sourceSchedule = fs.readFileSync(path.join(__dirname,'../views/schedueTemplate.hbs'),'utf-8');
-var userCreated = fs.readFileSync(path.join(__dirname,'../views/accountCreated.hbs'),'utf-8');
 var assignment = fs.readFileSync(path.join(__dirname,'../views/assignment.hbs'),'utf-8');
 
 //@ compile template file
 var template = Handlebars.compile(source);
 var templateSchedule = Handlebars.compile(sourceSchedule);
-var templateUserCreated = Handlebars.compile(userCreated);
 var templateAssignment = Handlebars.compile(assignment);
 
 //@ create the mail transporter
