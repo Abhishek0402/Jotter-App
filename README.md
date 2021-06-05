@@ -7,6 +7,7 @@ Jotter App Features list
 3. create new org
 4. refresh home screen
 5. Logout
+
 ![Artboard – 1](https://user-images.githubusercontent.com/42520941/120883574-8a23d780-c5fb-11eb-86b7-86051fb76793.jpg)
 
 //@ Organisation
@@ -24,6 +25,8 @@ Jotter App Features list
 12. Notifications
 13. Refresh home screen
 14. Logout
+
+![Artboard – 2](https://user-images.githubusercontent.com/42520941/120883915-a759a580-c5fd-11eb-842d-5e51e4af378b.jpg)
 
 //@ Teacher
 1.  Login
