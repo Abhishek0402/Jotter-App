@@ -7,10 +7,7 @@ Jotter App Features list
 3. create new org
 4. refresh home screen
 5. Logout
-![Screenshot_20200906-012649_Smart Class](https://user-images.githubusercontent.com/42520941/120882997-67dc8a80-c5f8-11eb-9a47-4130745ea149.jpg)
-![Screenshot_20200823-092802_Smart Class](https://user-images.githubusercontent.com/42520941/120883024-86428600-c5f8-11eb-8711-9fb94a7cbb94.jpg)
-![Screenshot_20200906-013025_Smart Class](https://user-images.githubusercontent.com/42520941/120883062-b1c57080-c5f8-11eb-9b3e-864891bbdbe8.jpg)
-![Screenshot_20200810-232941_Smart Class](https://user-images.githubusercontent.com/42520941/120883160-44fea600-c5f9-11eb-973e-646322098811.jpg)
+![Artboard – 1](https://user-images.githubusercontent.com/42520941/120883574-8a23d780-c5fb-11eb-86b7-86051fb76793.jpg)
 
 //@ Organisation
 1.  Login
