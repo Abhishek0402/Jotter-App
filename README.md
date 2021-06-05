@@ -41,6 +41,8 @@ Jotter App Features list
 10. Assignment --> Create, Read, Read Response, Download Response.
 11. Logout
 
+![Artboard – 3](https://user-images.githubusercontent.com/42520941/120884235-7b3f2400-c5ff-11eb-96e4-61984e57c96c.jpg)
+
 //@ Student
 1.  Login
 2.  Home --> Upcoming(latest) Schedules
@@ -52,3 +54,6 @@ Jotter App Features list
 8.  Refresh home screen
 9.  Assignment - Read, Create response, Delete Response
 10. Logout
+
+![Artboard – 4](https://user-images.githubusercontent.com/42520941/120884242-88f4a980-c5ff-11eb-86dc-593919867e06.jpg)
+
